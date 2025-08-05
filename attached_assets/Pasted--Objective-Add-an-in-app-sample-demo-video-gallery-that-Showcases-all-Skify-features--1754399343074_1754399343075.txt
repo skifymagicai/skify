@@ -1,0 +1,94 @@
+
+**Objective:**  
+Add an in-app sample/demo video gallery that:
+- **Showcases all Skify features** (visual style transfer, AI audio matching, text/lyric overlays, and copy-link importing)
+- Lets users preview what their own videos will look like after processing  
+- Makes first-time use frictionless and boosts user trust/conversions
+
+**Instructions / Prompt for Replit or AI Agent:**
+
+### 1. UI Placement
+- Feature this as a **“Sample/Example Videos”** section on the Landing Page and/or Gallery
+- Prominently label:  
+  - “See How Skify Works!”
+  - “Sample Styled Video (Full AI Makeover)”
+
+### 2. Showcase Video Component ([REACT/JSX] example code)
+
+```jsx
+import React, { useState } from 'react';
+
+const exampleVideos = [
+  {
+    title: "Cinematic Travel Pack",
+    description: "Full studio-style effect: advanced color grading, smooth transitions, camera pans, AI-matched music, extracted lyrics overlay, analyzed via copy-link feature.",
+    videoUrl: "/videos/skify_demo_cinematic.mp4",
+    features: [
+      "AI Video Style Transfer",
+      "One-Click Audio & Soundtrack Match",
+      "Lyrical OCR/Text Overlay",
+      "Paste Link Importing",
+      "HD Export, Watermark Option"
+    ]
+  },
+  {
+    title: "Urban Street Vibes",
+    description: "Demo: High contrast, quick AI transitions, auto-matched trending audio, and stylized text overlays (font/font color extracted from viral video).",
+    videoUrl: "/videos/skify_demo_urban.mp4",
+    features: [
+      "Transitions",
+      "Style Matching",
+      "Audio Extraction",
+      "AI Font Detection"
+    ]
+  }
+  // Add more samples for Nature, Docs, etc
+];
+
+export default function VideoShowcase() {
+  const [current, setCurrent] = useState(exampleVideos[0]);
+
+  return (
+    <div className="showcase-container" style={{display:"flex",gap:24}}>
+      <div className="video-player" style={{flex:2}}>
+        <video key={current.videoUrl} controls width="100%" style={{borderRadius:"10px", maxHeight: "380px"}}>
+          <source src={current.videoUrl} type="video/mp4" />
+          Sorry, your browser does not support embedded videos.
+        </video>
+        <h3>{current.title}</h3>
+        <div style={{fontSize:16, color:"#444"}}>{current.description}</div>
+        <ul>
+          {current.features.map((feat,idx) => (
+            <li key={idx}>✅ {feat}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="video-list" style={{flex:1, maxHeight:380, overflowY:"auto"}}>
+        {exampleVideos.map((v,idx) => (
+          <div key={idx} style={{cursor:"pointer",marginBottom:16, background: current.title===v.title?'#eef':'#fff', borderRadius:8, padding:8}}
+            onClick={()=>setCurrent(v)}>
+            <strong>{v.title}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### 3. Requirements for Sample Content
+- Make sure each sample video demonstrates:
+  - Import from link (Instagram/YouTube)
+  - AI Video Style transfer (filters, color, camera, transitions)
+  - Copy/link audio match
+  - Lyric/caption overlays using extracted/matched fonts
+  - Export (with watermark, then demo Pro download)
+- Prefer videos with visible overlays (“Styled by Skify” badge, toggled watermark, etc)
+
+### 4. User CTA (call-to-action)
+- “Try on Your Video” button right below the showcase, leading to upload/paste-link input
+- Optional tip/bar: “All features in this sample are available for your content.”
+
+**Summary Statement:**
+>
+> Add a feature-rich “Example Videos”/“Showcase” to Skify. These demo videos must highlight every smart feature (AI style, audio/lyrical/text, link import), inspire users, and live in a modern React video gallery for instant preview and seamless conversion to upload or link-inspect.

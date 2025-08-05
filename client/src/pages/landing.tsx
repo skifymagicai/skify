@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Camera, Play, Upload, Heart, Eye, Link } from "lucide-react";
+import VideoShowcase from "@/components/video-showcase";
 
 const SAMPLE_TEMPLATES = [
   {
@@ -204,76 +205,10 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Sample Styled Videos Section */}
-      <section className="py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl font-bold text-gray-900" data-testid="sample-videos-heading">
-              Sample Styled Videos
-            </h2>
-            <Button 
-              variant="link" 
-              className="text-blue-600 hover:text-blue-700 font-medium"
-              data-testid="view-all-button"
-            >
-              View All →
-            </Button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {SAMPLE_TEMPLATES.map((template) => (
-              <Card key={template.id} className="bg-white border border-gray-200 hover:shadow-lg transition-shadow overflow-hidden" data-testid={`template-card-${template.id}`}>
-                <div className="relative">
-                  <img 
-                    src={template.thumbnail} 
-                    alt={template.name}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2">
-                    <Heart className="h-4 w-4 text-gray-600" />
-                  </div>
-                </div>
-                
-                <CardContent className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-2" data-testid={`template-name-${template.id}`}>
-                    {template.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3" data-testid={`template-description-${template.id}`}>
-                    {template.description}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {template.tags.map((tag) => (
-                      <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                    <div className="flex items-center gap-4">
-                      <span className="flex items-center gap-1">
-                        <Eye className="h-4 w-4" />
-                        {template.views}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Heart className="h-4 w-4" />
-                        {template.hearts}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={() => handleTemplateSelect(template.id)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                    data-testid={`apply-template-${template.id}`}
-                  >
-                    Apply Template
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      {/* Video Showcase Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <VideoShowcase />
         </div>
       </section>
     </div>

@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import VideoShowcase from "@/components/video-showcase";
 import { Heart, Eye, Play, ArrowLeft, Filter, Search, Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
