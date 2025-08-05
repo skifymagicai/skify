@@ -36,7 +36,10 @@ An AI-powered video transformation platform that analyzes viral videos and appli
 - **payments**: Payment transactions
 
 ## User Preferences
-(To be updated based on user feedback)
+- Clean, modern light theme design with white backgrounds
+- Professional UI components with consistent styling
+- Tabbed interfaces for better organization
+- Modern navigation with proper routing between pages
 
 ## Development Notes
 - Using Drizzle ORM for database operations
