@@ -73,20 +73,24 @@ export default function Analysis() {
         const updated = [...prev];
         if (overallProgress >= 60) {
           const colorGradingIndex = updated.findIndex(c => c.id === "color-grading");
-          if (colorGradingIndex !== -1) {
+          if (colorGradingIndex !== -1 && updated[colorGradingIndex].status !== "complete") {
             updated[colorGradingIndex] = {
-              ...updated[colorGradingIndex],
-              status: "complete",
+              id: updated[colorGradingIndex].id,
+              name: updated[colorGradingIndex].name,
+              icon: updated[colorGradingIndex].icon,
+              status: "complete" as const,
               details: ["Temperature: Warm (+15)", "Contrast: Enhanced (+20)"],
             };
           }
         }
         if (overallProgress >= 80) {
           const cameraMotionIndex = updated.findIndex(c => c.id === "camera-motion");
-          if (cameraMotionIndex !== -1) {
+          if (cameraMotionIndex !== -1 && updated[cameraMotionIndex].status === "pending") {
             updated[cameraMotionIndex] = {
-              ...updated[cameraMotionIndex],
-              status: "processing",
+              id: updated[cameraMotionIndex].id,
+              name: updated[cameraMotionIndex].name,
+              icon: updated[cameraMotionIndex].icon,
+              status: "processing" as const,
               progress: 60,
             };
           }
