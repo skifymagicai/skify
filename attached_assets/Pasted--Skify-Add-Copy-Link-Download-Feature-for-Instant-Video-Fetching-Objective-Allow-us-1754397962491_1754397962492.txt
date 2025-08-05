@@ -1,0 +1,43 @@
+
+**Skify: Add “Copy Link & Download” Feature for Instant Video Fetching**
+
+**Objective:**  
+Allow users to paste a video URL (Instagram Reels, YouTube, TikTok, etc.) directly into the app. The app will automatically fetch/download the video from the link and place it into the analysis pipeline—removing the need for manual downloads.
+
+**How to Implement:**
+
+1. **Add a “Paste Video Link” Option in UI:**
+   - On landing page and/or upload screen, add a prominent input field/button:  
+     **“Paste Instagram/YouTube/TikTok link to fetch video”**
+   - Accept any common short-form video URL.
+
+2. **Backend Integration:**  
+   - On submit, backend validates and processes the URL.
+   - If the URL is for:
+     - **Instagram/TikTok:** Use a downloader API such as [Apify Instagram Downloader](https://apify.com/apilabs/instagram-downloader), or a Node.js/Python backend package (`instaloader` for Instagram, `yt-dlp` for YouTube, or a hosted “All-in-One Video Downloader API”).
+     - **YouTube:** Use ytdl-core (Node.js) or Apify YouTube Downloader API.
+     - **Other:** Integrate with universal APIs like Zyla, APIHut, or RapidAPI’s All Video Downloader.
+   - Download the video to your server/cloud storage.
+   - Handle errors gracefully and show progress/feedback to the user.
+
+3. **Pipeline:**
+   - Once the video is downloaded, automatically pass it to the AI style analysis and template extraction workflow, as with direct uploads.
+   - Allow all core features: extract style, audio, lyrics/text, etc.
+
+4. **Legal/Compliance:**
+   - Ensure downloaders are compliant with platform terms.
+   - Add clear UI note: “Only for videos you have rights to use.”
+
+**Sample API/Library Recommendations:**  
+- **Instagram:** Apify API, Instaloader (Python), RapidAPI Instagram Downloader  
+- **YouTube:** ytdl-core, Apify YouTube Downloader API  
+- **Universal:** [Apify All Social Media Video Downloader](https://apify.com/wilcode/all-social-media-video-downloader/api), [APIhut YouTube-Instagram Downloader](https://apihut.in/docs/api/youtube-instagram-video-downloader), Zyla Video Downloader APIs
+
+**User Flow Example:**
+1. User clicks “Paste Link” or “Copy link from Instagram/TikTok/YouTube”
+2. Pastes URL → App fetches and downloads video for them in background
+3. Automatically analyze, style, match audio, extract lyrics/text as in direct upload flow
+
+**Summary Statement for AI System / Developer:**
+
+> Add a feature to Skify that enables users to paste a video link (Instagram Reels, YouTube Shorts, TikTok, etc.). On link submission, the app fetches/downloads the video directly and processes it as if it was uploaded, unlocking truly seamless instant analysis and styling from any public trending video. Use compliant downloader APIs; support all current features for these link-based imports.

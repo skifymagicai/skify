@@ -36,6 +36,14 @@ Skify is a next-generation AI-powered video transformation SaaS platform that an
     - New API endpoints: /extract-text and /apply-lyrical-template
     - Dedicated lyrical analysis page with text editing and font customization
     - Complete workflow: viral video → OCR analysis → text extraction → user video → lyrical template application
+  - **NEW: Copy Link & Download Feature** - Instant video fetching from social media platforms
+    - Direct URL input for Instagram Reels, TikTok videos, and YouTube Shorts
+    - Automated video downloading using ytdl-core and platform-specific APIs
+    - Background processing with real-time progress tracking
+    - Seamless integration with existing analysis pipeline
+    - Enhanced landing page with prominent "Paste Video Link" option
+    - New API endpoint: /fetch-from-url with job tracking
+    - Complete workflow: paste URL → automatic download → instant analysis → style extraction
   - All APIs include proper error handling, validation, and security measures
   - Platform ready for deployment with real AI services and payment integration
 
@@ -73,6 +81,9 @@ Skify is a next-generation AI-powered video transformation SaaS platform that an
 ### Payment Processing
 - POST `/api/payments/create` - Create payment order for watermark removal (₹49) or Pro subscription (₹199/month)
 - POST `/api/payments/:id/verify` - Verify Razorpay payment
+
+### Video Link Fetching
+- POST `/api/videos/fetch-from-url` - Download video from Instagram, TikTok, or YouTube URL
 
 ### Job Tracking
 - GET `/api/jobs/:id/status` - Get processing job status and progress

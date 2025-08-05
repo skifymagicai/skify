@@ -435,6 +435,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== VIDEO LINK FETCHING & DOWNLOADING =====
+
+  app.post('/api/videos/fetch-from-url', authenticateUser, async (req: any, res) => {
+    try {
+      const { url } = req.body;
+      
+      if (!url) {
+        return res.status(400).json({ error: 'Video URL is required' });
+      }
+
+      // Import video downloader dynamically
+      const { videoDownloader } = await import('./video-downloader');
+      
+      // Start video download job
+      const downloadJob = await storage.createProcessingJob({
+        videoId: 'pending', // Will be updated once video is created
+        jobType: 'video_download',
+        metadata: { 
+          sourceUrl: url,
+          platform: getPlatformFromUrl(url)
+        }
+      });
+
+      // Start download process in background
+      setTimeout(async () => {
+        try {
+          const downloadResult = await videoDownloader.downloadVideo(url);
+          
+          if (downloadResult.success && downloadResult.videoPath) {
+            // Create video record
+            const video = await storage.createVideo({
+              userId: req.userId,
+              title: downloadResult.title || 'Downloaded Video',
+              originalUrl: downloadResult.videoUrl,
+              status: 'downloaded',
+              duration: downloadResult.duration || 0
+            });
+
+            // Update job with video ID
+            await storage.updateJobProgress(downloadJob.id, 100, 'completed');
+            await storage.updateProcessingJobMetadata(downloadJob.id, { 
+              videoId: video.id,
+              downloadPath: downloadResult.videoPath
+            });
+
+          } else {
+            await storage.updateJobProgress(downloadJob.id, 0, 'failed');
+            await storage.updateProcessingJobError(downloadJob.id, downloadResult.error || 'Download failed');
+          }
+        } catch (error: any) {
+          await storage.updateJobProgress(downloadJob.id, 0, 'failed');
+          await storage.updateProcessingJobError(downloadJob.id, error.message);
+          console.error('Video download failed:', error);
+        }
+      }, 2000); // Start download after 2 seconds
+
+      res.json({ 
+        message: 'Video download started', 
+        jobId: downloadJob.id,
+        estimatedTime: '10-30 seconds'
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Helper function to detect platform from URL
+  function getPlatformFromUrl(url: string): string {
+    if (url.includes('instagram.com')) return 'Instagram';
+    if (url.includes('tiktok.com')) return 'TikTok'; 
+    if (url.includes('youtube.com') || url.includes('youtu.be')) return 'YouTube';
+    return 'Unknown';
+  }
+
   // ===== TEXT EXTRACTION & LYRICAL ANALYSIS =====
 
   app.post('/api/videos/:id/extract-text', authenticateUser, async (req: any, res) => {

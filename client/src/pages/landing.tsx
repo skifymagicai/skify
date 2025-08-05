@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, Camera, Play, Upload, Heart, Eye } from "lucide-react";
+import { Sparkles, Camera, Play, Upload, Heart, Eye, Link } from "lucide-react";
 
 const SAMPLE_TEMPLATES = [
   {
@@ -79,6 +79,10 @@ export default function Landing() {
     setLocation("/gallery");
   };
 
+  const handleLinkFetch = () => {
+    setLocation("/link-fetch");
+  };
+
   const handleTemplateSelect = (templateId: string) => {
     setLocation("/template-preview");
   };
@@ -149,6 +153,14 @@ export default function Landing() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              onClick={handleLinkFetch}
+              className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-8 py-3 text-lg"
+              data-testid="paste-link-button"
+            >
+              <Link className="mr-2 h-5 w-5" />
+              Paste Video Link
+            </Button>
             <Button 
               onClick={handleUploadClick}
               className="bg-black text-white hover:bg-gray-800 px-8 py-3 text-lg"

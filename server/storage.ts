@@ -77,6 +77,8 @@ export interface IStorage {
   createProcessingJob(job: InsertVideoProcessingJob): Promise<VideoProcessingJob>;
   updateJobProgress(id: string, progress: number, status?: string): Promise<void>;
   getProcessingJob(id: string): Promise<VideoProcessingJob | undefined>;
+  updateProcessingJobMetadata(id: string, metadata: any): Promise<void>;
+  updateProcessingJobError(id: string, errorMessage: string): Promise<void>;
   
   // Template analytics
   updateTemplateAnalytics(analytics: InsertTemplateAnalytics): Promise<void>;
@@ -280,6 +282,18 @@ export class DatabaseStorage implements IStorage {
   async getProcessingJob(id: string): Promise<VideoProcessingJob | undefined> {
     const [job] = await db.select().from(videoProcessingJobs).where(eq(videoProcessingJobs.id, id));
     return job || undefined;
+  }
+
+  async updateProcessingJobMetadata(id: string, metadata: any): Promise<void> {
+    await db.update(videoProcessingJobs)
+      .set({ metadata })
+      .where(eq(videoProcessingJobs.id, id));
+  }
+
+  async updateProcessingJobError(id: string, errorMessage: string): Promise<void> {
+    await db.update(videoProcessingJobs)
+      .set({ errorMessage })
+      .where(eq(videoProcessingJobs.id, id));
   }
 
   // Template analytics

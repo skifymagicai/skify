@@ -13,6 +13,7 @@ import UploadApply from "@/pages/upload-apply";
 import ComparisonExport from "@/pages/comparison-export";
 import AudioMatching from "@/pages/audio-matching";
 import LyricalAnalysis from "@/pages/lyrical-analysis";
+import LinkFetch from "@/pages/link-fetch";
 import FloatingNavigation from "@/components/layout/floating-navigation";
 
 function Router() {
@@ -27,6 +28,7 @@ function Router() {
         <Route path="/comparison-export" component={ComparisonExport} />
         <Route path="/audio-matching" component={AudioMatching} />
         <Route path="/lyrical-analysis" component={LyricalAnalysis} />
+        <Route path="/link-fetch" component={LinkFetch} />
         <Route component={NotFound} />
       </Switch>
       <FloatingNavigation />
