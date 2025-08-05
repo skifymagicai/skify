@@ -79,6 +79,11 @@ export interface IStorage {
   getProcessingJob(id: string): Promise<VideoProcessingJob | undefined>;
   updateProcessingJobMetadata(id: string, metadata: any): Promise<void>;
   updateProcessingJobError(id: string, errorMessage: string): Promise<void>;
+  getJobStatus(jobId: string): Promise<VideoProcessingJob | undefined>;
+
+  // Additional video methods for comprehensive AI pipeline
+  updateVideo(id: string, data: Partial<Video>): Promise<void>;
+  getUserPayments(userId: string): Promise<Payment[]>;
   
   // Template analytics
   updateTemplateAnalytics(analytics: InsertTemplateAnalytics): Promise<void>;
@@ -294,6 +299,21 @@ export class DatabaseStorage implements IStorage {
     await db.update(videoProcessingJobs)
       .set({ errorMessage })
       .where(eq(videoProcessingJobs.id, id));
+  }
+
+  async getJobStatus(jobId: string): Promise<VideoProcessingJob | undefined> {
+    const [job] = await db.select().from(videoProcessingJobs).where(eq(videoProcessingJobs.id, jobId));
+    return job || undefined;
+  }
+
+  // Additional video methods for comprehensive AI pipeline
+  async updateVideo(id: string, data: Partial<Video>): Promise<void> {
+    await db.update(videos).set(data).where(eq(videos.id, id));
+  }
+
+  async getUserPayments(userId: string): Promise<Payment[]> {
+    const userPayments = await db.select().from(payments).where(eq(payments.userId, userId));
+    return userPayments;
   }
 
   // Template analytics

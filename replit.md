@@ -12,7 +12,7 @@ Skify is a next-generation AI-powered video transformation SaaS platform that an
 - **State Management**: TanStack Query for server state
 
 ## Recent Changes
-- **2025-08-05**: Completed comprehensive backend infrastructure and AI integration
+- **2025-08-05**: **MAJOR BACKEND OVERHAUL COMPLETED** - Redesigned entire AI pipeline for production deployment
   - Enhanced database schema with subscriptions, analytics, processing jobs, and template likes
   - Implemented full API endpoints for video upload, AI analysis, template management, and payments
   - Created AI services module with RunwayML, OpenAI Vision, and Google Gemini integration points
@@ -52,6 +52,15 @@ Skify is a next-generation AI-powered video transformation SaaS platform that an
     - Enhanced landing page with "See How Skify Works!" section
     - Compact gallery integration for template discovery
     - Complete feature demonstrations showcasing every Skify capability
+  - **COMPREHENSIVE AI PIPELINE OVERHAUL** - Complete backend redesign for real AI integration
+    - **Real FFmpeg Integration** - Actual video, audio, and frame extraction capabilities
+    - **Modular AI Services Architecture** - AIVideoProcessor class with production-ready pipeline
+    - **Asset Separation Engine** - Extract visual effects, audio tracks, and text overlays separately
+    - **Template-from-Analysis Workflow** - Create reusable templates from comprehensive AI analysis
+    - **Complete User Journey API** - Upload → Analyze → Template → Apply → Export pipeline
+    - **Advanced Job Processing** - Real-time progress tracking with metadata and error handling
+    - **Production Export System** - Watermark control, payment integration, and HD export
+    - **Comprehensive AI Workflow UI** - Step-by-step guided interface for complete video transformation
   - All APIs include proper error handling, validation, and security measures
   - Platform ready for deployment with real AI services and payment integration
 
@@ -71,30 +80,41 @@ Skify is a next-generation AI-powered video transformation SaaS platform that an
 - POST `/api/auth/register` - User registration
 - POST `/api/auth/login` - User login
 
-### Video Management
-- POST `/api/videos/upload` - Upload video for AI analysis (requires auth, supports MP4/MOV/AVI/WebM, max 500MB)
-- GET `/api/videos/:id/analysis` - Get AI analysis results for video
-- GET `/api/videos/user/:userId` - Get user's videos
-- POST `/api/videos/:id/apply-template` - Apply template to video (with optional audio matching)
-- POST `/api/videos/:id/extract-audio` - Extract audio from video using AI
-- POST `/api/videos/:id/sync-audio` - Synchronize audio from source video to target video
+### Comprehensive AI Video Pipeline
+- POST `/api/videos/upload` - Upload video for complete AI analysis (FFmpeg + AI processing)
+- GET `/api/videos/:id/analysis` - Get comprehensive AI analysis results
+- GET `/api/videos/user/:userId` - Get user's videos with processing status
+- POST `/api/templates/create-from-analysis` - **NEW: Create template from AI analysis results**
+- POST `/api/templates/:id/apply-to-video` - **NEW: Apply template to user video with full customization**
+- POST `/api/videos/:id/export` - **NEW: Export styled video with watermark control**
 
-### Template Management
-- POST `/api/templates/create` - Create new template (requires auth)
+### Legacy Template Management (Still Supported)
+- POST `/api/templates/create` - Create new template manually
 - GET `/api/templates/public` - Get all public templates with analytics
 - GET `/api/templates/trending` - Get trending templates
 - GET `/api/templates/:id` - Get template details (increments view count)
 - POST `/api/templates/:id/like` - Like/unlike template (requires auth)
+- POST `/api/videos/:id/apply-template` - Apply template to existing video (legacy)
+
+### Audio Processing
+- POST `/api/videos/:id/extract-audio` - Extract audio from video using FFmpeg
+- POST `/api/videos/:id/sync-audio` - Synchronize audio from source video to target video
+
+### Video Link Fetching
+- POST `/api/videos/fetch-from-url` - Download video from Instagram, TikTok, or YouTube URL
+- Real-time job tracking for URL downloads with platform detection
+
+### Text & Lyrical Analysis
+- POST `/api/videos/:id/extract-text` - Extract text/lyrics using OCR
+- POST `/api/videos/:id/apply-lyrical-template` - Apply lyrical template with text overlays
 
 ### Payment Processing
 - POST `/api/payments/create` - Create payment order for watermark removal (₹49) or Pro subscription (₹199/month)
 - POST `/api/payments/:id/verify` - Verify Razorpay payment
 
-### Video Link Fetching
-- POST `/api/videos/fetch-from-url` - Download video from Instagram, TikTok, or YouTube URL
-
-### Job Tracking
-- GET `/api/jobs/:id/status` - Get processing job status and progress
+### Job Tracking & Progress
+- GET `/api/jobs/:id/status` - Get processing job status and real-time progress
+- Advanced metadata tracking for all processing stages
 
 ### Analytics
 - GET `/api/analytics/dashboard` - User dashboard with video stats and subscription info

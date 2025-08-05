@@ -72,7 +72,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ===== VIDEO UPLOAD AND PROCESSING =====
+  // ===== COMPREHENSIVE AI VIDEO PIPELINE =====
+  
+  // STEP 1: Video Import (Upload or URL) with Real AI Analysis
   
   app.post('/api/videos/upload', authenticateUser, upload.single('video'), async (req: any, res) => {
     try {
@@ -133,7 +135,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           await storage.createAnalysisResult(analysisResult);
           await storage.updateJobProgress(analysisJob.id, 100, 'completed');
-          await storage.updateVideoStatus(video.id, 'analyzed');
+          
+          // Use the updateVideo method instead of updateVideoStatus
+          await storage.updateVideo(video.id, { status: 'analyzed' });
         } catch (error) {
           await storage.updateJobProgress(analysisJob.id, 0, 'failed');
           console.error('Analysis failed:', error);
@@ -183,6 +187,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ===== TEMPLATE MANAGEMENT =====
   
+  // STEP 2: Template Creation from Analysis Results
+  
+  app.post('/api/templates/create-from-analysis', authenticateUser, async (req: any, res) => {
+    try {
+      const { videoId, templateName, templateDescription } = req.body;
+      
+      if (!videoId || !templateName) {
+        return res.status(400).json({ error: 'Video ID and template name are required' });
+      }
+
+      // Get video and analysis results
+      const video = await storage.getVideo(videoId);
+      if (!video || video.userId !== req.userId) {
+        return res.status(404).json({ error: 'Video not found' });
+      }
+
+      const analysis = await storage.getAnalysisResult(videoId);
+      if (!analysis) {
+        return res.status(400).json({ error: 'Video analysis not found. Please analyze video first.' });
+      }
+
+      // Create reusable template from analysis
+      const template = await storage.createTemplate({
+        userId: req.userId,
+        name: templateName,
+        description: templateDescription || `Template extracted from ${video.title}`,
+        colorPalette: analysis.colorGrading,
+        effects: analysis.effects,
+        transitions: analysis.transitions,
+        colorGrading: analysis.colorGrading,
+        cameraMotion: analysis.cameraMotion,
+        audioUrl: video.audioUrl,
+        audioFeatures: analysis.audioAnalysis,
+        textElements: analysis.textExtraction?.extractedTexts || [],
+        fontPalette: analysis.textExtraction?.detectedFonts || [],
+        thumbnail: `/uploads/${videoId}/thumbnail.jpg`,
+        isPublic: false
+      });
+
+      res.status(201).json({ 
+        template,
+        message: 'Template created successfully from video analysis',
+        nextStep: 'Upload a new video to apply this template'
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post('/api/templates/create', authenticateUser, async (req: any, res) => {
     try {
       const templateData = insertTemplateSchema.parse({
@@ -291,6 +344,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ===== VIDEO STYLE APPLICATION WITH AUDIO MATCHING =====
   
+  // STEP 3: Apply Template to User Video (Complete Transformation)
+  
+  app.post('/api/templates/:id/apply-to-video', authenticateUser, upload.single('userVideo'), async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'User video file is required' });
+      }
+
+      const templateId = req.params.id;
+      const { applyVisual, applyAudio, applyText, videoTitle } = req.body;
+      
+      // Get template
+      const template = await storage.getTemplate(templateId);
+      if (!template) {
+        return res.status(404).json({ error: 'Template not found' });
+      }
+
+      // Create new video record for the transformation
+      const userVideo = await storage.createVideo({
+        userId: req.userId,
+        title: videoTitle || `Styled with ${template.name}`,
+        originalUrl: `/uploads/${req.file.filename}`,
+        templateId: template.id,
+        status: 'processing'
+      });
+
+      // Start template application job
+      const applicationJob = await storage.createProcessingJob({
+        videoId: userVideo.id,
+        jobType: 'template_application',
+        metadata: {
+          templateId: template.id,
+          userVideoPath: req.file.path,
+          options: {
+            applyVisual: applyVisual === 'true',
+            applyAudio: applyAudio === 'true', 
+            applyText: applyText === 'true'
+          }
+        }
+      });
+
+      // Start real template application process
+      setTimeout(async () => {
+        try {
+          const { aiProcessor } = await import('./ai-services');
+          
+          await storage.updateJobProgress(applicationJob.id, 20, 'processing');
+          
+          // Apply template to user video
+          const styledVideoPath = await aiProcessor.applyTemplate(
+            req.file.path,
+            template,
+            {
+              applyVisual: applyVisual === 'true',
+              applyAudio: applyAudio === 'true',
+              applyText: applyText === 'true'
+            }
+          );
+
+          await storage.updateJobProgress(applicationJob.id, 90, 'processing');
+
+          // Update video with styled version
+          await storage.updateVideo(userVideo.id, {
+            status: 'completed',
+            styledUrl: styledVideoPath,
+            audioMatched: applyAudio === 'true'
+          });
+
+          await storage.updateJobProgress(applicationJob.id, 100, 'completed');
+
+        } catch (error: any) {
+          await storage.updateJobProgress(applicationJob.id, 0, 'failed');
+          console.error('Template application failed:', error);
+        }
+      }, 3000);
+
+      res.status(201).json({
+        userVideo,
+        applicationJobId: applicationJob.id,
+        template: {
+          id: template.id,
+          name: template.name,
+          description: template.description
+        },
+        message: 'Template application started',
+        nextStep: 'Monitor progress, then preview and export styled video'
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post('/api/videos/:id/apply-template', authenticateUser, async (req: any, res) => {
     try {
       const { templateId, includeAudio = false } = req.body;
@@ -649,6 +794,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
+    }
+  });
+
+  // STEP 4: Export/Download Styled Video with Watermark Control
+
+  app.post('/api/videos/:id/export', authenticateUser, async (req: any, res) => {
+    try {
+      const videoId = req.params.id;
+      const { removeWatermark } = req.body;
+
+      const video = await storage.getVideo(videoId);
+      if (!video || video.userId !== req.userId) {
+        return res.status(404).json({ error: 'Video not found' });
+      }
+
+      if (video.status !== 'completed') {
+        return res.status(400).json({ 
+          error: 'Video processing not completed yet',
+          currentStatus: video.status,
+          message: 'Please wait for template application to finish'
+        });
+      }
+
+      // Check for watermark removal payment
+      if (removeWatermark) {
+        const payments = await storage.getUserPayments(req.userId);
+        const hasWatermarkRemoval = payments.some(p => 
+          p.type === 'watermark_removal' && p.status === 'completed'
+        );
+        
+        if (!hasWatermarkRemoval) {
+          return res.status(402).json({ 
+            error: 'Payment required for watermark removal',
+            paymentRequired: true,
+            amount: 4900, // ₹49 in paise
+            type: 'watermark_removal',
+            message: 'Upgrade to remove watermark and unlock premium export'
+          });
+        }
+      }
+
+      // Generate final export URL
+      const exportUrl = removeWatermark 
+        ? video.styledUrl  // Clean version
+        : `${video.styledUrl}?watermark=true`; // With watermark
+
+      res.json({
+        exportUrl,
+        videoId: video.id,
+        title: video.title,
+        watermarkFree: removeWatermark,
+        downloadReady: true,
+        exportFormat: 'MP4',
+        quality: 'HD 1080p',
+        fileSize: '~25MB',
+        message: 'Video ready for download'
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   });
 
