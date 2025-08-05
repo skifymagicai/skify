@@ -10,11 +10,9 @@ import Analysis from "@/pages/analysis";
 import TemplatePreview from "@/pages/template-preview";
 import UploadApply from "@/pages/upload-apply";
 import ComparisonExport from "@/pages/comparison-export";
-import FloatingNavigation from "@/components/layout/floating-navigation";
-
 function Router() {
   return (
-    <div className="min-h-screen bg-dark text-white">
+    <div className="min-h-screen bg-white">
       <Switch>
         <Route path="/" component={Landing} />
         <Route path="/analysis" component={Analysis} />
@@ -23,7 +21,6 @@ function Router() {
         <Route path="/comparison-export" component={ComparisonExport} />
         <Route component={NotFound} />
       </Switch>
-      <FloatingNavigation />
     </div>
   );
 }

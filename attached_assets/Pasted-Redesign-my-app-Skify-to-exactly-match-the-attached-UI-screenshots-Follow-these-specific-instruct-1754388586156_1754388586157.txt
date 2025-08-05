@@ -1,0 +1,51 @@
+Redesign my app “Skify” to exactly match the attached UI screenshots.
+Follow these specific instructions for layout, colors, and structure:
+1. General Design
+	•	Use a clean, white/light background for all pages, with clearly defined cards and sections.
+	•	Crisp, professional font (like Inter, Sans-Serif).
+	•	Modern, minimalist top menu:
+	•	Logo left (“Skify” with small subtext “AI Video Transform”)
+	•	Menu center/right: Home, Gallery, Analysis, Templates, Upload, Preview
+	•	User/avatar at far right.
+	•	All navigation and controls styled with light greys, subtle drop shadows, rounded corners, and minimalist icons.
+2. Home/Landing Page
+	•	Large bold headline: “Transform Your Video with AI” (blue to purple gradient text effect).
+	•	Subheading: “Upload any viral video and instantly extract its style, effects, and magic. Apply those styles to your own content with AI-powered precision.”
+	•	Centered action buttons:
+	•	“Upload Viral Video” (primary, black button, upload component)
+	•	“Browse Gallery” (secondary, outlined)
+	•	Three feature cards (horizontal):
+	•	Lightning icon: “AI Style Analysis”
+	•	Camera icon: “Template Creation”
+	•	Play icon: “Instant Apply”
+	•	Each with a short, clear subtitle.
+	•	Gallery section below: horizontally scrolling “Sample Styled Videos” with rectangular previews, subtle hover effect, and “Preview”/“Try Now” overlays.
+3. Video Style Analysis Page
+	•	Tabs at the top: Effects, Templates, Transitions, Color, Camera, AI Edits.
+	•	Left: Video preview with controls (play, seek, time-code).
+	•	Right: List detected effects as stacked, outlined cards, each with:
+	•	Icon
+	•	Effect name
+	•	Short summary (e.g., “Film Grain — Vintage texture overlay”)
+	•	Confidence percentage
+	•	Timestamps if available
+	•	Consistent use of color-coded icons as in your screenshots.
+4. Template Preview Page
+	•	Left: Video preview, template name, description field, and option to make template public.
+	•	Right: Tabbed interface for Color, Transitions, Effects, Timeline, each as neat editable rows.
+	•	Color swatch styles with “Edit” buttons; rounded, spaced, and clear section headers as shown.
+5. Preview & Export Page
+	•	Side-by-side video comparisons: left (original), right (styled, with “Skify Watermark” overlay when relevant).
+	•	Below: “Export Settings” card with three size options (4K, 1080p, 720p), each showing resolution and estimated file size.
+	•	Export button (dark, bold): “Download with Watermark (Free)”
+	•	Highlighted upgrade: “Remove Watermark (₹49)” clearly shown.
+	•	Row of secondary buttons: “Share Video”, “Try Another Style”, “Save to Favorites”.
+6. Consistency
+	•	Mobile responsive (all layouts reflow on small screens)
+	•	Minimal shadows/borders, focus on clarity and usability
+	•	Use only color palette, layout, and spacings matching my screenshots—no gradients/dark backgrounds except where shown
+	•	All cards, tabs, and buttons have consistent padding, hover, and selected states
+Technologies
+	•	Use Next.js (frontend), React functional components, TailwindCSS (for easy utility styling as per screenshots).
+	•	Keep logic and UI separated cleanly.
+	•	No placeholder or sample assets except where needed for layout.
