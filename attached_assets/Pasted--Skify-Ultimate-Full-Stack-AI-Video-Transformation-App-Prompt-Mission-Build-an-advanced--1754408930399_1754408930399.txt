@@ -1,0 +1,42 @@
+
+## Skify: Ultimate Full-Stack AI Video Transformation App Prompt
+
+**Mission:**  
+Build an advanced, production-grade full-stack AI web app called “Skify” for viral video analysis, template generation, user remix, and export—with bulletproof frontend-backend integration.
+
+**Key Architecture & Workflow Requirements:**
+
+- **Backend (Node.js/Express):**
+  - RESTful API routes for:
+    - `/upload` (accept viral/user videos)
+    - `/import` (video from link: YouTube/Instagram/TikTok)
+    - `/analyze` (run visual/audio/text/lyrics extraction using AI/FFmpeg/Google Vision/Tesseract)
+    - `/template/save` (store all outputs in a **unique cloud folder** per template)
+    - `/apply` (merge extracted template with user video)
+    - `/export` and `/download` (render and serve result via secure URLs)
+  - Modular AI orchestration (visual style, audio, OCR/text, font, timing, animation detection)
+  - Real-time async status tracking (Redis/BullMQ + `/status` API)
+  - Secure storage (S3/Cloudinary) and strong error handling/logs
+
+- **Frontend (React):**
+  - **Startup page prompts for BOTH:**
+    - Paste/upload viral video (analyze on submit, save as template/folder)
+    - Prompt user to upload own video as next step
+  - All user actions (upload, analyze, save, apply, preview, download) must call backend APIs, handle response, error, and show stage-by-stage progress
+  - Present decomposed layers visually (effects, transitions, audio, lyrics/animated text)
+  - Preview side-by-side results, enable download/export (watermark/pro), activate payments
+  - Robust API client (fetch/axios) and state management (Redux, Zustand, or Context)
+
+- **Other:**
+  - Razorpay integration for monetization/watermark
+  - Proper DOTENV/secrets via Replit’s Secret manager and secure CORS config
+  - All APIs documented (OpenAPI Swagger), and extensive inline code comments
+
+**Outcome Must Include:**
+
+- Smooth, stepwise journey: **Import viral → Analyze & save → Prompt own video → Apply/recreate → Preview/export/download**
+- No blank pages, no broken connections, all errors visible in UI and logged server-side
+- UI and backend run/deploy on Replit, with autoscale settings and secure secrets
+
+**Express instruction to AI Builder/Dev:**
+> “Generate a complete, fully connected React+Node.js full-stack app for Skify, with robust backend APIs, async task handling and cloud storage, stepwise UI, and all glue code needed for seamless user-to-backend communication. All features must work out of the box—nothing fake, no UI/backend disconnects, and download/export must be fully functional. Provide code, docs, and deploy instructions.”

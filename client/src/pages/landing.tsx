@@ -161,18 +161,32 @@ export default function Landing() {
             Apply those styles to your own content with AI-powered precision.
           </p>
           
-          {/* Primary CTA - Full-Stack AI */}
+          {/* Primary CTA - Ultimate Skify */}
+          <div className="mb-8">
+            <Link to="/ultimate">
+              <Button 
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-12 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                data-testid="ultimate-skify-button"
+              >
+                <Sparkles className="mr-3 h-6 w-6" />
+                Ultimate Skify AI
+              </Button>
+            </Link>
+            <p className="text-sm text-gray-500 mt-2">Production-grade pipeline: Viral Upload → AI Analysis → Template → Apply → Export → Download</p>
+          </div>
+
+          {/* Secondary CTA - Full-Stack */}
           <div className="mb-8">
             <Link to="/full-stack">
               <Button 
-                className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-12 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                variant="outline"
+                className="border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-3 text-lg rounded-lg"
                 data-testid="full-stack-button"
               >
-                <Sparkles className="mr-3 h-6 w-6" />
-                Full-Stack AI Transformation
+                <Video className="mr-2 h-5 w-5" />
+                Full-Stack Demo
               </Button>
             </Link>
-            <p className="text-sm text-gray-500 mt-2">Complete pipeline: Import → Analyze → Template → Apply → Export → Download</p>
           </div>
 
           {/* Secondary CTA - Legacy Viral Analysis */}

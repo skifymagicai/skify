@@ -17,6 +17,7 @@ import LinkFetch from "@/pages/link-fetch";
 import AIWorkflow from "@/pages/ai-workflow";
 import ViralAnalysis from "@/pages/viral-analysis";
 import FullStackViralAnalysis from "@/pages/full-stack-viral-analysis";
+import UltimateSkify from "@/pages/ultimate-skify";
 import FloatingNavigation from "@/components/layout/floating-navigation";
 
 function Router() {
@@ -35,6 +36,7 @@ function Router() {
         <Route path="/ai-workflow" component={AIWorkflow} />
         <Route path="/viral-analysis" component={ViralAnalysis} />
         <Route path="/full-stack" component={FullStackViralAnalysis} />
+        <Route path="/ultimate" component={UltimateSkify} />
         <Route component={NotFound} />
       </Switch>
       <FloatingNavigation />
