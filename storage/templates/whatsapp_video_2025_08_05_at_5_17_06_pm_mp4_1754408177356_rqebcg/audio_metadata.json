@@ -1,0 +1,31 @@
+{
+  "duration": 15,
+  "tempo": 128,
+  "key": "C major",
+  "energy": 0.8,
+  "danceability": 0.9,
+  "audioFeatures": {
+    "spectralCentroid": 2500,
+    "spectralRolloff": 5000,
+    "mfcc": [
+      1.2,
+      -0.5,
+      0.8
+    ],
+    "chroma": [
+      0.1,
+      0.2,
+      0.8,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1
+    ]
+  },
+  "extractedAt": "2025-08-05T15:36:19.542Z"
+}

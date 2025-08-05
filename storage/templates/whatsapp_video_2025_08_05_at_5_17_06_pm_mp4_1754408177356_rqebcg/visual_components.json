@@ -1,0 +1,50 @@
+{
+  "effects": [
+    "color_correction",
+    "stabilization",
+    "sharpening"
+  ],
+  "transitions": [
+    "cut",
+    "fade",
+    "slide"
+  ],
+  "colorGrading": {
+    "dominantColors": [
+      "#FF6B6B",
+      "#4ECDC4",
+      "#45B7D1"
+    ],
+    "colorPalette": [
+      "#FF6B6B",
+      "#4ECDC4",
+      "#45B7D1",
+      "#96CEB4",
+      "#FFEAA7"
+    ],
+    "saturation": 0.75,
+    "brightness": 0.65,
+    "contrast": 0.8
+  },
+  "cameraMotion": [
+    "pan_left",
+    "zoom_in",
+    "steady"
+  ],
+  "luts": [
+    "cinematic",
+    "vibrant",
+    "film_look"
+  ],
+  "aiEdits": {
+    "sceneChanges": [
+      2.5,
+      5.2,
+      8.1,
+      12.3
+    ],
+    "motionSmoothing": 0.7,
+    "autoFraming": "center_crop"
+  },
+  "extractedAt": "2025-08-05T15:36:19.540Z"
+}
