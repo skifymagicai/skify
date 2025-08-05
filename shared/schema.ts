@@ -131,6 +131,8 @@ export const insertVideoSchema = createInsertSchema(videos).pick({
   title: true,
   originalUrl: true,
   templateId: true,
+  status: true,
+  duration: true,
 });
 
 export const insertTemplateSchema = createInsertSchema(templates).pick({
@@ -142,6 +144,10 @@ export const insertTemplateSchema = createInsertSchema(templates).pick({
   transitions: true,
   colorGrading: true,
   cameraMotion: true,
+  audioUrl: true,
+  audioFeatures: true,
+  textElements: true,
+  fontPalette: true,
   thumbnail: true,
   isPublic: true,
 });

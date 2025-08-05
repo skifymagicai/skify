@@ -524,10 +524,7 @@ function UserVideoUploadSection({ template, onUserVideoUploaded }: {
       formData.append('templateId', template.id);
       formData.append('title', `${file.name} - Styled with ${template.name}`);
 
-      const response = await apiRequest('/api/templates/apply-to-user-video', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await apiRequest('POST', '/api/templates/apply-to-user-video', formData);
 
       onUserVideoUploaded({ file, uploadResponse: response });
     } catch (error) {
