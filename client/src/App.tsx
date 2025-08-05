@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/hooks/use-language";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
+import Gallery from "@/pages/gallery";
 import Analysis from "@/pages/analysis";
 import TemplatePreview from "@/pages/template-preview";
 import UploadApply from "@/pages/upload-apply";
@@ -17,6 +18,7 @@ function Router() {
     <div className="min-h-screen bg-dark text-white">
       <Switch>
         <Route path="/" component={Landing} />
+        <Route path="/gallery" component={Gallery} />
         <Route path="/analysis" component={Analysis} />
         <Route path="/template-preview" component={TemplatePreview} />
         <Route path="/upload-apply" component={UploadApply} />
