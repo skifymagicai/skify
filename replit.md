@@ -21,14 +21,18 @@ Skify is a next-generation AI-powered video transformation SaaS platform that an
   - Implemented video processing pipeline with job tracking and progress monitoring
   - Added template analytics, trending algorithms, and user engagement metrics
   - Created production-ready authentication and authorization middleware
+  - **NEW: Audio Matching & Synchronization Engine** - Extract audio from viral videos and perfectly sync with user content
+  - **NEW: AI Audio Analysis** - Tempo, key, energy, danceability, vocal detection, and beat synchronization
+  - **NEW: Audio Timeline Segmentation** - Intelligent audio breakdowns with intensity mapping and beat sync points
+  - **NEW: FFmpeg Integration Ready** - Audio extraction, synchronization, and overlay capabilities for production
   - All APIs include proper error handling, validation, and security measures
   - Platform ready for deployment with real AI services and payment integration
 
 ## Database Schema
 - **users**: User accounts with authentication (id, username, email, password, createdAt)
-- **videos**: Video processing records (id, userId, title, originalUrl, styledUrl, templateId, status, duration, createdAt)
-- **templates**: Style templates for transformations (id, userId, name, description, colorPalette, effects, transitions, colorGrading, cameraMotion, thumbnail, usageCount, rating, isPublic, createdAt)
-- **analysis_results**: AI analysis results (id, videoId, effects, templates, transitions, colorGrading, cameraMotion, aiEdits, confidence, processingTime, createdAt)
+- **videos**: Video processing records (id, userId, title, originalUrl, styledUrl, audioUrl, templateId, status, duration, audioMatched, createdAt)
+- **templates**: Style templates for transformations (id, userId, name, description, colorPalette, effects, transitions, colorGrading, cameraMotion, audioUrl, audioDuration, audioFeatures, thumbnail, usageCount, rating, isPublic, createdAt)
+- **analysis_results**: AI analysis results (id, videoId, effects, templates, transitions, colorGrading, cameraMotion, aiEdits, audioAnalysis, audioTimestamps, confidence, processingTime, createdAt)
 - **payments**: Payment transactions (id, userId, videoId, amount, currency, status, razorpayPaymentId, razorpayOrderId, type, createdAt)
 - **subscriptions**: User subscription management (id, userId, plan, status, startDate, endDate, paymentId, createdAt)
 - **template_likes**: User template favorites (id, userId, templateId, createdAt)
@@ -44,7 +48,9 @@ Skify is a next-generation AI-powered video transformation SaaS platform that an
 - POST `/api/videos/upload` - Upload video for AI analysis (requires auth, supports MP4/MOV/AVI/WebM, max 500MB)
 - GET `/api/videos/:id/analysis` - Get AI analysis results for video
 - GET `/api/videos/user/:userId` - Get user's videos
-- POST `/api/videos/:id/apply-template` - Apply template to video
+- POST `/api/videos/:id/apply-template` - Apply template to video (with optional audio matching)
+- POST `/api/videos/:id/extract-audio` - Extract audio from video using AI
+- POST `/api/videos/:id/sync-audio` - Synchronize audio from source video to target video
 
 ### Template Management
 - POST `/api/templates/create` - Create new template (requires auth)

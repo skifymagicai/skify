@@ -17,9 +17,11 @@ export const videos = pgTable("videos", {
   title: text("title").notNull(),
   originalUrl: text("original_url"),
   styledUrl: text("styled_url"),
+  audioUrl: text("audio_url"), // extracted audio file URL
   templateId: varchar("template_id").references(() => templates.id),
   status: text("status").notNull().default("processing"), // processing, completed, failed
   duration: integer("duration"), // in seconds
+  audioMatched: boolean("audio_matched").notNull().default(false), // whether audio was matched from source
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
@@ -33,6 +35,9 @@ export const templates = pgTable("templates", {
   transitions: jsonb("transitions").notNull(), // array of transition objects
   colorGrading: jsonb("color_grading").notNull(), // color grading settings
   cameraMotion: jsonb("camera_motion"), // camera motion settings
+  audioUrl: text("audio_url"), // extracted audio from source video
+  audioDuration: integer("audio_duration"), // audio duration in seconds
+  audioFeatures: jsonb("audio_features"), // audio characteristics (tempo, key, etc.)
   thumbnail: text("thumbnail"),
   usageCount: integer("usage_count").notNull().default(0),
   rating: integer("rating").notNull().default(0), // 1-5 stars
@@ -49,6 +54,8 @@ export const analysisResults = pgTable("analysis_results", {
   colorGrading: jsonb("color_grading").notNull(),
   cameraMotion: jsonb("camera_motion"),
   aiEdits: jsonb("ai_edits"),
+  audioAnalysis: jsonb("audio_analysis"), // audio characteristics, tempo, key, vocals
+  audioTimestamps: jsonb("audio_timestamps"), // synchronized audio segments
   confidence: integer("confidence").notNull(), // 0-100
   processingTime: integer("processing_time"), // in milliseconds
   createdAt: timestamp("created_at").notNull().default(sql`now()`),

@@ -1,0 +1,120 @@
+
+## 🚀 Skify All-in-One App Generation Prompt (With Audio Matching)
+
+**Create a next-gen AI web application called “Skify” (support: skifymagicai@gmail.com)**  
+A production-grade SaaS platform for AI-powered video style transformation with modern UI and robust, real AI backend.
+
+### **MISSION**
+
+- Instantly analyze any viral short-form video (Reel, TikTok, YouTube Short).
+- Automatically extract and separate all style components:
+  - Effects (filters, overlays)
+  - Templates (layout/structure)
+  - Transitions (scene cuts, boundaries)
+  - Color Grading (LUTs, palettes, tone)
+  - Camera Movements (pans, zooms, tracking)
+  - **Audio Matching:** Extract audio from the imported/video-to-analyze file, and allow users to apply and perfectly synchronize this audio with the timing of their own uploaded video.
+  - AI Edits (auto-cuts, sequencing)
+- Auto-generate reusable, remixable style templates
+- Users upload videos and apply templates in ONE CLICK—broadcast-quality output, no editing skills needed
+
+### **FRONTEND (USER INTERFACE)**
+
+**Header Navigation:**  
+- Top white navbar with tabs: Home, Gallery, Analysis, Templates, Upload, Preview
+- “Skify” logo left, “AI Video Transform” tagline
+
+**Landing Page:**  
+- Main bold heading: “Transform Your Video with AI” (blue or purple)
+- Subtext: “Upload any viral video and instantly extract its style, effects, and magic. Apply those styles to your own content with AI-powered precision.”
+- Big, centered CTAs: “Upload Viral Video” (black button), “Browse Gallery” (outlined button)
+
+**Feature Cards Row:**  
+- AI Style Analysis (spark/icon): “Advanced AI extracts effects, transitions, color grading, camera movements, and audio.”
+- Template Creation (layers/camera icon): “Generate reusable templates from any viral video.”
+- Instant Apply (play button): “Apply extracted styles and audio to your videos with one-click transformation.”
+
+**Sample Gallery:**  
+- Horizontal gallery with video cards, titles, tags, “Apply Template” CTA
+
+**Other Screens:**  
+- Style Gallery: grid of trending templates, each with thumbnail/tags/heart
+- Video Style Analysis: left = video preview, right = detected effect/component list (with icons/confidence/timestamp)
+- Template Preview: video box (left), color palette (right, with swatch editing)
+- Upload: drag and drop area + file button, format/size/duration
+- **Preview/Export:** Side-by-side (“Original” vs. “Styled”), quality options, watermark for free, Remove Watermark (₹49) CTA, Pro Plan (₹199/month). **Show synchronized audio waveforms and flagged “Audio Matched From Source” label for matched audio.**
+
+**Design:**  
+- Minimal, clean fonts (Inter/Montserrat), white/light gray background, accent blue/purple, rounded corners, smooth icons
+- Inspired by CapCut/VN Editor
+
+### **BACKEND & AI PIPELINE**
+
+1. **Video & Audio Upload & Processing**
+   - REST API for upload (MP4/MOV/AVI/WebM, max 500MB/10min)
+   - Integrate Cloudinary or S3 for CDN and encrypted global storage
+   - Background queue (BullMQ/Redis or serverless) for AI/FFmpeg/audio tasks
+
+2. **True AI Style & Audio Analysis**
+   - On upload, analyze using best-in-class APIs: RunwayML, Gemini, Replicate, FFmpeg
+   - Extract effects, transitions, LUTs, camera movements, AI edits **and extract the original audio file**
+   - Store all extracted info as JSON
+
+3. **Audio Matching & Replacement Engine**
+   - When user chooses a style/template, enable option:
+       - “Apply original video’s audio to my own video”
+   - Backend uses FFmpeg or similar to:
+     - Export audio from source video (with accurate timing)
+     - Overlay/sync this audio onto user's target video file
+     - Ensure perfect alignment to video duration, using stretch/trim if needed
+   - Make audio replacement the default or user-toggle feature in “Apply Style” process
+
+4. **Template Engine**
+   - APIs for create/save/edit/remix templates
+   - Link templates to users, expose for public gallery/premium/private use
+
+5. **One-Click Application/Rendering**
+   - API: User picks template → backend applies (FFmpeg/AI) to user video, including audio matching → outputs downloadable video (watermarked for free, not for paid)
+
+6. **User & Security**
+   - JWT or OAuth (Google, Apple, email/password)
+   - Roles: free, pro, admin; media encryption, signed URLs for download
+
+7. **Monetization**
+   - Razorpay API for:
+     - ₹49 (one-time watermark removal)
+     - ₹199/month Pro
+   - Webhooks for payment success/feature unlocks; generate receipts
+
+8. **Community Analytics/Endpoints**
+   - API for template gallery, likes, remixes, sharing
+   - Track analytics: usage, trends, admin tools
+
+9. **Infra/Scale**
+   - Node.js (Express) or Python (FastAPI) for modular API
+   - Serverless (Vercel/Render/CloudRun) support
+   - Database: Supabase or MongoDB (users/templates/payments/analytics)
+   - All code/cloud/data fully owned by founder
+
+10. **Security/Legal**
+    - CORS, rate limiting, input validation, encryption
+    - GDPR and India IT Law compliance
+    - Export/import ready for user/data/template backup
+
+### **INSTRUCTIONS TO AI SYSTEM**
+
+- Write modular, documented, production-grade code (APIs, audio/video processing, UI)
+- Integrate only real AI, audio, & payment logic—no placeholder
+- All code/data/assets owned by founder (see below)
+- Generate API docs (OpenAPI/Swagger)
+- All setup ready for Vercel/Render/Cloud hosting
+
+### **FOUNDER LEGAL/ATTRIBUTION**
+
+- **Name:** M. Suresh Kumar  
+- **Contact:** kumarsuresh84678@gmail.com / 7373643481 / Ariyalur, Tamil Nadu, India  
+- **Ownership:** 100% code, infra, data, IP, and cloud by founder
+
+### **SUMMARY**
+
+> Deliver Skify: a viral AI SaaS for instant video style transfer—including **audio extraction and matching**—real AI-powered, studio-grade, monetized, scalable, modern UI/UX, and legally/technically future ready.

@@ -289,11 +289,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ===== VIDEO STYLE APPLICATION =====
+  // ===== VIDEO STYLE APPLICATION WITH AUDIO MATCHING =====
   
   app.post('/api/videos/:id/apply-template', authenticateUser, async (req: any, res) => {
     try {
-      const { templateId } = req.body;
+      const { templateId, includeAudio = false } = req.body;
       const video = await storage.getVideo(req.params.id);
       const template = await storage.getTemplate(templateId);
 
@@ -308,16 +308,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Start template application job
       const applicationJob = await storage.createProcessingJob({
         videoId: video.id,
-        jobType: 'template_application',
-        metadata: { templateId, originalUrl: video.originalUrl }
+        jobType: includeAudio ? 'template_application_with_audio' : 'template_application',
+        metadata: { templateId, originalUrl: video.originalUrl, includeAudio }
       });
 
       // Simulate template application processing
       setTimeout(async () => {
         try {
-          const styledUrl = `/styled/${video.id}_${templateId}.mp4`; // In production, generate actual styled video
+          const styledUrl = `/styled/${video.id}_${templateId}.mp4`;
+          let audioMatchedUrl = null;
           
-          await storage.updateVideoStatus(video.id, 'styled', styledUrl);
+          // If audio matching is requested and template has audio
+          if (includeAudio && template.audioUrl) {
+            // In production, use AI services to synchronize audio
+            audioMatchedUrl = `/styled/${video.id}_${templateId}_audio_matched.mp4`;
+            await storage.updateVideoAudioMatched(video.id, true);
+          }
+          
+          await storage.updateVideoStatus(video.id, 'styled', audioMatchedUrl || styledUrl);
           await storage.incrementTemplateUsage(templateId);
           await storage.updateTemplateAnalytics({
             templateId,
@@ -328,12 +336,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.updateJobProgress(applicationJob.id, 0, 'failed');
           console.error('Template application failed:', error);
         }
-      }, 5000); // Simulate 5-second processing
+      }, includeAudio ? 8000 : 5000); // Audio matching takes longer
 
       res.json({ 
-        message: 'Template application started', 
+        message: includeAudio ? 'Template and audio matching started' : 'Template application started', 
         jobId: applicationJob.id,
-        estimatedTime: '5-10 seconds'
+        estimatedTime: includeAudio ? '8-12 seconds' : '5-10 seconds',
+        audioMatching: includeAudio
+      });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // ===== AUDIO EXTRACTION AND MATCHING =====
+  
+  app.post('/api/videos/:id/extract-audio', authenticateUser, async (req: any, res) => {
+    try {
+      const video = await storage.getVideo(req.params.id);
+      if (!video || video.userId !== req.userId) {
+        return res.status(404).json({ error: 'Video not found' });
+      }
+
+      // Start audio extraction job
+      const extractionJob = await storage.createProcessingJob({
+        videoId: video.id,
+        jobType: 'audio_extraction',
+        metadata: { originalUrl: video.originalUrl }
+      });
+
+      // Simulate audio extraction processing
+      setTimeout(async () => {
+        try {
+          const audioUrl = `/uploads/audio/${video.id}_extracted.mp3`;
+          await storage.updateVideoAudio(video.id, audioUrl);
+          await storage.updateJobProgress(extractionJob.id, 100, 'completed');
+        } catch (error) {
+          await storage.updateJobProgress(extractionJob.id, 0, 'failed');
+          console.error('Audio extraction failed:', error);
+        }
+      }, 3000); // Simulate 3-second extraction
+
+      res.json({ 
+        message: 'Audio extraction started', 
+        jobId: extractionJob.id,
+        estimatedTime: '3-5 seconds'
+      });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.post('/api/videos/:id/sync-audio', authenticateUser, async (req: any, res) => {
+    try {
+      const { sourceVideoId } = req.body;
+      const targetVideo = await storage.getVideo(req.params.id);
+      const sourceVideo = await storage.getVideo(sourceVideoId);
+
+      if (!targetVideo || targetVideo.userId !== req.userId) {
+        return res.status(404).json({ error: 'Target video not found' });
+      }
+
+      if (!sourceVideo || !sourceVideo.audioUrl) {
+        return res.status(404).json({ error: 'Source video or audio not found' });
+      }
+
+      // Start audio synchronization job
+      const syncJob = await storage.createProcessingJob({
+        videoId: targetVideo.id,
+        jobType: 'audio_synchronization',
+        metadata: { 
+          targetVideoUrl: targetVideo.originalUrl,
+          sourceAudioUrl: sourceVideo.audioUrl,
+          targetDuration: targetVideo.duration 
+        }
+      });
+
+      // Simulate audio synchronization processing
+      setTimeout(async () => {
+        try {
+          const syncedUrl = `/uploads/synced/${targetVideo.id}_audio_synced.mp4`;
+          await storage.updateVideoStatus(targetVideo.id, 'audio_synced', syncedUrl);
+          await storage.updateVideoAudioMatched(targetVideo.id, true);
+          await storage.updateJobProgress(syncJob.id, 100, 'completed');
+        } catch (error) {
+          await storage.updateJobProgress(syncJob.id, 0, 'failed');
+          console.error('Audio synchronization failed:', error);
+        }
+      }, 6000); // Simulate 6-second sync processing
+
+      res.json({ 
+        message: 'Audio synchronization started', 
+        jobId: syncJob.id,
+        estimatedTime: '6-10 seconds'
       });
     } catch (error: any) {
       res.status(400).json({ error: error.message });

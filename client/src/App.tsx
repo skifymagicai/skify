@@ -11,6 +11,7 @@ import Analysis from "@/pages/analysis";
 import TemplatePreview from "@/pages/template-preview";
 import UploadApply from "@/pages/upload-apply";
 import ComparisonExport from "@/pages/comparison-export";
+import AudioMatching from "@/pages/audio-matching";
 import FloatingNavigation from "@/components/layout/floating-navigation";
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
         <Route path="/template-preview" component={TemplatePreview} />
         <Route path="/upload-apply" component={UploadApply} />
         <Route path="/comparison-export" component={ComparisonExport} />
+        <Route path="/audio-matching" component={AudioMatching} />
         <Route component={NotFound} />
       </Switch>
       <FloatingNavigation />

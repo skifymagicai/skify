@@ -42,6 +42,8 @@ export interface IStorage {
   getVideo(id: string): Promise<Video | undefined>;
   getUserVideos(userId: string): Promise<Video[]>;
   updateVideoStatus(id: string, status: string, styledUrl?: string): Promise<void>;
+  updateVideoAudio(id: string, audioUrl: string): Promise<void>;
+  updateVideoAudioMatched(id: string, audioMatched: boolean): Promise<void>;
   
   // Template management
   createTemplate(template: InsertTemplate): Promise<Template>;
@@ -129,6 +131,18 @@ export class DatabaseStorage implements IStorage {
     if (styledUrl) updateData.styledUrl = styledUrl;
     
     await db.update(videos).set(updateData).where(eq(videos.id, id));
+  }
+
+  async updateVideoAudio(id: string, audioUrl: string): Promise<void> {
+    await db.update(videos)
+      .set({ audioUrl })
+      .where(eq(videos.id, id));
+  }
+
+  async updateVideoAudioMatched(id: string, audioMatched: boolean): Promise<void> {
+    await db.update(videos)
+      .set({ audioMatched })
+      .where(eq(videos.id, id));
   }
 
   // Template management
