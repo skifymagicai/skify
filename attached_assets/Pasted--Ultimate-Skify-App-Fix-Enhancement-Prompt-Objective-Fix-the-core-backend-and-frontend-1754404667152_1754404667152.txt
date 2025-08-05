@@ -1,0 +1,43 @@
+
+**Ultimate Skify App Fix & Enhancement Prompt**
+
+**Objective:**  
+Fix the core backend and frontend pipeline to guarantee:
+
+1. **Full Analysis & Reusable Template Generation**
+   - Upon viral video upload or link import, the backend must:
+     - Extract and separate all style elements (visuals, effects, LUTs, transitions, colors, camera moves, AI cuts, audio, lyrics/text/animated captions with font, color, and timing).
+     - Immediately store results as a new, uniquely-named folder in your cloud storage (e.g., S3/Cloudinary), containing:
+       - A JSON or structured metadata file for visual components.
+       - The full separated audio track file.
+       - OCR’d lyrics/text file(s) with formatting, font, color, and timecodes.
+       - Thumbnail/preview assets for the gallery.
+     - Templates MUST be organized in user-accessible folders for search, display, and reuse.
+
+2. **Front Page Workflow Correction**
+   - On landing, display a dual upload/import box:
+     - **Step 1:** Paste or upload viral video (analysis triggers on submit).
+     - **Step 2:** Prompt for *immediate upload or selection of user’s own video* right below.
+   - After viral video is analyzed and template/folder created:
+     - Show a prompt like:  
+       “Now upload your own video to recreate this viral style!”  
+     - Only then allow user to proceed to the next steps of preview/apply/export.
+
+3. **Backend API & Storage Logic**
+   - For each viral video, create a unique template folder/key in your cloud storage (e.g., S3: `templates/{template_id}/`, Cloudinary: `skify_templates/{template_name}/`).
+   - Store all extracted and processed files within this folder for easy access, preview, edit, and remix.
+   - Expose REST API endpoints to list, fetch, update, and apply these templates by folder.
+
+4. **Combinatorial Rendering**
+   - Enable combined processing: merge user-uploaded video with any selected template (including visual, audio, and lyrics) as the default pathway.
+   - Preview/result should always use user’s own video with all extracted viral styling applied from the chosen template folder.
+
+**Backend/Infra Stack Guidance:**  
+- Use Node.js (Express/Fastify) + async queue (BullMQ/Redis).
+- Storage: AWS S3, Google Cloud Storage, or Cloudinary for all folders/files.
+- FFmpeg/Gemini/AI for pipeline analysis.
+- Store template data as versioned folders.
+- API must clearly separate “Analyze viral → Save template (folder) → Upload user video → Apply template → Export.”
+
+**Summary Prompt for the System:**  
+> Skify’s backend and frontend must create a *new folder for every analyzed viral video/template*, storing all separated assets. The landing screen must always require both the viral and user-uploaded video, then initiate analysis, folder/template creation, and enable one-click style export. Every API, UI, and workflow should present this consistent logic, ensuring users ALWAYS start by analyzing a viral video and then immediately uploading their own video for full recreation.
