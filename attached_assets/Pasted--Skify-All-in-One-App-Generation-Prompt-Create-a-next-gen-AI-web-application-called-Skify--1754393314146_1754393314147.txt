@@ -1,0 +1,108 @@
+## 🚀 Skify All-in-One App Generation Prompt
+
+**Create a next-gen AI web application called “Skify” (support: skifymagicai@gmail.com)**  
+A production-grade SaaS platform for AI-powered video style transformation with modern UI and robust, real AI backend.
+
+### **MISSION**
+
+- Instantly analyze any viral short-form video (Reel, TikTok, YouTube Short).
+- Automatically extract and separate all style components:
+  - Effects (filters, overlays)
+  - Templates (layout/structure)
+  - Transitions (scene cuts, boundaries)
+  - Color Grading (LUTs, palettes, tone)
+  - Camera Movements (pans, zooms, tracking)
+  - AI Edits (auto-cuts, sequencing)
+- Auto-generate reusable, remixable style templates
+- Users upload videos and apply templates in ONE CLICK—broadcast-quality output, no editing skills needed
+
+### **FRONTEND (USER INTERFACE)**
+
+**Header Navigation:**  
+- Top white navbar with tabs: Home, Gallery, Analysis, Templates, Upload, Preview
+- “Skify” logo left, “AI Video Transform” tagline
+
+**Landing Page:**  
+- Main bold heading: “Transform Your Video with AI” (blue or purple)
+- Subtext: “Upload any viral video and instantly extract its style, effects, and magic. Apply those styles to your own content with AI-powered precision.”
+- Big, centered CTAs: “Upload Viral Video” (black button), “Browse Gallery” (outlined button)
+
+**Feature Cards Row:**  
+- AI Style Analysis (spark/icon): “Advanced AI extracts effects, transitions, color grading, camera movements.”
+- Template Creation (layers/camera icon): “Generate reusable templates from any viral video.”
+- Instant Apply (play button): “Apply extracted styles to your videos with one-click transformation.”
+
+**Sample Gallery:**  
+- Horizontal gallery with video cards, titles, tags, “Apply Template” CTA
+
+**Other Screens:**  
+- Style Gallery: grid of trending templates, each with thumbnail/tags/heart
+- Video Style Analysis: left = video preview, right = detected effect/component list (with icons/confidence/timestamp)
+- Template Preview: video box (left), color palette (right, with swatch editing)
+- Upload: drag and drop area + file button, format/size/duration
+- Preview/Export: side-by-side (“Original” vs. “Styled”), quality options, watermark for free, Remove Watermark (₹49) CTA, Pro Plan (₹199/month)
+
+**Design:**  
+- Minimal, clean fonts (Inter/Montserrat), white/light gray background, accent blue/purple, rounded corners, smooth icons
+- Inspired by CapCut/VN Editor
+
+### **BACKEND & AI PIPELINE**
+
+1. **Video Upload & Processing**
+   - REST API for upload (MP4/MOV/AVI/WebM, max 500MB/10min)
+   - Integrate Cloudinary or S3 for CDN and encrypted global storage
+   - Background queue (BullMQ/Redis or serverless) for AI/FFmpeg tasks
+
+2. **True AI Style Analysis**
+   - On upload, analyze using best-in-class APIs: RunwayML, Gemini, Replicate, FFmpeg
+   - Extract effects, transitions, LUTs, camera movements, AI edits; store as JSON
+
+3. **Template Engine**
+   - APIs for create/save/edit/remix templates
+   - Link templates to users, expose for public gallery/premium/private use
+
+4. **One-Click Application/Rendering**
+   - API: User picks template → backend applies (FFmpeg/AI) to user video → outputs downloadable video (watermarked for free, not for paid)
+
+5. **User & Security**
+   - JWT or OAuth (Google, Apple, email/password)
+   - Roles: free, pro, admin; media encryption, signed URLs for download
+
+6. **Monetization**
+   - Razorpay API for:
+     - ₹49 (one-time watermark removal)
+     - ₹199/month Pro
+   - Webhooks for payment success/feature unlocks; generate receipts
+
+7. **Community Analytics/Endpoints**
+   - API for template gallery, likes, remixes, sharing
+   - Track analytics: usage, trends, admin tools
+
+8. **Infra/Scale**
+   - Node.js (Express) or Python (FastAPI) for modular API
+   - Serverless (Vercel/Render/CloudRun) support
+   - Database: Supabase or MongoDB (users/templates/payments/analytics)
+   - All code/cloud/data fully owned by founder
+
+9. **Security/Legal**
+   - CORS, rate limiting, input validation, encryption
+   - GDPR and India IT Law compliance
+   - Export/import ready for user/data/template backup
+
+### **INSTRUCTIONS TO AI SYSTEM**
+
+- Write modular, documented, production-grade code (APIs, processing, UI)
+- Integrate only real AI & payment logic, no placeholder
+- All code/data/assets owned by founder (see below)
+- Generate API docs (OpenAPI/Swagger)
+- All setup ready for Vercel/Render/Cloud hosting
+
+### **FOUNDER LEGAL/ATTRIBUTION**
+
+- **Name:** M. Suresh Kumar  
+- **Contact:** kumarsuresh84678@gmail.com / 7373643481 / Ariyalur, Tamil Nadu, India  
+- **Ownership:** 100% code, infra, data, IP, and cloud by founder
+
+### **SUMMARY**
+
+> Deliver Skify: a viral AI SaaS for instant video style transfer—real AI-powered, studio-grade, monetized, scalable, modern UI/UX, and legally/technically future ready.
