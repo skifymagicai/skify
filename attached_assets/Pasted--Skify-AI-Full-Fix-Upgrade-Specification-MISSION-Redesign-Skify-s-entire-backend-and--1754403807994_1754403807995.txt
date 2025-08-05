@@ -1,0 +1,64 @@
+
+## Skify AI — Full Fix & Upgrade Specification
+
+**MISSION:**  
+Redesign Skify’s entire backend and frontend pipeline to ensure truly automated, full-stack AI video transformation—correctly extracting, separating, and recombining video, audio, and lyrics/text from trending/viral videos. Ensure seamless integration, user workflow, and download/export features.
+
+### 1. AI Video Pipeline (Backend)
+
+- **Extract & Separate:**
+  - **Visual:** Effects, templates, transitions, color grading (LUTs), camera movements, scene boundaries, AI-cuts.
+  - **Audio:** Extract the complete audio track, accurately detect timing/segments.
+  - **Text/Lyrics:** Run OCR across frames to extract every lyric, caption, and overlay text. Also extract font (type, color, size, style) and timing/animation.
+- Store ALL extracted elements in a structured, reusable “template analysis” folder/schema.
+
+### 2. Workflow Correction (Frontend + Backend)
+
+- **Video Import:**
+  - Let users upload a file *OR* paste a public link (Instagram, YouTube, TikTok) and fetch/download video instantly.
+- **Analysis & Template:**
+  - After running analysis, **prompt user to save the extracted style/template.**
+  - Clearly offer next step:  
+    “Upload your own video to apply this style/template and audio/lyrics.”
+- **Recreation:**
+  - When user uploads/chooses their video:
+    - Apply the separated visual style (effects, transitions, color, etc.)
+    - Overlay lyrics/OCR’d text with detected or matched fonts and timings
+    - Offer user the choice to keep their own audio or replace with the viral/original extracted audio, perfectly timed
+- **Export/Download:**
+  - After preview, allow direct download/export of the recreated, fully styled video (with watermark).
+  - Unlock watermark-free export after payment (Razorpay integration).
+- Ensure detailed **error messages** and “what’s going on” UI at every step.
+
+### 3. Architecture & Integration
+
+- Use **best-of-breed open-source and API tools**:
+  - **Visual:** RunwayML, Gemini, FFmpeg, etc.
+  - **Audio:** FFmpeg, wave analysis, direct extraction and waveform mapping.
+  - **Text/Lyrics:** Google Vision, Tesseract, or Gemini OCR.
+- Integrate everything as **modular backend REST endpoints**—each stage (video → analysis → template → combine → export) must log and pass rich JSON data.
+- Store all processed templates for reuse or remix.
+- Handle cloud storage (Cloudinary, S3) and user/session isolation securely.
+- Queue all heavy tasks for async (background) execution.
+- Respect legal rights and display usage guidance for video downloading from third-party sites.
+
+### 4. Fix UI/UX Flows
+
+- Every user must see these steps:
+  1. Import viral video (by file or link)
+  2. See instant automatic separation of:  
+     - Video styles (visual)  
+     - Audio  
+     - Text/lyrics (+fonts/colors/timings)
+  3. Save/explore this as a “template”
+  4. Upload their own video (or choose another) and apply this template
+  5. Preview side-by-side and download/export the result
+
+### 5. Other Essentials
+
+- Download and output must ALWAYS work (with clear progress and error reporting).
+- Every backend AI job must do real extraction and pass data forward (do not fake results).
+- All workflows must be documented and easily debuggable.
+
+**Summary Prompt:**  
+> Build a robust, production-ready Skify—where users can analyze any viral video (uploaded or by link), instantly separate video, audio, and lyrics/text (with style, font, timing), save as a reusable template, upload their own video, and apply everything (visual, audio, lyrics) for instant download. All backend jobs must be real, automated, and joined up seamlessly, with complete export/monetization.
