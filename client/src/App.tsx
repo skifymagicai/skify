@@ -15,6 +15,7 @@ import AudioMatching from "@/pages/audio-matching";
 import LyricalAnalysis from "@/pages/lyrical-analysis";
 import LinkFetch from "@/pages/link-fetch";
 import AIWorkflow from "@/pages/ai-workflow";
+import ViralAnalysis from "@/pages/viral-analysis";
 import FloatingNavigation from "@/components/layout/floating-navigation";
 
 function Router() {
@@ -31,6 +32,7 @@ function Router() {
         <Route path="/lyrical-analysis" component={LyricalAnalysis} />
         <Route path="/link-fetch" component={LinkFetch} />
         <Route path="/ai-workflow" component={AIWorkflow} />
+        <Route path="/viral-analysis" component={ViralAnalysis} />
         <Route component={NotFound} />
       </Switch>
       <FloatingNavigation />

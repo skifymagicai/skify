@@ -80,6 +80,10 @@ export default function Landing() {
     setLocation("/ai-workflow");
   };
 
+  const handleViralAnalysisClick = () => {
+    setLocation("/viral-analysis");
+  };
+
   const handleBrowseGallery = () => {
     setLocation("/gallery");
   };
@@ -157,17 +161,30 @@ export default function Landing() {
             Apply those styles to your own content with AI-powered precision.
           </p>
           
-          {/* Primary CTA - AI Workflow */}
+          {/* Primary CTA - Viral Analysis */}
+          <div className="mb-8">
+            <Button 
+              onClick={handleViralAnalysisClick}
+              className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-12 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+              data-testid="viral-analysis-button"
+            >
+              <Sparkles className="mr-3 h-6 w-6" />
+              Recreate Viral Video Style
+            </Button>
+            <p className="text-sm text-gray-500 mt-2">Upload viral video → Extract all elements → Upload your video → Apply viral styling</p>
+          </div>
+
+          {/* Secondary CTA - AI Workflow */}
           <div className="mb-8">
             <Button 
               onClick={handleAIWorkflowClick}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+              variant="outline"
+              className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 text-lg rounded-lg"
               data-testid="ai-workflow-button"
             >
-              <Sparkles className="mr-3 h-6 w-6" />
-              Start AI Transformation
+              <Sparkles className="mr-2 h-5 w-5" />
+              Advanced AI Pipeline
             </Button>
-            <p className="text-sm text-gray-500 mt-2">Complete guided workflow - Upload → Analyze → Create Template → Apply → Export</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
