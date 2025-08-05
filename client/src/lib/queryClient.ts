@@ -14,9 +14,17 @@ export async function apiRequest(
 ): Promise<any> {
   const isFormData = data instanceof FormData;
   
+  const headers: Record<string, string> = {
+    'x-user-id': 'user_001' // Simplified auth for demo
+  };
+  
+  if (!isFormData && data) {
+    headers["Content-Type"] = "application/json";
+  }
+  
   const res = await fetch(url, {
     method,
-    headers: isFormData ? {} : (data ? { "Content-Type": "application/json" } : {}),
+    headers,
     body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     credentials: "include",
   });

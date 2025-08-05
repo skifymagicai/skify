@@ -214,10 +214,7 @@ function ViralVideoUploadSection({ onViralVideoAnalyzed, onAnalysisProgress }: {
       formData.append('title', file.name);
       formData.append('isViralVideo', 'true');
 
-      const response = await apiRequest('/api/videos/analyze-viral', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await apiRequest('POST', '/api/videos/analyze-viral', formData);
 
       onViralVideoAnalyzed({ file, uploadResponse: response });
     } catch (error) {
@@ -232,10 +229,7 @@ function ViralVideoUploadSection({ onViralVideoAnalyzed, onAnalysisProgress }: {
     
     setIsProcessing(true);
     try {
-      const response = await apiRequest('/api/videos/analyze-viral-url', {
-        method: 'POST',
-        body: JSON.stringify({ url: videoUrl }),
-      });
+      const response = await apiRequest('POST', '/api/videos/analyze-viral-url', { url: videoUrl });
 
       onViralVideoAnalyzed({ url: videoUrl, uploadResponse: response });
     } catch (error) {

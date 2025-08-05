@@ -127,6 +127,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 });
 
 export const insertVideoSchema = createInsertSchema(videos).pick({
+  userId: true,
   title: true,
   originalUrl: true,
   templateId: true,
