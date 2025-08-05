@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Eye, Play, ArrowLeft, Filter, Search } from "lucide-react";
+import { Heart, Eye, Play, ArrowLeft, Filter, Search, Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 const GALLERY_TEMPLATES = [
@@ -322,7 +322,7 @@ export default function Gallery() {
 
                   {/* Apply button */}
                   <Button 
-                    className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+                    className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -330,7 +330,8 @@ export default function Gallery() {
                     }}
                     data-testid={`button-apply-template-${template.id}`}
                   >
-                    Apply Template
+                    <Upload className="mr-1 h-3 w-3" />
+                    Apply to My Video
                   </Button>
                 </div>
               </CardContent>

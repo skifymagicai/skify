@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Play, ArrowLeft, Wand2, Clock } from "lucide-react";
+import { Play, ArrowLeft, Wand2, Clock, Upload } from "lucide-react";
 
 const DETECTED_EFFECTS = [
   {
@@ -62,6 +62,11 @@ export default function Analysis() {
 
   const handleGenerateTemplate = () => {
     setLocation("/template-preview");
+  };
+
+  const handleApplyToMyVideo = () => {
+    // Navigate to upload page with the extracted template context
+    setLocation("/upload-apply?from=analysis");
   };
 
   const handlePlayPause = () => {
@@ -234,6 +239,15 @@ export default function Analysis() {
               >
                 <Wand2 className="mr-2 h-5 w-5" />
                 Create Template from Analysis
+              </Button>
+              
+              <Button 
+                onClick={handleApplyToMyVideo}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3"
+                data-testid="apply-to-my-video-button"
+              >
+                <Upload className="mr-2 h-5 w-5" />
+                Apply Style to My Video
               </Button>
               
               <Button 

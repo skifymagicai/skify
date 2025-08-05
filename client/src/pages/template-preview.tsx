@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Play, Download, Edit3, Palette } from "lucide-react";
+import { ArrowLeft, Play, Download, Edit3, Palette, Upload } from "lucide-react";
 
 const COLOR_PALETTE = [
   { name: "Primary", color: "#3B82F6", editable: true },
@@ -14,7 +14,7 @@ const COLOR_PALETTE = [
 
 export default function TemplatePreview() {
   const [, setLocation] = useLocation();
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
   const handleBack = () => {
     setLocation("/");
@@ -199,10 +199,11 @@ export default function TemplatePreview() {
             <div className="space-y-3">
               <Button 
                 onClick={handleApplyToVideo}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3"
                 data-testid="apply-template-button"
               >
-                Apply Template to Video
+                <Upload className="mr-2 h-4 w-4" />
+                Apply to My Video
               </Button>
               
               <div className="grid grid-cols-2 gap-3">
@@ -222,6 +223,10 @@ export default function TemplatePreview() {
                   Download
                 </Button>
               </div>
+              
+              <p className="text-xs text-gray-500 text-center">
+                Upload your video and apply this style with one click
+              </p>
             </div>
           </div>
         </div>

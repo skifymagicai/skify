@@ -3,7 +3,8 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Upload, ArrowLeft, File, CheckCircle, AlertCircle, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Upload, ArrowLeft, File, CheckCircle, AlertCircle, X, Palette, Wand2, Play } from "lucide-react";
 
 const SUPPORTED_FORMATS = ["MP4", "MOV", "AVI", "MKV", "WMV"];
 const MAX_FILE_SIZE = "2GB";
@@ -281,48 +282,97 @@ export default function UploadApply() {
           </CardContent>
         </Card>
 
-        {/* Template Selection Summary */}
+        {/* Template Selection */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Selected Template</CardTitle>
+            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+              <Palette className="w-5 h-5" />
+              Select Template to Apply
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center space-x-4">
-              <img 
-                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=120"
-                alt="Template preview"
-                className="w-20 h-12 object-cover rounded-lg"
-              />
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">Cinematic Travel Pack</h4>
-                <p className="text-sm text-gray-600">Film grain, color grading, smooth transitions</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {/* Recently Analyzed Template */}
+              <div className="p-4 border-2 border-blue-200 bg-blue-50 rounded-lg">
+                <div className="flex items-center gap-3 mb-3">
+                  <img 
+                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=120"
+                    alt="Recent analysis"
+                    className="w-16 h-10 object-cover rounded"
+                  />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                      Cinematic Travel Pack
+                      <Badge variant="default" className="bg-blue-100 text-blue-800">Latest Analysis</Badge>
+                    </h4>
+                    <p className="text-sm text-gray-600">Film grain, color grading, smooth transitions</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 text-xs">
+                  <Badge variant="outline">Film Grain</Badge>
+                  <Badge variant="outline">Color Pop</Badge>
+                  <Badge variant="outline">Motion Blur</Badge>
+                </div>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setLocation("/template-preview")}
-                data-testid="change-template-button"
-              >
-                Change Template
-              </Button>
+
+              {/* Gallery Template Option */}
+              <div className="p-4 border-2 border-gray-200 hover:border-gray-300 rounded-lg transition-colors">
+                <div className="flex items-center gap-3 mb-3">
+                  <img 
+                    src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=120"
+                    alt="Gallery template"
+                    className="w-16 h-10 object-cover rounded"
+                  />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900">Sunset Vibes</h4>
+                    <p className="text-sm text-gray-600">Warm tones, soft transitions</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 text-xs">
+                  <Badge variant="outline">Warm Filter</Badge>
+                  <Badge variant="outline">Soft Focus</Badge>
+                </div>
+              </div>
             </div>
+
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => setLocation("/gallery")}
+              data-testid="browse-more-templates-button"
+            >
+              <Wand2 className="mr-2 h-4 w-4" />
+              Browse More Templates from Gallery
+            </Button>
           </CardContent>
         </Card>
 
-        {/* Action Button */}
-        <div className="text-center">
+        {/* Action Buttons */}
+        <div className="text-center space-y-4">
           <Button 
             onClick={handleApplyTemplate}
             disabled={!uploadComplete}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             data-testid="apply-template-button"
           >
-            {uploadComplete ? "Apply Template to Video" : "Upload Video First"}
+            <Play className="mr-2 h-5 w-5" />
+            {uploadComplete ? "Apply Style to My Video" : "Upload Video First"}
           </Button>
           
           {uploadComplete && (
-            <p className="text-sm text-gray-500 mt-3">
-              Processing usually takes 30-60 seconds depending on video length
+            <div className="space-y-2">
+              <p className="text-sm text-gray-500">
+                Processing usually takes 30-60 seconds depending on video length
+              </p>
+              <p className="text-xs text-gray-400">
+                AI will apply visual effects, color grading, transitions, and audio matching
+              </p>
+            </div>
+          )}
+
+          {!uploadComplete && (
+            <p className="text-sm text-red-500">
+              Please upload your video first to continue with template application
             </p>
           )}
         </div>

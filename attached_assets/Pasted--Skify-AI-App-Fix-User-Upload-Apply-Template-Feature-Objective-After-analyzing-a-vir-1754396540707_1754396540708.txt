@@ -1,0 +1,41 @@
+
+**Skify AI App — Fix User Upload & Apply Template Feature**
+
+**Objective:**  
+After analyzing a viral video and extracting style/templates, the user MUST be able to upload their own video and apply the extracted/analyzed or gallery style/template to it. In preview/testing, this feature is missing—only “analyze” and “apply to demo/default video” are visible.
+
+**Instructions for the AI/System:**
+
+1. **Add “Upload Your Video” Step**  
+   - After the analysis screen and before/after “Apply Template,” there MUST be a clear, accessible option or button:  
+     **“Upload Your Own Video”** (or “Apply style/template to my video”).
+   - If the user hasn’t uploaded their own video yet, prompt them right after style analysis:
+     - “Would you like to apply this style to your own video? [Upload Your Video]”
+
+2. **Update All Flows:**  
+   - Users should be able to:
+     - Analyze a reel/video and extract the style/template.
+     - Save template to their library (optional).
+     - **Upload their own video file** (new video, not the analyzed one).
+     - Select a style/template (from just analyzed, saved, or gallery).
+     - See side-by-side (or preview) of their uploaded video with applied style.
+     - Export/download results.
+
+3. **UI Requirements:**  
+   - Provide a visible **“Upload” Tab** in the main nav, or an “Upload Your Video” button after style analysis.
+   - On the template screen, add an “Apply to My Video” button if user has not yet uploaded a video.
+   - Make sure this works both in preview mode and production.
+
+4. **Backend Logic:**  
+   - Ensure the backend/api accepts a new user video upload, applies the selected/extracted template, and returns the processed video (with style, color, transitions, and audio as designed).
+
+5. **Testing:**  
+   - After these changes, verify that users can:
+     - Analyze any video,
+     - Upload a new (their own) video,
+     - Apply any extracted or gallery template,
+     - Download/preview the styled result.
+
+**Summary Statement for the System:**
+
+> Update the Skify app flow to enable every user, after analyzing any viral video, to upload their own video and apply any extracted or saved template. Ensure this feature is always visible after style analysis, and fully functional in both preview and production.
