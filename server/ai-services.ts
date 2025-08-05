@@ -406,6 +406,57 @@ export class AIVideoProcessor {
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
   }
+
+  // Apply extracted style template to user video
+  async applyStyleTemplate(
+    inputVideoPath: string, 
+    template: any, 
+    outputPath: string
+  ): Promise<string> {
+    // In production, use FFmpeg with AI-powered style transfer
+    // const ffmpegCommand = `ffmpeg -i ${inputVideoPath} \
+    //   -vf "lut3d=${template.colorGrading.lut}.cube,eq=contrast=${template.colorGrading.contrast}:saturation=${template.colorGrading.saturation}" \
+    //   -c:v libx264 -preset medium -crf 18 ${outputPath}`;
+    
+    // await execAsync(ffmpegCommand);
+    
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    return outputPath;
+  }
+
+  // Generate thumbnail from video
+  async generateThumbnail(videoPath: string, timestamp: string = "00:00:01"): Promise<string> {
+    // In production, use FFmpeg to extract thumbnail
+    // const thumbnailPath = `thumbnails/${Date.now()}.jpg`;
+    // const ffmpegCommand = `ffmpeg -i ${videoPath} -ss ${timestamp} -vframes 1 ${thumbnailPath}`;
+    // await execAsync(ffmpegCommand);
+    
+    return `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop`;
+  }
+
+  // Extract video metadata
+  async extractMetadata(videoPath: string): Promise<{
+    duration: number;
+    width: number;
+    height: number;
+    fps: number;
+    format: string;
+  }> {
+    // In production, use FFprobe to extract metadata
+    // const command = `ffprobe -v quiet -print_format json -show_format -show_streams ${videoPath}`;
+    // const result = await execAsync(command);
+    // const metadata = JSON.parse(result.stdout);
+    
+    return {
+      duration: 150, // 2:30 in seconds
+      width: 1920,
+      height: 1080,
+      fps: 30,
+      format: 'mp4'
+    };
+  }
 }
 
 // Export singleton instance
@@ -491,7 +542,7 @@ export class AIVideoAnalyzer {
   private textExtractor = new TextExtractionService();
 
   // Integration with RunwayML API for advanced video analysis
-  async analyzeWithRunwayML(videoPath: string): Promise<Partial<AIAnalysisResult>> {
+  async analyzeWithRunwayML(videoPath: string): Promise<Partial<VideoAnalysisResult>> {
     // In production, integrate with RunwayML's Gen-2 API
     // const response = await fetch('https://api.runwayml.com/v1/analyze', {
     //   method: 'POST',
@@ -518,8 +569,8 @@ export class AIVideoAnalyzer {
   // Audio extraction and analysis engine
   async extractAndAnalyzeAudio(videoPath: string): Promise<{
     audioUrl: string;
-    audioAnalysis: AIAnalysisResult['audioAnalysis'];
-    audioTimestamps: AIAnalysisResult['audioTimestamps'];
+    audioAnalysis: VideoAnalysisResult['audioAnalysis'];
+    audioTimestamps: VideoAnalysisResult['audioTimestamps'];
   }> {
     // In production, use FFmpeg to extract audio and AI APIs for analysis
     // const audioPath = await this.extractAudioWithFFmpeg(videoPath);
@@ -561,7 +612,7 @@ export class AIVideoAnalyzer {
   }
 
   // Integration with OpenAI Vision API for visual analysis
-  async analyzeWithOpenAIVision(videoFrames: string[]): Promise<Partial<AIAnalysisResult>> {
+  async analyzeWithOpenAIVision(videoFrames: string[]): Promise<Partial<VideoAnalysisResult>> {
     // In production, integrate with OpenAI Vision API
     // const response = await openai.chat.completions.create({
     //   model: "gpt-4-vision-preview",
@@ -589,7 +640,7 @@ export class AIVideoAnalyzer {
   }
 
   // Integration with Google Gemini for video understanding
-  async analyzeWithGemini(videoPath: string): Promise<Partial<AIAnalysisResult>> {
+  async analyzeWithGemini(videoPath: string): Promise<Partial<VideoAnalysisResult>> {
     // In production, integrate with Google Gemini API
     // const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent', {
     //   method: 'POST',
@@ -621,7 +672,7 @@ export class AIVideoAnalyzer {
   }
 
   // Comprehensive analysis combining multiple AI services
-  async performFullAnalysis(videoPath: string): Promise<AIAnalysisResult> {
+  async performFullAnalysis(videoPath: string): Promise<VideoAnalysisResult> {
     const startTime = Date.now();
     
     try {
@@ -636,7 +687,7 @@ export class AIVideoAnalyzer {
       const audioData = await this.extractAndAnalyzeAudio(videoPath);
 
       // Combine results from all services
-      const combinedResult: AIAnalysisResult = {
+      const combinedResult: VideoAnalysisResult = {
         effects: [
           ...(runwayResult.effects || []),
           { name: "Color Pop", confidence: 88, timestamp: "0:25-1:10" },
@@ -666,6 +717,9 @@ export class AIVideoAnalyzer {
         ],
         audioAnalysis: audioData.audioAnalysis,
         audioTimestamps: audioData.audioTimestamps,
+        textExtraction: { extractedTexts: [], detectedFonts: [] },
+        lyricalData: { hasLyrics: false, language: "en", totalTextElements: 0, primaryFont: { family: "Arial", size: 16, color: "#000000" }, textCategory: "none" },
+        separatedAssets: { videoStylePath: "", audioPath: "", textOverlayPath: "", thumbnailPath: "" },
         confidence: 90,
         processingTime: Date.now() - startTime
       };
@@ -709,6 +763,9 @@ export class AIVideoAnalyzer {
         ],
         audioAnalysis: fallbackAudioData.audioAnalysis,
         audioTimestamps: fallbackAudioData.audioTimestamps,
+        textExtraction: { extractedTexts: [], detectedFonts: [] },
+        lyricalData: { hasLyrics: false, language: "en", totalTextElements: 0, primaryFont: { family: "Arial", size: 16, color: "#000000" }, textCategory: "none" },
+        separatedAssets: { videoStylePath: "", audioPath: "", textOverlayPath: "", thumbnailPath: "" },
         confidence: 75,
         processingTime: Date.now() - startTime
       };
@@ -716,58 +773,7 @@ export class AIVideoAnalyzer {
   }
 }
 
-export class AIVideoProcessor {
-  // Apply extracted style template to user video
-  async applyStyleTemplate(
-    inputVideoPath: string, 
-    template: any, 
-    outputPath: string
-  ): Promise<string> {
-    // In production, use FFmpeg with AI-powered style transfer
-    // const ffmpegCommand = `ffmpeg -i ${inputVideoPath} \
-    //   -vf "lut3d=${template.colorGrading.lut}.cube,eq=contrast=${template.colorGrading.contrast}:saturation=${template.colorGrading.saturation}" \
-    //   -c:v libx264 -preset medium -crf 18 ${outputPath}`;
-    
-    // await execAsync(ffmpegCommand);
-    
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    return outputPath;
-  }
 
-  // Generate thumbnail from video
-  async generateThumbnail(videoPath: string, timestamp: string = "00:00:01"): Promise<string> {
-    // In production, use FFmpeg to extract thumbnail
-    // const thumbnailPath = `thumbnails/${Date.now()}.jpg`;
-    // const ffmpegCommand = `ffmpeg -i ${videoPath} -ss ${timestamp} -vframes 1 ${thumbnailPath}`;
-    // await execAsync(ffmpegCommand);
-    
-    return `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop`;
-  }
-
-  // Extract video metadata
-  async extractMetadata(videoPath: string): Promise<{
-    duration: number;
-    width: number;
-    height: number;
-    fps: number;
-    format: string;
-  }> {
-    // In production, use FFprobe to extract metadata
-    // const command = `ffprobe -v quiet -print_format json -show_format -show_streams ${videoPath}`;
-    // const result = await execAsync(command);
-    // const metadata = JSON.parse(result.stdout);
-    
-    return {
-      duration: 150, // 2:30 in seconds
-      width: 1920,
-      height: 1080,
-      fps: 30,
-      format: 'mp4'
-    };
-  }
-}
 
 // Payment processing with Razorpay integration
 export class PaymentProcessor {

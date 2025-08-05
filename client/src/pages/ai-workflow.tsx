@@ -228,10 +228,7 @@ function VideoImportStep({ onVideoImported }: { onVideoImported: (data: any) => 
       formData.append('video', file);
       formData.append('title', file.name);
 
-      const response = await apiRequest('/api/videos/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await apiRequest('POST', '/api/videos/upload', formData);
 
       onVideoImported({ videoFile: file, uploadResponse: response });
     } catch (error) {
@@ -246,10 +243,7 @@ function VideoImportStep({ onVideoImported }: { onVideoImported: (data: any) => 
     
     setIsProcessing(true);
     try {
-      const response = await apiRequest('/api/videos/fetch-from-url', {
-        method: 'POST',
-        body: JSON.stringify({ url: videoUrl }),
-      });
+      const response = await apiRequest('POST', '/api/videos/fetch-from-url', { url: videoUrl });
 
       onVideoImported({ videoUrl, fetchResponse: response });
     } catch (error) {
@@ -353,7 +347,7 @@ function AIAnalysisStep({ videoData, onAnalysisComplete, onProgress }: {
     // Poll for job completion
     const pollJob = async () => {
       try {
-        const jobStatus = await apiRequest(`/api/jobs/${jobId}/status`);
+        const jobStatus = await apiRequest('GET', `/api/jobs/${jobId}/status`);
         
         if (jobStatus.status === 'completed') {
           onProgress(100);
@@ -447,13 +441,10 @@ function TemplateCreationStep({ analysisResult, onTemplateCreated }: {
     
     setIsCreating(true);
     try {
-      const response = await apiRequest('/api/templates/create-from-analysis', {
-        method: 'POST',
-        body: JSON.stringify({
-          videoId: analysisResult.videoId,
-          templateName,
-          templateDescription
-        }),
+      const response = await apiRequest('POST', '/api/templates/create-from-analysis', {
+        videoId: analysisResult.videoId,
+        templateName,
+        templateDescription
       });
 
       onTemplateCreated(response.template);
@@ -561,15 +552,12 @@ function TemplateApplicationStep({ template, onApplicationComplete, onProgress }
       formData.append('applyText', options.applyText.toString());
       formData.append('videoTitle', `Styled with ${template.name}`);
 
-      const response = await apiRequest(`/api/templates/${template.id}/apply-to-video`, {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await apiRequest('POST', `/api/templates/${template.id}/apply-to-video`, formData);
 
       // Poll for completion
       const pollJob = async () => {
         try {
-          const jobStatus = await apiRequest(`/api/jobs/${response.applicationJobId}/status`);
+          const jobStatus = await apiRequest('GET', `/api/jobs/${response.applicationJobId}/status`);
           
           if (jobStatus.status === 'completed') {
             onProgress(100);
@@ -695,10 +683,7 @@ function ExportStep({ finalVideo, onExportComplete }: {
 
     setIsExporting(true);
     try {
-      const response = await apiRequest(`/api/videos/${finalVideo.userVideo.id}/export`, {
-        method: 'POST',
-        body: JSON.stringify({ removeWatermark }),
-      });
+      const response = await apiRequest('POST', `/api/videos/${finalVideo.userVideo.id}/export`, { removeWatermark });
 
       if (response.paymentRequired) {
         // Handle payment flow
