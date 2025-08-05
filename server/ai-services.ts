@@ -459,9 +459,6 @@ export class AIVideoProcessor {
   }
 }
 
-// Export singleton instance
-export const aiProcessor = new AIVideoProcessor();
-
 export class TextExtractionService {
   // Integration with Google Vision API for OCR and text analysis
   async extractTextWithGoogleVision(videoFrames: string[]): Promise<any> {

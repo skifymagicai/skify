@@ -388,12 +388,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Start real template application process
       setTimeout(async () => {
         try {
-          const { aiProcessor } = await import('./ai-services');
+          const { aiVideoProcessor } = await import('./ai-services');
           
           await storage.updateJobProgress(applicationJob.id, 20, 'processing');
           
           // Apply template to user video
-          const styledVideoPath = await aiProcessor.applyTemplate(
+          const styledVideoPath = await aiVideoProcessor.applyTemplate(
             req.file.path,
             template,
             {
