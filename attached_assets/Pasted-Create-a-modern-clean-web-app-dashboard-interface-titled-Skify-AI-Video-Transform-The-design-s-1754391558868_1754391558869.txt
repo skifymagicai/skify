@@ -1,0 +1,54 @@
+Create a modern, clean web app dashboard interface titled “Skify – AI Video Transform.” The design should be minimalistic, professional, and inspired by leading SaaS video editing platforms.
+
+**Header Navigation:**  
+- At the top, a white navbar with clear, spaced tabs: Home (selected), Gallery, Analysis, Templates, Upload, Preview.  
+- “Skify” logo or name on the far left.  
+- “AI Video Transform” as a small tagline.
+
+**Main Section:**  
+- Large bold heading: “Transform Your Video with AI” in bright blue or purple, centered.  
+- Subtext: “Upload any viral video and instantly extract its style, effects, and magic. Apply those styles to your own content with AI-powered precision.”  
+- Two centered CTAs:  
+  - “Upload Viral Video” (solid black button)
+  - “Browse Gallery” (white outlined button)
+
+**Three Feature Cards:**  
+- Arranged horizontally (or in a row under the header if mobile):  
+  - **AI Style Analysis:** Icon of a spark/bolt, with text: “Advanced AI extracts effects, transitions, color grading, and camera movements.”
+  - **Template Creation:** Icon of a camera or layers, text: “Generate reusable templates from any viral video for consistent styling.”
+  - **Instant Apply:** Icon of a play button, text: “Apply extracted styles to your videos with one-click transformation.”
+
+**Sample Section:**  
+- “Sample Styled Videos” heading, with a horizontal gallery showing video thumbnails, each with a title, tags, effects/icons, and an “Apply Template” button.
+- Each card: a video scene still, bold title (like "Cinematic Travel Pack", "Urban Street Vibes"), effect tags (e.g., LUT, High Contrast, AI Edits), tags (#Cinematic, #Nature...), stats (like views/hearts), and “Apply Template” CTA.
+
+**Style Gallery Screen (if requested):**  
+- Grid showcasing trending templates, each card with thumbnail, labels, sample tags, and heart/favorite icon.
+
+**Video Style Analysis Screen:**  
+- Left side: video preview window (still image with play icon, timer 0:45/2:00).  
+- Right: vertical list of detected effects, each with color icon (e.g., Film Grain, Color Pop), confidence slider (e.g., 92% confidence), and timestamp info.
+
+**Template Preview Screen:**  
+- Video preview box on left.
+- On right, a clean color palette panel with editable color swatches (Primary, Secondary, Accent, Neutral, Background) with edit buttons.
+
+**Upload Screen:**  
+- Large upload area: “Upload your video” (icon of upload arrow), drag-drop or “Choose Video File” button.
+- Supported formats, file size, and duration info.
+
+**Preview/Export Screen:**  
+- Side-by-side: Original Video (before), Styled Video (after, with “Skify Watermark” label).
+- Video thumbnails above short text description (e.g., "Natural lighting", "Cinematic style applied").
+- Export settings below: 4K, 1080p, 720p options.
+- Download button (with watermark, free) and paid “Remove Watermark (₹49)” CTA at the bottom.
+
+**Brand touch:**  
+- Consistent minimal fonts (like Inter or Montserrat)
+- Subtle shadow, rounded corners, crisp icons  
+- Background: clean white or light grey
+- Accent color: blue or purple for highlights
+
+**Purpose:**  
+- The interface must look like an actual, working SaaS video platform UI—crisp, inviting, and premium—ready for screenshots or product showcases.
+

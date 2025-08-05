@@ -2,71 +2,80 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Header from "@/components/layout/header";
-import TemplateCard from "@/components/template/template-card";
-import { useLanguage } from "@/hooks/use-language";
+import { Sparkles, Camera, Play, Upload, Heart, Eye } from "lucide-react";
 
 const SAMPLE_TEMPLATES = [
   {
-    id: "cinematic-sunset",
-    name: "Cinematic Sunset",
-    description: "Warm tones, smooth transitions",
-    thumbnail: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=600",
-    usageCount: 12500,
-    rating: 5,
+    id: "cinematic-travel",
+    name: "Cinematic Travel Pack",
+    description: "LUT, High Contrast, AI Edits",
+    tags: ["#Cinematic", "#Nature", "#Travel"],
+    views: "12.5K",
+    hearts: "1.2K",
+    thumbnail: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
   },
   {
-    id: "neon-vibes",
-    name: "Neon Vibes",
-    description: "Cyberpunk aesthetic, glitch effects",
-    thumbnail: "https://pixabay.com/get/g2e4fbb90929d45fe2bbd14840853c2245110f6588426727fb17819edbfa7e0a6d0ee9f916ce82df3d1625efda1de2e970848ea193a630d6259bd5776a447ebf3_1280.jpg",
-    usageCount: 8700,
-    rating: 4,
+    id: "urban-street",
+    name: "Urban Street Vibes",
+    description: "Color Pop, Motion Blur, Transitions",
+    tags: ["#Urban", "#Street", "#Modern"],
+    views: "8.7K",
+    hearts: "890",
+    thumbnail: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
   },
   {
-    id: "clean-minimal",
-    name: "Clean Minimal",
-    description: "Soft lighting, elegant cuts",
-    thumbnail: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=600",
-    usageCount: 15200,
-    rating: 5,
+    id: "soft-aesthetic",
+    name: "Soft Aesthetic",
+    description: "Film Grain, Warm Tones, Smooth Cuts",
+    tags: ["#Aesthetic", "#Soft", "#Vintage"],
+    views: "15.2K",
+    hearts: "2.1K",
+    thumbnail: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
   },
   {
     id: "dynamic-sport",
-    name: "Dynamic Sport",
-    description: "High contrast, motion blur",
-    thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=600",
-    usageCount: 9300,
-    rating: 4,
+    name: "Dynamic Sport Pack",
+    description: "High Energy, Quick Cuts, Bold Colors",
+    tags: ["#Sport", "#Energy", "#Action"],
+    views: "9.3K",
+    hearts: "756",
+    thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
   },
 ];
 
 const FEATURES = [
   {
-    icon: "fas fa-brain",
     title: "AI Style Analysis",
     description: "Advanced AI extracts effects, transitions, color grading, and camera movements.",
-    color: "primary",
+    icon: Sparkles,
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
   },
   {
-    icon: "fas fa-magic",
     title: "Template Creation",
     description: "Generate reusable templates from any viral video for consistent styling.",
-    color: "secondary",
+    icon: Camera,
+    color: "text-purple-600",
+    bgColor: "bg-purple-50",
   },
   {
-    icon: "fas fa-play",
     title: "Instant Apply",
     description: "Apply extracted styles to your videos with one-click transformation.",
-    color: "accent",
+    icon: Play,
+    color: "text-green-600",
+    bgColor: "bg-green-50",
   },
 ];
 
 export default function Landing() {
   const [, setLocation] = useLocation();
-  const { t } = useLanguage();
+  const [activeTab, setActiveTab] = useState("Home");
 
   const handleUploadClick = () => {
+    setLocation("/upload-apply");
+  };
+
+  const handleBrowseGallery = () => {
     setLocation("/analysis");
   };
 
@@ -74,92 +83,162 @@ export default function Landing() {
     setLocation("/template-preview");
   };
 
-  const handleBrowseGallery = () => {
-    setLocation("/template-preview");
-  };
+  const navTabs = ["Home", "Gallery", "Analysis", "Templates", "Upload", "Preview"];
 
   return (
-    <div className="min-h-screen bg-dark text-white">
-      <Header />
+    <div className="min-h-screen bg-white">
+      {/* Header Navigation */}
+      <nav className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <h1 className="text-2xl font-bold text-gray-900" data-testid="logo">Skify</h1>
+            <span className="text-sm text-gray-500" data-testid="tagline">AI Video Transform</span>
+          </div>
+          
+          <div className="flex items-center space-x-8">
+            {navTabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === tab
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                data-testid={`nav-${tab.toLowerCase()}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
 
-      {/* Hero Section */}
-      <div className="gradient-bg px-4 pb-12">
+      {/* Main Section */}
+      <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-gradient" data-testid="hero-title">
-            {t("landing.hero.title")}
-          </h2>
-          <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto" data-testid="hero-subtitle">
-            {t("landing.hero.subtitle")}
+          <h1 className="text-5xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text mb-6" data-testid="main-heading">
+            Transform Your Video with AI
+          </h1>
+          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto" data-testid="main-subtext">
+            Upload any viral video and instantly extract its style, effects, and magic. 
+            Apply those styles to your own content with AI-powered precision.
           </p>
           
-          {/* Upload Zone */}
-          <div 
-            className="bg-card border-2 border-dashed border-primary/40 rounded-2xl p-8 mb-8 max-w-md mx-auto hover:border-primary/60 transition-colors cursor-pointer"
-            onClick={handleUploadClick}
-            data-testid="upload-zone"
-          >
-            <i className="fas fa-cloud-upload-alt text-4xl text-primary mb-4"></i>
-            <h3 className="text-lg font-semibold mb-2">{t("landing.upload.title")}</h3>
-            <p className="text-muted-foreground text-sm mb-4">{t("landing.upload.subtitle")}</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              data-testid="choose-file-button"
+              onClick={handleUploadClick}
+              className="bg-black text-white hover:bg-gray-800 px-8 py-3 text-lg"
+              data-testid="upload-viral-video-button"
             >
-              <i className="fas fa-plus mr-2"></i>Choose File
+              <Upload className="mr-2 h-5 w-5" />
+              Upload Viral Video
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleBrowseGallery}
+              className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-lg"
+              data-testid="browse-gallery-button"
+            >
+              Browse Gallery
             </Button>
           </div>
-
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleBrowseGallery}
-            className="mb-8"
-            data-testid="browse-gallery-button"
-          >
-            Browse Gallery
-          </Button>
-        </div>
-      </div>
-
-      {/* Template Gallery */}
-      <section className="max-w-6xl mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <h3 className="text-2xl font-bold" data-testid="trending-templates-title">Trending Templates</h3>
-          <Button 
-            variant="link" 
-            className="text-primary hover:text-primary/80"
-            data-testid="view-all-templates"
-          >
-            View All
-          </Button>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {SAMPLE_TEMPLATES.map((template) => (
-            <TemplateCard
-              key={template.id}
-              {...template}
-              onTryNow={handleTemplateSelect}
-            />
-          ))}
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="max-w-6xl mx-auto px-4 py-12">
-        <h3 className="text-2xl font-bold text-center mb-12" data-testid="features-title">Powered by AI Magic</h3>
-        <div className="grid md:grid-cols-3 gap-8">
-          {FEATURES.map((feature, index) => (
-            <Card key={index} className="bg-card text-center border-0" data-testid={`feature-card-${index}`}>
-              <CardContent className="p-6">
-                <div className={`w-16 h-16 bg-${feature.color}/20 rounded-2xl flex items-center justify-center mx-auto mb-4`}>
-                  <i className={`${feature.icon} text-${feature.color} text-2xl`}></i>
+      {/* Three Feature Cards */}
+      <section className="py-16 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8">
+            {FEATURES.map((feature, index) => (
+              <Card key={index} className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow" data-testid={`feature-card-${index}`}>
+                <CardContent className="p-8 text-center">
+                  <div className={`w-16 h-16 ${feature.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-6`}>
+                    <feature.icon className={`h-8 w-8 ${feature.color}`} />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4" data-testid={`feature-title-${index}`}>
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed" data-testid={`feature-description-${index}`}>
+                    {feature.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Sample Styled Videos Section */}
+      <section className="py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl font-bold text-gray-900" data-testid="sample-videos-heading">
+              Sample Styled Videos
+            </h2>
+            <Button 
+              variant="link" 
+              className="text-blue-600 hover:text-blue-700 font-medium"
+              data-testid="view-all-button"
+            >
+              View All →
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {SAMPLE_TEMPLATES.map((template) => (
+              <Card key={template.id} className="bg-white border border-gray-200 hover:shadow-lg transition-shadow overflow-hidden" data-testid={`template-card-${template.id}`}>
+                <div className="relative">
+                  <img 
+                    src={template.thumbnail} 
+                    alt={template.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2">
+                    <Heart className="h-4 w-4 text-gray-600" />
+                  </div>
                 </div>
-                <h4 className="text-lg font-semibold mb-2" data-testid={`feature-title-${index}`}>{feature.title}</h4>
-                <p className="text-muted-foreground" data-testid={`feature-description-${index}`}>{feature.description}</p>
-              </CardContent>
-            </Card>
-          ))}
+                
+                <CardContent className="p-4">
+                  <h3 className="font-bold text-gray-900 mb-2" data-testid={`template-name-${template.id}`}>
+                    {template.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3" data-testid={`template-description-${template.id}`}>
+                    {template.description}
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {template.tags.map((tag) => (
+                      <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <div className="flex items-center gap-4">
+                      <span className="flex items-center gap-1">
+                        <Eye className="h-4 w-4" />
+                        {template.views}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Heart className="h-4 w-4" />
+                        {template.hearts}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => handleTemplateSelect(template.id)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    data-testid={`apply-template-${template.id}`}
+                  >
+                    Apply Template
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
     </div>
