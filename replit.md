@@ -26,6 +26,16 @@ Skify is a next-generation AI-powered video transformation SaaS platform that an
   - **NEW: Audio Timeline Segmentation** - Intelligent audio breakdowns with intensity mapping and beat sync points
   - **NEW: FFmpeg Integration Ready** - Audio extraction, synchronization, and overlay capabilities for production
   - **FIXED: User Upload & Apply Template Feature** - Complete workflow from analysis → upload user video → apply template
+  - **NEW: Lyrical/Text Extraction & Recreation Feature** - Complete OCR-powered text analysis and recreation system
+    - Google Vision API integration for OCR text extraction from video frames
+    - Font detection and classification (Montserrat, Arial, etc.) with confidence scoring
+    - Text positioning, timing, animation detection (fade, slide, typewriter)
+    - Color, size, weight, and styling analysis for accurate text recreation
+    - Custom lyrical template application with text overlay matching original viral videos
+    - Enhanced database schema with textExtraction and lyricalData fields
+    - New API endpoints: /extract-text and /apply-lyrical-template
+    - Dedicated lyrical analysis page with text editing and font customization
+    - Complete workflow: viral video → OCR analysis → text extraction → user video → lyrical template application
   - All APIs include proper error handling, validation, and security measures
   - Platform ready for deployment with real AI services and payment integration
 

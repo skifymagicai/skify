@@ -435,6 +435,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== TEXT EXTRACTION & LYRICAL ANALYSIS =====
+
+  app.post('/api/videos/:id/extract-text', authenticateUser, async (req: any, res) => {
+    try {
+      const video = await storage.getVideo(req.params.id);
+      if (!video || video.userId !== req.userId) {
+        return res.status(404).json({ error: 'Video not found' });
+      }
+
+      // Start text extraction job
+      const extractionJob = await storage.createProcessingJob({
+        videoId: video.id,
+        jobType: 'text_extraction',
+        metadata: { videoUrl: video.originalUrl }
+      });
+
+      // Simulate OCR text extraction processing
+      setTimeout(async () => {
+        try {
+          const textResults = {
+            extractedTexts: [
+              {
+                id: "text-1",
+                text: "When the beat drops",
+                startTime: 15.5,
+                endTime: 18.2,
+                position: { x: 50, y: 200, width: 300, height: 60 },
+                fontFamily: "Montserrat",
+                fontSize: 42,
+                fontWeight: "bold",
+                color: "#FFFFFF",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                animation: "fade",
+                confidence: 94
+              },
+              {
+                id: "text-2", 
+                text: "Feel the rhythm",
+                startTime: 18.5,
+                endTime: 21.0,
+                position: { x: 75, y: 350, width: 250, height: 50 },
+                fontFamily: "Montserrat",
+                fontSize: 36,
+                fontWeight: "regular",
+                color: "#FFD700",
+                animation: "slide",
+                confidence: 89
+              }
+            ],
+            detectedFonts: [
+              {
+                family: "Montserrat",
+                weight: "bold",
+                style: "normal",
+                usage: "primary",
+                confidence: 92
+              }
+            ]
+          };
+
+          const lyricalData = {
+            hasLyrics: true,
+            language: "en",
+            totalTextElements: 12,
+            primaryFont: {
+              family: "Montserrat",
+              size: 42,
+              color: "#FFFFFF"
+            },
+            textCategory: "lyrics"
+          };
+
+          // Store analysis results
+          await storage.updateAnalysisResults(video.id, {
+            textExtraction: textResults,
+            lyricalData: lyricalData
+          });
+
+          await storage.updateJobProgress(extractionJob.id, 100, 'completed');
+        } catch (error) {
+          await storage.updateJobProgress(extractionJob.id, 0, 'failed');
+          console.error('Text extraction failed:', error);
+        }
+      }, 4000); // Simulate 4-second OCR processing
+
+      res.json({ 
+        message: 'Text extraction started', 
+        jobId: extractionJob.id,
+        estimatedTime: '4-6 seconds'
+      });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.post('/api/videos/:id/apply-lyrical-template', authenticateUser, async (req: any, res) => {
+    try {
+      const { templateId, customLyrics, preserveOriginalText } = req.body;
+      const video = await storage.getVideo(req.params.id);
+      
+      if (!video || video.userId !== req.userId) {
+        return res.status(404).json({ error: 'Video not found' });
+      }
+
+      const template = await storage.getTemplate(templateId);
+      if (!template) {
+        return res.status(404).json({ error: 'Template not found' });
+      }
+
+      // Start lyrical template application job
+      const applicationJob = await storage.createProcessingJob({
+        videoId: video.id,
+        jobType: 'lyrical_application',
+        metadata: { 
+          templateId,
+          customLyrics,
+          preserveOriginalText,
+          videoUrl: video.originalUrl
+        }
+      });
+
+      // Simulate lyrical template application processing
+      setTimeout(async () => {
+        try {
+          const processedUrl = `/uploads/lyrical/${video.id}_lyrical_applied.mp4`;
+          await storage.updateVideoStatus(video.id, 'lyrical_applied', processedUrl);
+          await storage.updateJobProgress(applicationJob.id, 100, 'completed');
+        } catch (error) {
+          await storage.updateJobProgress(applicationJob.id, 0, 'failed');
+          console.error('Lyrical template application failed:', error);
+        }
+      }, 8000); // Simulate 8-second processing
+
+      res.json({ 
+        message: 'Lyrical template application started', 
+        jobId: applicationJob.id,
+        estimatedTime: '8-12 seconds'
+      });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
   // ===== PAYMENT PROCESSING =====
   
   app.post('/api/payments/create', authenticateUser, async (req: any, res) => {

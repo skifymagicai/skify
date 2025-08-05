@@ -1,0 +1,41 @@
+
+**Add Lyrical/Text Extraction & Recreation Feature to Skify**
+
+**Objective:**  
+Upgrade Skify so it can:
+- Analyze any trending video (especially lyrical/music or reels with prominent on-screen text)
+- Automatically extract all visible text, captions, and lyrics, **including their font styles, size, color, and animation/timing**
+- Detect, extract, and classify fonts used (if possible), or approximate with visually similar ones
+
+**Workflow to Implement:**
+
+1. **Text Detection and Extraction**
+   - Integrate OCR (Optical Character Recognition), such as Google Vision API, Tesseract, or similar, in your AI pipeline
+   - For each frame/scene, extract all overlaid text (lyrics, captions, quotes)
+   - Capture timestamps of when each text/lyric appears/disappears
+
+2. **Font & Style Analysis**
+   - Use font detection (font recognition AI libraries or services, or heuristic matching) to identify font family, weight, size, and color from each detected text region
+   - Extract any animation style (fade, slide, typewriter, etc.) if possible
+
+3. **Template Mapping**
+   - Store all extracted text, font, color, style, position, and animation info as a part of the video’s style/template
+   - Allow remixing or editing of lyrics/text and font settings before applying
+
+4. **Lyrical Video Recreation**
+   - When users upload their own videos and select an extracted “lyrical” template:
+     - **Auto-generate new lyrics/text overlays** on user’s video
+     - Preserve original timing, font style, layout, and animation as seen in the source/trending video template
+     - Let users edit lyrics before finalizing, if they wish
+
+5. **Export**
+   - Ensure rendered output exactly matches trending lyrical video’s style, even on user’s own/cloned content
+
+**UI Flow:**
+- Show extracted lyrics/captions, their appearance times, and font previews in the Template Preview screen
+- Let users edit text/lyrics or choose to “keep original from trending video”
+- Offer option to select from extracted fonts or suggest best match if original font unavailable
+
+**Summary Statement for the System:**
+
+> Enhance Skify so that for every trending lyrical or caption video, the AI will detect, extract, and analyze all text, fonts, and styling from the original. When applying the template to users’ videos, Skify will automatically recreate the lyric/text overlays—matching fonts, sizes, timing, color, and animation—to deliver true, studio-ready remakes of viral lyrical videos.

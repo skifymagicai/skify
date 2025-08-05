@@ -38,6 +38,8 @@ export const templates = pgTable("templates", {
   audioUrl: text("audio_url"), // extracted audio from source video
   audioDuration: integer("audio_duration"), // audio duration in seconds
   audioFeatures: jsonb("audio_features"), // audio characteristics (tempo, key, etc.)
+  textElements: jsonb("text_elements"), // extracted text/lyrics with font styling
+  fontPalette: jsonb("font_palette"), // detected fonts and typography settings
   thumbnail: text("thumbnail"),
   usageCount: integer("usage_count").notNull().default(0),
   rating: integer("rating").notNull().default(0), // 1-5 stars
@@ -56,6 +58,8 @@ export const analysisResults = pgTable("analysis_results", {
   aiEdits: jsonb("ai_edits"),
   audioAnalysis: jsonb("audio_analysis"), // audio characteristics, tempo, key, vocals
   audioTimestamps: jsonb("audio_timestamps"), // synchronized audio segments
+  textExtraction: jsonb("text_extraction"), // OCR extracted text with fonts, positions, animations
+  lyricalData: jsonb("lyrical_data"), // lyrical/caption timing and styling information
   confidence: integer("confidence").notNull(), // 0-100
   processingTime: integer("processing_time"), // in milliseconds
   createdAt: timestamp("created_at").notNull().default(sql`now()`),

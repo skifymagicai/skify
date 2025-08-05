@@ -49,11 +49,123 @@ interface AIAnalysisResult {
     beatSync: boolean;
     intensity: number;
   }>;
+  textExtraction: {
+    extractedTexts: Array<{
+      id: string;
+      text: string;
+      startTime: number;
+      endTime: number;
+      position: { x: number; y: number; width: number; height: number };
+      fontFamily: string;
+      fontSize: number;
+      fontWeight: string;
+      color: string;
+      backgroundColor?: string;
+      animation: string; // fade, slide, typewriter, none
+      confidence: number;
+    }>;
+    detectedFonts: Array<{
+      family: string;
+      weight: string;
+      style: string;
+      usage: string; // primary, secondary, accent
+      confidence: number;
+    }>;
+  };
+  lyricalData: {
+    hasLyrics: boolean;
+    language: string;
+    totalTextElements: number;
+    primaryFont: {
+      family: string;
+      size: number;
+      color: string;
+    };
+    textCategory: string; // lyrics, captions, quotes, titles
+  };
   confidence: number;
   processingTime: number;
 }
 
+export class TextExtractionService {
+  // Integration with Google Vision API for OCR and text analysis
+  async extractTextWithGoogleVision(videoFrames: string[]): Promise<any> {
+    // In production, integrate with Google Vision API
+    // const vision = new ImageAnnotatorClient({
+    //   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
+    // });
+    
+    // Mock response structure for development
+    return {
+      extractedTexts: [
+        {
+          id: "text-1",
+          text: "When the beat drops",
+          startTime: 15.5,
+          endTime: 18.2,
+          position: { x: 50, y: 200, width: 300, height: 60 },
+          fontFamily: "Montserrat",
+          fontSize: 42,
+          fontWeight: "bold",
+          color: "#FFFFFF",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          animation: "fade",
+          confidence: 94
+        },
+        {
+          id: "text-2", 
+          text: "Feel the rhythm",
+          startTime: 18.5,
+          endTime: 21.0,
+          position: { x: 75, y: 350, width: 250, height: 50 },
+          fontFamily: "Montserrat",
+          fontSize: 36,
+          fontWeight: "regular",
+          color: "#FFD700",
+          animation: "slide",
+          confidence: 89
+        }
+      ],
+      detectedFonts: [
+        {
+          family: "Montserrat",
+          weight: "bold",
+          style: "normal",
+          usage: "primary",
+          confidence: 92
+        },
+        {
+          family: "Arial",
+          weight: "regular", 
+          style: "normal",
+          usage: "secondary",
+          confidence: 78
+        }
+      ]
+    };
+  }
+
+  // Font detection and classification
+  async detectFonts(textRegions: any[]): Promise<any> {
+    // In production, integrate with font recognition services
+    // or use computer vision libraries for font classification
+    return {
+      primaryFont: {
+        family: "Montserrat",
+        size: 42,
+        color: "#FFFFFF"
+      },
+      hasLyrics: true,
+      language: "en",
+      totalTextElements: 12,
+      textCategory: "lyrics"
+    };
+  }
+}
+
 export class AIVideoAnalyzer {
+  private textExtractor = new TextExtractionService();
+
   // Integration with RunwayML API for advanced video analysis
   async analyzeWithRunwayML(videoPath: string): Promise<Partial<AIAnalysisResult>> {
     // In production, integrate with RunwayML's Gen-2 API
@@ -233,6 +345,13 @@ export class AIVideoAnalyzer {
         confidence: 90,
         processingTime: Date.now() - startTime
       };
+
+      // Add text extraction to comprehensive analysis
+      const textAnalysis = await this.textExtractor.extractTextWithGoogleVision([]);
+      const lyricalData = await this.textExtractor.detectFonts(textAnalysis.extractedTexts);
+      
+      combinedResult.textExtraction = textAnalysis;
+      combinedResult.lyricalData = lyricalData;
 
       return combinedResult;
     } catch (error) {

@@ -81,6 +81,9 @@ export interface IStorage {
   // Template analytics
   updateTemplateAnalytics(analytics: InsertTemplateAnalytics): Promise<void>;
   getTemplateAnalytics(templateId: string): Promise<TemplateAnalytics | undefined>;
+  
+  // Text extraction and lyrical analysis
+  updateAnalysisResults(videoId: string, updates: Partial<AnalysisResult>): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -298,6 +301,13 @@ export class DatabaseStorage implements IStorage {
   async getTemplateAnalytics(templateId: string): Promise<TemplateAnalytics | undefined> {
     const [analytics] = await db.select().from(templateAnalytics).where(eq(templateAnalytics.templateId, templateId));
     return analytics || undefined;
+  }
+
+  // Text extraction and lyrical analysis
+  async updateAnalysisResults(videoId: string, updates: Partial<AnalysisResult>): Promise<void> {
+    await db.update(analysisResults)
+      .set(updates)
+      .where(eq(analysisResults.videoId, videoId));
   }
 }
 

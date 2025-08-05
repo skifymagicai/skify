@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Play, ArrowLeft, Wand2, Clock, Upload } from "lucide-react";
+import { Play, ArrowLeft, Wand2, Clock, Upload, Type } from "lucide-react";
 
 const DETECTED_EFFECTS = [
   {
@@ -67,6 +67,11 @@ export default function Analysis() {
   const handleApplyToMyVideo = () => {
     // Navigate to upload page with the extracted template context
     setLocation("/upload-apply?from=analysis");
+  };
+
+  const handleLyricalAnalysis = () => {
+    // Navigate to lyrical analysis page for text extraction
+    setLocation("/lyrical-analysis");
   };
 
   const handlePlayPause = () => {
@@ -248,6 +253,15 @@ export default function Analysis() {
               >
                 <Upload className="mr-2 h-5 w-5" />
                 Apply Style to My Video
+              </Button>
+              
+              <Button 
+                onClick={handleLyricalAnalysis}
+                className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white py-3"
+                data-testid="lyrical-analysis-button"
+              >
+                <Type className="mr-2 h-5 w-5" />
+                Extract Text & Lyrics
               </Button>
               
               <Button 
