@@ -1,0 +1,163 @@
+Create a next-gen AI web application called **"Skify"** (support: skifymagicai@gmail.com).
+
+---
+
+**Mission:**
+
+Build an intelligent short-form video transformation app that:
+- Analyzes any viral Reel, TikTok, or YouTube Short
+- Automatically extracts core creative components such as:
+  - **Effects** (filters, overlays)
+  - **Templates** (layout, structure)
+  - **Transitions** (scene cuts, boundaries)
+  - **Color Grading** (LUTs, tone/mood palette)
+  - **Camera Movement** (zoom-in/out, pan, tilt, motion tracking)
+  - **AI Edits** (auto-cuts, smart sequencing)
+
+Generates:
+- A **reusable visual style template** from analyzed video
+- Allows users to upload their own clips
+- Applies extracted style in **one click**
+- Delivers **broadcast-ready, trend-aligned output**
+- Requires **no user editing skill**
+
+---
+
+**User Flow & UI Screens:**
+
+1. **Landing Page**
+   - H1: “Transform Your Videos with AI – Skify”
+   - CTA: “Upload Viral Video”
+   - Sample gallery of styled templates with “Try Now” buttons
+
+2. **Analysis Screen**
+   - Auto-play uploaded video
+   - Display breakdown of extracted layers:
+     ▶️ Effects  
+     ▶️ Templates  
+     ▶️ Transitions  
+     ▶️ Color Grading  
+     ▶️ Camera Motion  
+     ▶️ AI Edits  
+
+3. **Template Generator Preview**
+   - Renders composite style structure from analysis
+   - Color palette, layout, style chart
+   - Save button: “Save Template”
+   - Action: “Apply Style to My Video”
+
+4. **User Upload + Template Application**
+   - Upload personal video
+   - Choose template (AI-generated or community)
+   - Shows preview with applied LUTs, transitions, motion
+
+5. **Styled Preview + Export**
+   - Compare: Original vs. Styled side by side
+   - Export:
+     - Free: With watermark
+     - ₹49 to remove watermark → Razorpay: https://rzp.io/rzp/Q5OwNLf
+     - ₹199/month for full Pro access → Razorpay: https://rzp.io/rzp/WbGPsmn
+   - Share, Save, or Remix
+
+---
+
+**Core Features:**
+
+☑️ **True AI Style Extraction**  
+- Use APIs: RunwayML, FFmpeg, Replicate, Gemini  
+- No mock logic—real LUT detection, transition mapping, motion separation
+
+☑️ **Reusable Template Engine**  
+- Breaks video into stylized blocks  
+- Users can remix, save, share templates
+
+☑️ **One-Click Recreation**  
+- Upload video → Apply template → Get styled output instantly  
+- Fully automated pipeline
+
+☑️ **Studio-Grade PWA UI/UX**  
+- Built with React + Next.js  
+- Fully mobile-optimized  
+- Inspired by VN Editor, CapCut  
+- Dual Language: Tamil & English  
+- Instant preview, real-time rendering
+
+☑️ **Cloud Infra**  
+- Use Cloudinary or similar for secure uploads  
+- CDN delivery for styled outputs  
+- MongoDB or Supabase DB  
+- Serverless backend (Node.js + Python for AI jobs)
+
+☑️ **Authentication**  
+- Google, Apple OAuth  
+- Secure media encryption  
+- Simple email onboarding
+
+☑️ **Monetization**  
+- Freemium model  
+- ₹49 watermark removal – Razorpay: https://rzp.io/rzp/Q5OwNLf  
+- ₹199/month Pro plan – Razorpay: https://rzp.io/rzp/WbGPsmn  
+- Template Marketplace (UGC + Creator Store)  
+- Paid upsells: analytics, featured templates, premium packs
+
+☑️ **Community Growth**  
+- Users can remix, share, and showcase templates  
+- Public gallery: trending styles, top creators  
+- Built-in influencer appeal and brand partnership model
+
+---
+
+**Legal, IP, and Ownership**
+
+Grant 100% **ownership rights** of:
+- Source code
+- AI workflows
+- Template engine logic
+- App UI/UX
+- All cloud, auth, and analytics infra
+
+Prepare legal stack:
+- Terms of Service  
+- Privacy Policy  
+- NDA template  
+- Trademark / IP filing readiness
+
+---
+
+**Founder Information (For Ownership & Legal Use):**
+
+- **Name:** M. Suresh Kumar  
+- **Email:** kumarsuresh84678@gmail.com  
+- **Mobile:** 7373643481  
+- **Location:** Ariyalur, Tamil Nadu, India  
+
+- **Education:**  
+  B.E. in Electrical & Electronics Engineering  
+  Saveetha Engineering College (Batch 2025)  
+  CGPA: 7.7/10 (up to 5th semester)  
+
+- **College Project:** *Smart Safety Helmet* for two-wheeler security & tracking  
+- **Skills:** Python, C/C++, Arduino, Matlab, UI/UX Design, MS Excel  
+- **Soft Skills:** Team leadership, communication, problem-solving  
+- **Certifications:** IoT, Economic Growth & Development  
+- **Training:** TVS Motors, Kalaimahal Cement, Ennore Thermal Power Plant  
+- **Internships:** NSIC (IoT & Embedded), Teachnook (Robotics)  
+- **Languages:** Tamil (native), English (fluent), Hindi (basic)
+
+---
+
+**Instruction for AI System:**
+
+- ✅ Build backend + UI pathways based on real AI models (FFmpeg, Gemini, RunwayML)  
+- ✅ Include Razorpay payment integration using provided links  
+- ✅ Generate reusable component architecture  
+- ✅ Scalable, serverless deployment (Vercel/Render)  
+- ✅ Ensure full styling recreation (no mocked logic)  
+- ✅ All templates, styling engines, and outputs must be owned and licensed by the founder
+
+---
+
+**Final Summary:**
+
+> Build **Skify**, a powerful AI app that replicates viral video styles—color grading, LUTs, transitions, effects, structure—in one click using true AI extraction and template-generation. Designed for creators, studios, and brands to match trends instantly. Monetization via watermark-free exports & Pro subscriptions. Built for scale. Fully owned by founder M. Suresh Kumar.
+

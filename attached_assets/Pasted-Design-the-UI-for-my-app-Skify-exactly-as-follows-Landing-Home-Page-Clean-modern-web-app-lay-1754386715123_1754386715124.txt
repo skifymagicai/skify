@@ -1,0 +1,38 @@
+Design the UI for my app “Skify” exactly as follows:
+Landing (Home) Page
+	•	Clean modern web-app layout, white background, centered content, lightweight feel.
+	•	Top navigation bar with: Skify logo/brand on the left; menu items: Home, Gallery, Analysis, Templates, Upload, Preview. User avatar/login at top right.
+	•	Main hero section centered:
+	•	Title (large, bold, gradient): “Transform Your Video with AI”
+	•	Subtitle: “Upload any viral video and instantly extract its style, effects, and magic. Apply those styles to your own content with AI-powered precision.”
+	•	Two big action buttons: “Upload Viral Video” (primary—file upload), “Browse Gallery” (secondary).
+	•	Three horizontally arranged feature cards below:
+	1.	Lightning icon: “AI Style Analysis” — “Advanced AI extracts effects, transitions, color grading, and camera movements.”
+	2.	Camera icon: “Template Creation” — “Generate reusable templates from any viral video for consistent styling.”
+	3.	Play icon: “Instant Apply” — “Apply extracted styles to your videos with one-click transformation.”
+	•	Section below: “Sample Styled Videos” — 2–4 visually-rich video thumbnails with “Preview”/“Try Now” overlays, aligned in a horizontal scrollable gallery.
+	•	Overall: Crisp font (e.g., Inter or similar), good padding, rounded corners, subtle drop-shadows, modern buttons with hover effects.
+Analysis Screen
+	•	Same top nav as above.
+	•	Dual-panel layout:
+	•	Left: Video player to auto-play the user’s uploaded/imported video.
+	•	Right: Segmented breakdown (stacked cards) for:
+	•	Effects
+	•	Templates
+	•	Transitions
+	•	Color Grading
+	•	Camera Motions
+	•	AI Edits Each card uses icons, bold section headers, and clear tag/chip style for extracted attributes.
+	•	Clean, minimal, light theme with subtle accent colors for section highlights.
+Template Preview/Creation
+	•	Preview of generated style template: palette swatch, layout mini-map, transitions icons, summarized text.
+	•	Two clear action buttons: “Save Template”, “Apply Style to My Video”.
+All pages
+	•	Consistent spacing, mobile responsiveness (PWA style).
+	•	Design aesthetic inspired by VN Editor and CapCut, but clean and light like your attached screenshots.
+	•	Dual language toggle (English/Tamil) in nav bar.
+	•	Do not include any dummy or placeholder logic in core UI—focus on visual correctness.
+General
+	•	All UI components as reusable React components, using Next.js framework.
+	•	Use styled-components or TailwindCSS for styling, as appropriate.
+	•	Match paddings, border radii, colors, and iconography to the references in both attached images as closely as possible.
