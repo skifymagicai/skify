@@ -1,0 +1,44 @@
+
+## Skify Full-Stack Integration FIX Prompt
+
+**Problem to Fix:**  
+The current UI and backend are not properly connected. Viral video analysis, reusable template generation, user video upload, save/apply pipeline, and result/download workflows are broken or missing end-to-end connectivity.
+
+**Solution | Prompt for System/Dev/AI:**
+
+1. **Backend Pipeline Refactor:**
+   - Build modular REST APIs for:
+     - `/upload` (user & viral video upload)
+     - `/import` (download video from public link)
+     - `/analyze` (run full AI pipeline → split visuals/audio/text/lyrics/fonts/timing)
+     - `/template/save` (create folder+metadata for every viral video analyzed)
+     - `/apply` (user video + chosen template)
+     - `/export` (render/export combined result)
+     - `/download` (final asset)
+   - Store **all extracted assets/templates** in structured cloud folders (S3, Cloudinary, etc.).
+
+2. **Frontend–Backend API Integration:**
+   - React app should use `fetch` or `axios` to call backend APIs for every action.
+   - Each UI button/step (upload, analyze, save template, upload own video, apply, download) MUST trigger a backend call and show status/loading/errors.
+   - All responses and errors from backend APIs must be handled and surfaced in the UI.
+
+3. **Frontend UX Flow:**
+   - **Landing page:** Dual import; get viral video and user video (both required).
+   - **After viral analysis:** Show decomposed layers, *save template to folder*, prompt for user video.
+   - **Template application:** Merge user video with viral template (visuals/audio/lyrics, etc), then show preview and enable export.
+   - **Download:** Output available after render finishes, with clear “Download” button wired to `/download` endpoint.
+
+4. **Job Queue and Async Feedback:**
+   - Use async job queue (BullMQ, Redis) so frontend can poll `/status` until each backend action is done (analysis, export, etc.), and update UI as soon as jobs finish.
+   - Show any errors in the frontend—never leave users “waiting” without feedback.
+
+5. **Security, State, & Deployment:**
+   - Set up secure management of all environment variables/secrets.
+   - Backend and frontend must be connected using HTTP(S) endpoints, with CORS enabled for frontend origin.
+   - Redeploy and validate after these changes.
+
+6. **Documentation:**
+   - Document endpoints and data contracts so every UI component clearly knows what backend call to make, and what to expect in response.
+
+**Summary for Implementer:**
+> “Fully connect the Skify frontend (React) and backend (Node.js/Express) so every user action is fulfilled by a corresponding backend API, all workflows run through the pipeline, and results are delivered without disconnects. Store everything in reusable folders, require both viral and user uploads, and make download/export flows truly work. Provide robust error handling, status, and logging from backend to frontend for a seamless, production-ready launch.”

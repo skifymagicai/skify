@@ -161,29 +161,30 @@ export default function Landing() {
             Apply those styles to your own content with AI-powered precision.
           </p>
           
-          {/* Primary CTA - Viral Analysis */}
+          {/* Primary CTA - Full-Stack AI */}
+          <div className="mb-8">
+            <Link to="/full-stack">
+              <Button 
+                className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-12 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                data-testid="full-stack-button"
+              >
+                <Sparkles className="mr-3 h-6 w-6" />
+                Full-Stack AI Transformation
+              </Button>
+            </Link>
+            <p className="text-sm text-gray-500 mt-2">Complete pipeline: Import → Analyze → Template → Apply → Export → Download</p>
+          </div>
+
+          {/* Secondary CTA - Legacy Viral Analysis */}
           <div className="mb-8">
             <Button 
               onClick={handleViralAnalysisClick}
-              className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-12 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
-              data-testid="viral-analysis-button"
-            >
-              <Sparkles className="mr-3 h-6 w-6" />
-              Recreate Viral Video Style
-            </Button>
-            <p className="text-sm text-gray-500 mt-2">Upload viral video → Extract all elements → Upload your video → Apply viral styling</p>
-          </div>
-
-          {/* Secondary CTA - AI Workflow */}
-          <div className="mb-8">
-            <Button 
-              onClick={handleAIWorkflowClick}
               variant="outline"
               className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 text-lg rounded-lg"
-              data-testid="ai-workflow-button"
+              data-testid="viral-analysis-button"
             >
-              <Sparkles className="mr-2 h-5 w-5" />
-              Advanced AI Pipeline
+              <Video className="mr-2 h-5 w-5" />
+              Legacy Viral Analysis
             </Button>
           </div>
 
