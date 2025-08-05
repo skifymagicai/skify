@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, Camera, Play, Upload, Heart, Eye, Link } from "lucide-react";
+import { Sparkles, Camera, Play, Upload, Heart, Eye, Link, Video } from "lucide-react";
 import VideoShowcase from "@/components/video-showcase";
 
 const SAMPLE_TEMPLATES = [
