@@ -229,15 +229,15 @@ export async function registerModularRoutes(app: Express) {
           
           // Step 1: Visual analysis
           await storage.updateJobProgress(job.id, 25, 'visual_analysis');
-          const visualAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', {});
+          const visualAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', video.id);
           
           // Step 2: Audio analysis
           await storage.updateJobProgress(job.id, 50, 'audio_analysis');
-          const audioAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', {});
+          const audioAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', video.id);
           
           // Step 3: Text/OCR analysis
           await storage.updateJobProgress(job.id, 75, 'text_analysis');
-          const textAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', {});
+          const textAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', video.id);
           
           // Step 4: Combine results
           await storage.updateJobProgress(job.id, 100, 'completed');
