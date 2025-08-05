@@ -76,6 +76,10 @@ export default function Landing() {
     setLocation("/upload-apply");
   };
 
+  const handleAIWorkflowClick = () => {
+    setLocation("/ai-workflow");
+  };
+
   const handleBrowseGallery = () => {
     setLocation("/gallery");
   };
@@ -153,6 +157,19 @@ export default function Landing() {
             Apply those styles to your own content with AI-powered precision.
           </p>
           
+          {/* Primary CTA - AI Workflow */}
+          <div className="mb-8">
+            <Button 
+              onClick={handleAIWorkflowClick}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+              data-testid="ai-workflow-button"
+            >
+              <Sparkles className="mr-3 h-6 w-6" />
+              Start AI Transformation
+            </Button>
+            <p className="text-sm text-gray-500 mt-2">Complete guided workflow - Upload → Analyze → Create Template → Apply → Export</p>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               onClick={handleLinkFetch}
