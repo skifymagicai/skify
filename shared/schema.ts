@@ -186,6 +186,8 @@ export const insertTemplateLikeSchema = createInsertSchema(templateLikes).pick({
 export const insertVideoProcessingJobSchema = createInsertSchema(videoProcessingJobs).pick({
   videoId: true,
   jobType: true,
+  status: true,
+  progress: true,
   metadata: true,
 });
 

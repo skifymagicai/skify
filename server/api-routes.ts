@@ -217,6 +217,8 @@ export async function registerModularRoutes(app: Express) {
       const job = await storage.createProcessingJob({
         videoId: video.id,
         jobType: 'ai_analysis',
+        status: 'processing',
+        progress: 0,
         metadata: {
           analysisSteps: ['visual', 'audio', 'text', 'ocr']
         }
@@ -225,37 +227,37 @@ export async function registerModularRoutes(app: Express) {
       // Start async AI analysis
       setTimeout(async () => {
         try {
+          console.log(`Starting AI analysis for job ${job.id}, video ${video.id}`);
           const { aiVideoProcessor } = await import('./ai-services');
           
           // Step 1: Visual analysis
           await storage.updateJobProgress(job.id, 25, 'visual_analysis');
-          const visualAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', video.id);
+          console.log('Running visual analysis...');
+          const analysisResult = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', video.id);
           
-          // Step 2: Audio analysis
-          await storage.updateJobProgress(job.id, 50, 'audio_analysis');
-          const audioAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', video.id);
+          // Step 2: Update progress
+          await storage.updateJobProgress(job.id, 75, 'saving_results');
+          console.log('Saving analysis results...');
           
-          // Step 3: Text/OCR analysis
-          await storage.updateJobProgress(job.id, 75, 'text_analysis');
-          const textAnalysis = await aiVideoProcessor.analyzeVideo(video.originalUrl || '', video.id);
-          
-          // Step 4: Combine results
-          await storage.updateJobProgress(job.id, 100, 'completed');
-          
-          const analysisResult = await storage.createAnalysisResult({
+          // Step 3: Save analysis results
+          const dbAnalysisResult = await storage.createAnalysisResult({
             videoId: video.id,
-            effects: visualAnalysis.effects || {},
-            transitions: visualAnalysis.transitions || {},
-            colorGrading: visualAnalysis.colorGrading || {},
-            cameraMotion: visualAnalysis.cameraMotion || {},
-            templates: visualAnalysis.templates || {},
-            confidence: 0.85,
-            processingTime: 30
+            effects: analysisResult.effects || {},
+            transitions: analysisResult.transitions || {},
+            colorGrading: analysisResult.colorGrading || {},
+            cameraMotion: analysisResult.cameraMotion || {},
+            templates: analysisResult.templates || {},
+            confidence: analysisResult.confidence || 85,
+            processingTime: analysisResult.processingTime || 2000
           });
 
+          // Step 4: Complete
+          await storage.updateJobProgress(job.id, 100, 'completed');
           await storage.updateVideo(video.id, { status: 'analyzed' });
+          console.log(`AI analysis completed for job ${job.id}`);
           
         } catch (error: any) {
+          console.error(`AI analysis failed for job ${job.id}:`, error);
           await storage.updateJobProgress(job.id, 0, 'failed');
           await storage.updateVideo(video.id, { status: 'failed' });
         }

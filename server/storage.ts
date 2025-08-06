@@ -91,6 +91,21 @@ export interface IStorage {
   
   // Text extraction and lyrical analysis
   updateAnalysisResults(videoId: string, updates: Partial<AnalysisResult>): Promise<void>;
+  getProcessingJob(id: string): Promise<VideoProcessingJob | undefined>;
+  updateProcessingJobMetadata(id: string, metadata: any): Promise<void>;
+  updateProcessingJobError(id: string, errorMessage: string): Promise<void>;
+  getJobStatus(jobId: string): Promise<VideoProcessingJob | undefined>;
+
+  // Additional video methods for comprehensive AI pipeline
+  updateVideo(id: string, data: Partial<Video>): Promise<void>;
+  getUserPayments(userId: string): Promise<Payment[]>;
+  
+  // Template analytics
+  updateTemplateAnalytics(analytics: InsertTemplateAnalytics): Promise<void>;
+  getTemplateAnalytics(templateId: string): Promise<TemplateAnalytics | undefined>;
+  
+  // Text extraction and lyrical analysis
+  updateAnalysisResults(videoId: string, updates: Partial<AnalysisResult>): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
