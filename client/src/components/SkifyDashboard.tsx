@@ -41,7 +41,7 @@ export const SkifyDashboard: React.FC = () => {
   const { toast } = useToast();
 
   // API BASE URL
-  const API_BASE = '/api';
+  const API_BASE = '/api/skify';
 
   // UPLOAD VIDEO FILE
   const handleFileUpload = async (file: File) => {
@@ -141,6 +141,7 @@ export const SkifyDashboard: React.FC = () => {
         },
         body: JSON.stringify({
           videoId: uploadedVideo.id,
+          videoUrl: uploadedVideo.originalUrl || uploadedVideo.originalPath || uploadedVideo.cloudinaryUrl,
           options: {
             extractLyrics: true,
             detectStyle: true,

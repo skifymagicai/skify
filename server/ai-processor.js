@@ -301,29 +301,38 @@ export class SkifyAIProcessor {
   // UTILITY METHODS
 
   async downloadVideo(url, videoId) {
-    // For demo, copy from existing file or create placeholder
     const outputPath = path.join(this.tempDir, `${videoId}.mp4`);
+    console.log(`Processing video source: ${url}`);
     
     if (url.startsWith('http')) {
-      // In production, use youtube-dl or similar
-      console.log(`Downloading video from: ${url}`);
-      // For now, create a test video
-      await new Promise((resolve, reject) => {
-        ffmpeg()
-          .input('testsrc=duration=10:size=640x480:rate=30')
-          .inputFormat('lavfi')
-          .output(outputPath)
-          .videoCodec('libx264')
-          .audioCodec('aac')
-          .on('end', resolve)
-          .on('error', reject)
-          .run();
-      });
+      if (url.includes('/uploads/')) {
+        // Local uploaded file via URL
+        const filename = url.split('/uploads/')[1];
+        const localPath = path.join(__dirname, '../uploads', filename);
+        console.log(`Copying local uploaded file: ${localPath}`);
+        await fs.copyFile(localPath, outputPath);
+      } else {
+        // External URL - create demo video for now
+        console.log(`Creating demo video for external URL: ${url}`);
+        await new Promise((resolve, reject) => {
+          ffmpeg()
+            .input('testsrc=duration=10:size=640x480:rate=30')
+            .inputFormat('lavfi')
+            .output(outputPath)
+            .videoCodec('libx264')
+            .audioCodec('aac')
+            .on('end', resolve)
+            .on('error', reject)
+            .run();
+        });
+      }
     } else {
-      // Local file
+      // Direct file path
+      console.log(`Copying local file: ${url}`);
       await fs.copyFile(url, outputPath);
     }
     
+    console.log(`Video prepared at: ${outputPath}`);
     return outputPath;
   }
 

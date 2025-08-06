@@ -13,10 +13,12 @@ class SkifyStorage {
   async saveVideo(videoData) {
     const video = {
       ...videoData,
+      userId: videoData.userId || 'demo_user', // Ensure userId is set
       createdAt: new Date(),
       updatedAt: new Date()
     };
     this.videos.set(video.id, video);
+    console.log('Video saved:', { id: video.id, userId: video.userId, title: video.title });
     return video;
   }
 

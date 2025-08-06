@@ -25,7 +25,13 @@ const upload = multer({
     fileSize: 500 * 1024 * 1024, // 500MB
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('video/')) {
+    console.log('File upload attempt:', { 
+      filename: file.originalname, 
+      mimetype: file.mimetype,
+      fieldname: file.fieldname 
+    });
+    
+    if (file.mimetype.startsWith('video/') || file.originalname.endsWith('.mp4')) {
       cb(null, true);
     } else {
       cb(new Error('Only video files are allowed'));
@@ -62,7 +68,7 @@ function updateJob(jobId, updates) {
 
 // ===== API ROUTES =====
 
-// Health check
+// Health check (both paths for compatibility)
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
@@ -76,8 +82,21 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.get('/api/skify/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    services: {
+      replicate: !!process.env.REPLICATE_API_KEY,
+      assemblyai: !!process.env.ASSEMBLYAI_API_KEY,
+      cloudinary: !!process.env.CLOUDINARY_CLOUD,
+      googleVision: !!process.env.GOOGLE_APPLICATION_CREDENTIALS
+    }
+  });
+});
+
 // 1. VIDEO UPLOAD - Upload user video for processing
-app.post('/api/upload', upload.single('video'), async (req, res) => {
+app.post('/api/skify/upload', upload.single('video'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No video file uploaded' });
@@ -95,7 +114,15 @@ app.post('/api/upload', upload.single('video'), async (req, res) => {
       filename: req.file.filename,
       mimetype: req.file.mimetype,
       size: req.file.size,
-      status: 'uploaded'
+      status: 'uploaded',
+      // Add full server path for analysis
+      fullPath: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
+    });
+
+    console.log('Video uploaded:', { 
+      id: video.id, 
+      path: video.originalPath,
+      fullPath: video.fullPath 
     });
 
     res.json({
@@ -110,8 +137,8 @@ app.post('/api/upload', upload.single('video'), async (req, res) => {
   }
 });
 
-// 2. VIDEO IMPORT - Import video from URL
-app.post('/api/import', async (req, res) => {
+// 2. VIDEO IMPORT - Import video from URL  
+app.post('/api/skify/import', async (req, res) => {
   try {
     const { url, userId, title } = req.body;
 
@@ -143,9 +170,10 @@ app.post('/api/import', async (req, res) => {
 });
 
 // 3. AI ANALYSIS - Analyze video for style extraction
-app.post('/api/analyze', async (req, res) => {
+app.post('/api/skify/analyze', async (req, res) => {
   try {
-    const { videoId, options } = req.body;
+    const { videoId, videoUrl, options } = req.body;
+    console.log('AI Analysis request:', { videoId, videoUrl, options });
 
     if (!videoId) {
       return res.status(400).json({ error: 'Video ID is required' });
@@ -156,6 +184,12 @@ app.post('/api/analyze', async (req, res) => {
       return res.status(404).json({ error: 'Video not found' });
     }
 
+    console.log('Video found:', { 
+      id: video.id, 
+      originalPath: video.originalPath, 
+      originalUrl: video.originalUrl 
+    });
+
     // Create analysis job
     const job = createJob('analysis', { videoId, options });
 
@@ -164,8 +198,9 @@ app.post('/api/analyze', async (req, res) => {
       try {
         updateJob(job.id, { status: 'processing', progress: 10 });
 
-        // Use original URL or file path
-        const videoSource = video.originalUrl || video.originalPath;
+        // Use provided URL, original URL, or file path
+        const videoSource = videoUrl || video.originalUrl || video.originalPath;
+        console.log('Using video source:', videoSource);
         
         updateJob(job.id, { status: 'analyzing', progress: 30 });
         
@@ -218,7 +253,7 @@ app.post('/api/analyze', async (req, res) => {
 });
 
 // 4. JOB STATUS - Check analysis progress
-app.get('/api/jobs/:jobId', (req, res) => {
+app.get('/api/skify/jobs/:jobId', (req, res) => {
   const job = jobs.get(req.params.jobId);
   
   if (!job) {
@@ -241,7 +276,7 @@ app.get('/api/jobs/:jobId', (req, res) => {
 });
 
 // 5. SAVE TEMPLATE - Save analysis as reusable template
-app.post('/api/templates', async (req, res) => {
+app.post('/api/skify/templates', async (req, res) => {
   try {
     const { videoId, name, description, isPublic } = req.body;
 
@@ -277,7 +312,7 @@ app.post('/api/templates', async (req, res) => {
 });
 
 // 6. GET TEMPLATES - List available templates
-app.get('/api/templates', async (req, res) => {
+app.get('/api/skify/templates', async (req, res) => {
   try {
     const { userId, isPublic } = req.query;
     const templates = await storage.getTemplates({ userId, isPublic });
@@ -374,7 +409,7 @@ app.post('/api/apply-style', async (req, res) => {
 });
 
 // 8. GET ANALYSIS - Get detailed analysis results
-app.get('/api/analysis/:videoId', async (req, res) => {
+app.get('/api/skify/analysis/:videoId', async (req, res) => {
   try {
     const analysis = await storage.getAnalysis(req.params.videoId);
     
@@ -394,7 +429,7 @@ app.get('/api/analysis/:videoId', async (req, res) => {
 });
 
 // 9. GET VIDEOS - List user videos
-app.get('/api/videos', async (req, res) => {
+app.get('/api/skify/videos', async (req, res) => {
   try {
     const { userId } = req.query;
     const videos = await storage.getUserVideos(userId || 'anonymous');
