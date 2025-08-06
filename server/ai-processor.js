@@ -28,11 +28,13 @@ cloudinary.config({
 // Initialize Google Vision
 let visionClient;
 try {
+  const keyFile = process.env.GOOGLE_APPLICATION_CREDENTIALS || './skify-service-key.json';
   const auth = new GoogleAuth({
-    keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    keyFile,
     scopes: ['https://www.googleapis.com/auth/cloud-platform']
   });
   visionClient = new vision.ImageAnnotatorClient({ auth });
+  console.log('Google Vision initialized successfully');
 } catch (error) {
   console.warn('Google Vision not initialized:', error.message);
 }
