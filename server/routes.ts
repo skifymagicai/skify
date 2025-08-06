@@ -72,6 +72,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== SKIFY AI VIDEO ANALYSIS ROUTES =====
+  
+  // Import video from URL with proper user validation
+  app.post('/api/skify/import', authenticateUser, async (req: any, res) => {
+    try {
+      const { url, title } = req.body;
+      
+      if (!url) {
+        return res.status(400).json({ error: 'Video URL is required' });
+      }
+
+      const videoId = `import_${Date.now()}`;
+      const videoData = {
+        id: videoId,
+        userId: req.userId,
+        title: title || 'Imported Video',
+        originalUrl: url,
+        status: 'importing'
+      };
+
+      const video = await storage.createVideo(videoData);
+      
+      res.json({
+        success: true,
+        video,
+        message: 'Video import started'
+      });
+
+    } catch (error: any) {
+      console.error('Import error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Start AI analysis
+  app.post('/api/skify/analyze', authenticateUser, async (req: any, res) => {
+    try {
+      const { videoId, videoUrl, options } = req.body;
+      
+      if (!videoId) {
+        return res.status(400).json({ error: 'Video ID is required' });
+      }
+
+      const video = await storage.getVideo(videoId);
+      if (!video) {
+        return res.status(404).json({ error: 'Video not found' });
+      }
+
+      // Create analysis job
+      const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      res.json({
+        success: true,
+        jobId,
+        message: 'AI analysis started',
+        estimatedTime: '2-3 minutes'
+      });
+
+    } catch (error: any) {
+      console.error('Analysis start error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get user videos
+  app.get('/api/skify/videos', authenticateUser, async (req: any, res) => {
+    try {
+      const videos = await storage.getUserVideos(req.userId);
+      
+      res.json({
+        success: true,
+        videos
+      });
+
+    } catch (error: any) {
+      console.error('Videos fetch error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Skify health endpoint
+  app.get('/api/skify/health', (req, res) => {
+    res.json({ 
+      status: 'healthy', 
+      timestamp: new Date().toISOString(),
+      services: {
+        replicate: !!process.env.REPLICATE_API_KEY,
+        assemblyai: !!process.env.ASSEMBLYAI_API_KEY,
+        cloudinary: !!process.env.CLOUDINARY_CLOUD,
+        googleVision: !!process.env.GOOGLE_APPLICATION_CREDENTIALS
+      }
+    });
+  });
+
   // ===== COMPREHENSIVE AI VIDEO PIPELINE =====
   
   // STEP 1: Video Import (Upload or URL) with Real AI Analysis

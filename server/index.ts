@@ -44,13 +44,20 @@ app.use((req, res, next) => {
   registerViralRoutes(app);
   await registerModularRoutes(app);
   
-  // Mount Skify AI routes
+  // Mount Skify AI routes - debug import
   try {
-    const { default: skifyApp } = await import('./skify-server.js');
-    app.use('/', skifyApp);
-    console.log('Skify AI server mounted successfully');
+    const skifyModule = await import('./skify-server.js');
+    console.log('Skify module imported:', Object.keys(skifyModule));
+    
+    const skifyApp = skifyModule.default || skifyModule;
+    if (skifyApp && typeof skifyApp.use === 'function') {
+      app.use('/', skifyApp);
+      console.log('✅ Skify AI server mounted successfully');
+    } else {
+      console.error('❌ Skify module does not export a valid Express app');
+    }
   } catch (error) {
-    console.error('Failed to mount Skify AI server:', error);
+    console.error('❌ Failed to mount Skify AI server:', error);
   }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

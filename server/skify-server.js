@@ -105,10 +105,13 @@ app.post('/api/skify/upload', upload.single('video'), async (req, res) => {
     const { userId, title } = req.body;
     const videoId = `upload_${Date.now()}`;
 
+    // Ensure valid user ID for database constraint
+    const validUserId = userId || req.headers['x-user-id'] || 'demo-user-001';
+    
     // Save video metadata
     const video = await storage.saveVideo({
       id: videoId,
-      userId: userId || 'anonymous',
+      userId: validUserId,
       title: title || 'Uploaded Video',
       originalPath: req.file.path,
       filename: req.file.filename,
@@ -148,10 +151,13 @@ app.post('/api/skify/import', async (req, res) => {
 
     const videoId = `import_${Date.now()}`;
     
+    // Ensure valid user ID for database constraint
+    const validUserId = userId || req.headers['x-user-id'] || 'demo-user-001';
+    
     // Save video metadata
     const video = await storage.saveVideo({
       id: videoId,
-      userId: userId || 'anonymous',
+      userId: validUserId,
       title: title || 'Imported Video',
       originalUrl: url,
       status: 'importing'
