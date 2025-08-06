@@ -19,12 +19,15 @@ import ViralAnalysis from "@/pages/viral-analysis";
 import FullStackViralAnalysis from "@/pages/full-stack-viral-analysis";
 import UltimateSkify from "@/pages/ultimate-skify";
 import FloatingNavigation from "@/components/layout/floating-navigation";
+import SkifyDashboard from "@/components/SkifyDashboard";
 
 function Router() {
   return (
     <div className="min-h-screen bg-dark text-white">
       <Switch>
-        <Route path="/" component={Landing} />
+        <Route path="/" component={SkifyDashboard} />
+        <Route path="/skify" component={SkifyDashboard} />
+        <Route path="/landing" component={Landing} />
         <Route path="/gallery" component={Gallery} />
         <Route path="/analysis" component={Analysis} />
         <Route path="/template-preview" component={TemplatePreview} />

@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { registerViralRoutes } from "./viral-routes";
 import { registerModularRoutes } from "./api-routes";
 import { setupVite, serveStatic, log } from "./vite";
+// Import Skify AI server (will be dynamically imported)
 
 const app = express();
 app.use(express.json());
@@ -42,6 +43,15 @@ app.use((req, res, next) => {
   const server = await registerRoutes(app);
   registerViralRoutes(app);
   await registerModularRoutes(app);
+  
+  // Mount Skify AI routes
+  try {
+    const { default: skifyApp } = await import('./skify-server.js');
+    app.use('/', skifyApp);
+    console.log('Skify AI server mounted successfully');
+  } catch (error) {
+    console.error('Failed to mount Skify AI server:', error);
+  }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

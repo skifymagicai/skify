@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "skify-service",
+  "private_key_id": "a8ee918d8e0f5b824b9783605fe76809b282a871",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCnyWhpppr/DXAI\nwI0BkZtPXok2lX771E+qCceq0gY0rOaFTCYBvifa20hD6Abn4xJ0h6TbcyU0nN3W\ni6Scs6Yap7IHmOBXrJmK8pPtc2wNxS5WARXgPoqs3MzaEXdMI2nZ+qMy01r4uKF9\nYh0GR4F6IuLp6dOsKPrEl0dVusBgWyKRj61+yWMI/MAuOUNhVCJFi4E7+FhW2Bop\nZak4Jqp7O0/4annUc4Sj2qrOR3OJokoDe/8Dy17udF+dwygr+H3/04ibrDnDrZc2\n7Z8GfY6swDz6CrOad9N8wh/1WDYjsmjZSCwtfMixOuUxtFMoaIK5iyyOt6QDAlDx\naJNmsA79AgMBAAECggEADtdk8ft3uFnS8CNAFcRwbXvaPUbJ/bKQ/WRyEe0T+XLV\nzTKoJf1Q/y3oXYFXowlV55LcBUFRKC87/C9L90R4y+DLgZqHNZoh1sWQSi+sfidT\n6u2bpsNBdvrs79kdqVF0moBuER/a6ydBuZqFILoQfOI7Gh/Bxne1ftA20iF7xMoF\n9hxuoMwM6Imy8ysd2979S9RnZ0FUibNnkH0KGmoHCeAXsguYxt3bgW1tDLD9cqgq\naccJgZGHPxVhcw/dHD/F9m9XV+MVmSl+h9BEeNtO5wQ+o06VjrWlgafM2dHJ0aci\ndQYxbeoicjZYQy3I0sXSgRrZvsTZrPLwZu3B0K7NwQKBgQDrPXpBKRhWaDi8y74Z\nZ1S7KOGSuoHqIyfEH0QV1y7hxVCMiFbnZdmkMcfA6bwElxQgD2x1e6/Uoc9HoyiL\nyE+cQ13vRkX7+kyup6AmNFXqzuS7+J5teKoBzukMpo3kVgu7Ml/tIy3wLpEdz5gI\ndZ3uhc7RJ27mwHDIEDyzrp6GEQKBgQC2mAecxNvEC72LUUFmhYIcfP3e+eabpFhx\nxvrorWeI8l4KwFkLdMy7x5J5GdhPpzCg1jAo1kVHxCkREf7N2Ck0IYerpnWtGuUu\n+4yyk+XZ57LkKpIrfXkFVXf82MO2HftJF0SFsVfh/Vne/HNJ1bGo9fu7//c+N+YK\n+6krWNSeLQKBgQDEGAhcXwxpoxGA1/pMpOVt6uM29AAuFEYm58VSy4DKNTgzHcgL\ntsxZYiHYvz67ONFO9Gx99rAY+RWX6vt2onEymrmoJxVZuknH4fXPQxtH1FW6F8LB\nEK/vN/LvV7u6VrwKvTBXtlap+7d+eTmL+7e+SI6hrVR2SH77VwWy5uJAcQKBgQCR\neik+fx21YcE/mZqoyyAyAGfoWmSght0ssWNBNL8zvh6tJDkNxp5D0iriL3RHaiZ1\nTpGKR8Vk+2XYwuSnLl0NutU0Lmi9ZZtJxoN/2BQee9rsrPpOiiZ82G7D1hSAKf0G\na/JdLkGdvVP4NFzKa+ajfnB1hed/+9tdzsomzhyAdQKBgA9QXOvbO3L7DQQYRlHa\n+FBMRv6NYFBowfH4setrx5w4JIz/6vAusd3cTZQ/BbOicm6KnVSf1ErYjmg8Zbn5\nOWBS1mC4juYVsFRce4IxAvyGZfP+46qMsF5yB5v1M99lG84txqNmzi1/Qkw73qQH\nN7+jM6QkiFjp56TxRqE9l6mC\n-----END PRIVATE KEY-----\n",
+  "client_email": "skify-service@skify-service.iam.gserviceaccount.com",
+  "client_id": "110749182277727554718",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/skify-service%40skify-service.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
