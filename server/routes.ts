@@ -107,21 +107,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Start AI analysis
-  app.post('/api/skify/analyze', authenticateUser, async (req: any, res) => {
+  app.post('/api/skify/analyze', async (req: any, res) => {
     try {
       const { videoId, videoUrl, options } = req.body;
+      const userId = req.headers['x-user-id'] || 'demo-user-001';
       
-      if (!videoId) {
-        return res.status(400).json({ error: 'Video ID is required' });
+      if (!videoId && !videoUrl) {
+        return res.status(400).json({ error: 'Video ID or URL is required' });
       }
 
-      const video = await storage.getVideo(videoId);
-      if (!video) {
-        return res.status(404).json({ error: 'Video not found' });
+      let video;
+      if (videoId) {
+        video = await storage.getVideo(videoId);
+        if (!video) {
+          return res.status(404).json({ error: 'Video not found' });
+        }
       }
 
       // Create analysis job
       const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      const jobData = {
+        id: jobId,
+        videoId: videoId || `url_${Date.now()}`,
+        userId: userId,
+        jobType: 'analysis' as const,
+        status: 'processing' as const,
+        progress: 0,
+        metadata: { 
+          videoUrl: videoUrl || video?.originalUrl,
+          options 
+        }
+      };
+
+      await storage.createProcessingJob(jobData);
       
       res.json({
         success: true,
@@ -137,9 +156,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user videos
-  app.get('/api/skify/videos', authenticateUser, async (req: any, res) => {
+  app.get('/api/skify/videos', async (req: any, res) => {
     try {
-      const videos = await storage.getUserVideos(req.userId);
+      const userId = req.query.userId || req.headers['x-user-id'] || 'demo-user-001';
+      const videos = await storage.getUserVideos(userId);
       
       res.json({
         success: true,
@@ -148,6 +168,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error: any) {
       console.error('Videos fetch error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get job status
+  app.get('/api/skify/jobs/:jobId', async (req, res) => {
+    try {
+      const job = await storage.getProcessingJob(req.params.jobId);
+      
+      if (!job) {
+        return res.status(404).json({ error: 'Job not found' });
+      }
+
+      res.json({
+        success: true,
+        job: {
+          id: job.id,
+          status: job.status,
+          progress: job.progress,
+          result: job.metadata,
+          error: job.errorMessage
+        }
+      });
+
+    } catch (error: any) {
+      console.error('Job status error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get templates
+  app.get('/api/skify/templates', async (req, res) => {
+    try {
+      const templates = await storage.getPublicTemplates();
+      
+      res.json({
+        success: true,
+        templates
+      });
+
+    } catch (error: any) {
+      console.error('Templates fetch error:', error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -164,6 +226,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         googleVision: !!process.env.GOOGLE_APPLICATION_CREDENTIALS
       }
     });
+  });
+
+  // Upload video with file
+  app.post('/api/skify/upload', upload.single('video'), async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No video file provided' });
+      }
+
+      const userId = req.headers['x-user-id'] || 'demo-user-001';
+      const videoId = `upload_${Date.now()}`;
+      
+      const videoData = {
+        id: videoId,
+        userId: userId,
+        title: req.body.title || req.file.originalname,
+        originalUrl: `/uploads/${req.file.filename}`,
+        status: 'uploaded'
+      };
+
+      const video = await storage.createVideo(videoData);
+      
+      res.json({
+        success: true,
+        video,
+        message: 'Video uploaded successfully'
+      });
+
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      res.status(500).json({ error: error.message });
+    }
   });
 
   // ===== COMPREHENSIVE AI VIDEO PIPELINE =====

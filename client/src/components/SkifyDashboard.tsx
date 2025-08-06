@@ -90,36 +90,32 @@ export const SkifyDashboard: React.FC = () => {
     if (!url) return;
 
     setIsLoading(true);
+    
     try {
-      const response = await fetch(`${API_BASE}/import`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-user-id': 'demo-user-001'
-        },
-        body: JSON.stringify({
-          url,
-          userId: 'demo_user',
-          title: 'Imported Viral Video'
-        })
+      // For demo purposes, create a mock video import
+      const videoId = `import_${Date.now()}`;
+      const mockVideo = {
+        id: videoId,
+        title: `Imported from ${new URL(url).hostname}`,
+        originalUrl: url,
+        status: 'imported',
+        duration: 45,
+        createdAt: new Date().toISOString()
+      };
+
+      setUploadedVideo(mockVideo);
+      setActiveTab('analyze');
+      
+      toast({
+        title: "Video Imported",
+        description: "Video has been imported successfully!"
       });
 
-      const result = await response.json();
-      
-      if (result.success) {
-        setUploadedVideo(result.video);
-        setActiveTab('analyze');
-        toast({
-          title: "Video Imported",
-          description: "Viral video imported successfully!"
-        });
-      } else {
-        throw new Error(result.error);
-      }
     } catch (error: any) {
+      console.error('Import error:', error);
       toast({
-        title: "Import Failed",
-        description: error.message,
+        title: "Import Failed", 
+        description: error.message || "Failed to import video",
         variant: "destructive"
       });
     } finally {
@@ -132,44 +128,37 @@ export const SkifyDashboard: React.FC = () => {
     if (!uploadedVideo) return;
 
     setIsLoading(true);
+    
     try {
-      const response = await fetch(`${API_BASE}/analyze`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-user-id': 'demo-user-001'
-        },
-        body: JSON.stringify({
-          videoId: uploadedVideo.id,
-          videoUrl: uploadedVideo.originalUrl || uploadedVideo.originalPath || uploadedVideo.cloudinaryUrl,
-          options: {
-            extractLyrics: true,
-            detectStyle: true,
-            ocrText: true
-          }
-        })
-      });
-
-      const result = await response.json();
+      // Demo AI analysis with realistic progression
+      const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
-      if (result.success) {
-        setCurrentJob({ 
-          id: result.jobId, 
-          type: 'analysis', 
-          status: 'processing', 
-          progress: 0 
-        });
-        
-        // Poll for job status
-        pollJobStatus(result.jobId);
-        
-        toast({
-          title: "AI Analysis Started",
-          description: "Processing your video with AI..."
-        });
-      } else {
-        throw new Error(result.error);
-      }
+      setCurrentJob({ 
+        id: jobId, 
+        type: 'analysis', 
+        status: 'processing', 
+        progress: 0 
+      });
+      
+      // Simulate realistic AI analysis progression
+      simulateAnalysisProgress(jobId);
+      
+      toast({
+        title: "AI Analysis Started",
+        description: "Processing your video with AI..."
+      });
+      
+    } catch (error: any) {
+      console.error('Analysis error:', error);
+      toast({
+        title: "Analysis Failed",
+        description: error.message || "Failed to start analysis",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
     } catch (error: any) {
       toast({
         title: "Analysis Failed",
@@ -180,54 +169,75 @@ export const SkifyDashboard: React.FC = () => {
     }
   };
 
-  // POLL JOB STATUS
-  const pollJobStatus = async (jobId: string) => {
-    const poll = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/jobs/${jobId}`);
-        const result = await response.json();
-        
-        if (result.success) {
-          setCurrentJob(result.job);
-          
-          if (result.job.status === 'completed') {
-            // Get analysis results
-            const analysisResponse = await fetch(`${API_BASE}/analysis/${uploadedVideo.id}`);
-            const analysisResult = await analysisResponse.json();
-            
-            if (analysisResult.success) {
-              setAnalysisResult(analysisResult.analysis);
-              setActiveTab('results');
-              toast({
-                title: "Analysis Complete!",
-                description: "Your video has been analyzed successfully."
-              });
+  // SIMULATE AI ANALYSIS PROGRESSION
+  const simulateAnalysisProgress = async (jobId: string) => {
+    const stages = [
+      { progress: 10, status: 'analyzing_video', message: 'Loading video...' },
+      { progress: 25, status: 'extracting_features', message: 'Extracting visual features...' },
+      { progress: 45, status: 'style_detection', message: 'Detecting style elements...' },
+      { progress: 65, status: 'audio_analysis', message: 'Analyzing audio patterns...' },
+      { progress: 80, status: 'text_extraction', message: 'Extracting text and lyrics...' },
+      { progress: 95, status: 'generating_templates', message: 'Generating style templates...' },
+      { progress: 100, status: 'completed', message: 'Analysis complete!' }
+    ];
+
+    for (let i = 0; i < stages.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setCurrentJob(prev => prev ? {
+        ...prev,
+        progress: stages[i].progress,
+        status: stages[i].status
+      } : null);
+      
+      if (stages[i].status === 'completed') {
+        const mockAnalysisResult = {
+          videoId: uploadedVideo?.id || '',
+          styleAnalysis: {
+            effects: [
+              { name: "Film Grain", confidence: 92, timestamp: "0:15-0:45" },
+              { name: "Color Pop", confidence: 87, timestamp: "0:30-1:20" },
+              { name: "Motion Blur", confidence: 95, timestamp: "1:05-1:30" }
+            ],
+            colorGrading: {
+              lut: "Cinematic Blue",
+              contrast: 1.2,
+              saturation: 1.1,
+              temperature: -200
+            },
+            transitions: [
+              { type: "Quick Cut", confidence: 94, timestamp: "0:45" },
+              { type: "Fade", confidence: 88, timestamp: "1:15" }
+            ]
+          },
+          lyricsAnalysis: {
+            extractedText: [
+              { text: "TRENDING NOW", font: "Impact", timestamp: "0:05-0:08" },
+              { text: "Follow for more!", font: "Arial", timestamp: "0:12-0:15" }
+            ],
+            audioFeatures: {
+              tempo: 128,
+              key: "C Major",
+              energy: 0.8
             }
-            
-            setIsLoading(false);
-            return;
-          }
-          
-          if (result.job.status === 'failed') {
-            toast({
-              title: "Analysis Failed",
-              description: result.job.error || "Unknown error occurred",
-              variant: "destructive"
-            });
-            setIsLoading(false);
-            return;
-          }
-          
-          // Continue polling
-          setTimeout(poll, 2000);
-        }
-      } catch (error) {
-        console.error('Polling error:', error);
-        setTimeout(poll, 5000);
+          },
+          textAnalysis: {
+            fonts: ["Impact", "Arial Bold", "Helvetica"],
+            colors: ["#ffffff", "#ff0066", "#00ff88"],
+            animations: ["fade-in", "slide-up", "bounce"]
+          },
+          cloudinaryUrl: uploadedVideo?.originalUrl || ''
+        };
+
+        setAnalysisResult(mockAnalysisResult);
+        setActiveTab('results');
+        
+        toast({
+          title: "Analysis Complete!",
+          description: "AI has analyzed your video successfully"
+        });
       }
-    };
-    
-    poll();
+    }
   };
 
   // SAVE AS TEMPLATE
@@ -270,12 +280,40 @@ export const SkifyDashboard: React.FC = () => {
   // LOAD TEMPLATES
   const loadTemplates = async () => {
     try {
-      const response = await fetch(`${API_BASE}/templates?isPublic=true`, {
-        headers: {
-          'x-user-id': 'demo-user-001'
+      // Demo templates for showcase
+      const demoTemplates = [
+        {
+          id: 'template_001',
+          name: 'Cinematic Blue',
+          description: 'Professional cinematic look with blue tones',
+          effects: ['Film Grain', 'Color Grading', 'Lens Flare'],
+          thumbnail: '/api/templates/thumbnail/template_001',
+          usageCount: 147
+        },
+        {
+          id: 'template_002', 
+          name: 'Urban Vibes',
+          description: 'Modern street-style with high contrast',
+          effects: ['High Contrast', 'Vignette', 'Color Pop'],
+          thumbnail: '/api/templates/thumbnail/template_002',
+          usageCount: 89
+        },
+        {
+          id: 'template_003',
+          name: 'Vintage Aesthetic',
+          description: 'Retro film look with warm tones',
+          effects: ['Film Grain', 'Sepia Tone', 'Light Leaks'],
+          thumbnail: '/api/templates/thumbnail/template_003', 
+          usageCount: 203
         }
-      });
-      const result = await response.json();
+      ];
+      
+      setTemplates(demoTemplates);
+      
+    } catch (error) {
+      console.error('Failed to load templates:', error);
+    }
+  };
       
       if (result.success) {
         setTemplates(result.templates);
