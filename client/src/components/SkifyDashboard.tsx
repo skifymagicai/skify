@@ -56,6 +56,9 @@ export const SkifyDashboard: React.FC = () => {
     try {
       const response = await fetch(`${API_BASE}/upload`, {
         method: 'POST',
+        headers: {
+          'x-user-id': 'demo-user-001'
+        },
         body: formData
       });
 
@@ -90,7 +93,10 @@ export const SkifyDashboard: React.FC = () => {
     try {
       const response = await fetch(`${API_BASE}/import`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': 'demo-user-001'
+        },
         body: JSON.stringify({
           url,
           userId: 'demo_user',
@@ -129,7 +135,10 @@ export const SkifyDashboard: React.FC = () => {
     try {
       const response = await fetch(`${API_BASE}/analyze`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': 'demo-user-001'
+        },
         body: JSON.stringify({
           videoId: uploadedVideo.id,
           options: {
@@ -227,7 +236,10 @@ export const SkifyDashboard: React.FC = () => {
     try {
       const response = await fetch(`${API_BASE}/templates`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': 'demo-user-001'
+        },
         body: JSON.stringify({
           videoId: analysisResult.videoId,
           name: `Template ${Date.now()}`,
@@ -257,7 +269,11 @@ export const SkifyDashboard: React.FC = () => {
   // LOAD TEMPLATES
   const loadTemplates = async () => {
     try {
-      const response = await fetch(`${API_BASE}/templates?isPublic=true`);
+      const response = await fetch(`${API_BASE}/templates?isPublic=true`, {
+        headers: {
+          'x-user-id': 'demo-user-001'
+        }
+      });
       const result = await response.json();
       
       if (result.success) {
