@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Link2, Wand2, Download, Play, Eye, Sparkles } from 'lucide-react';
+import { Upload, Link2, Wand2, Download, Play, Eye, Sparkles, Star, Save } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -9,6 +9,7 @@ import { Progress } from './ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import VideoPlayer from './VideoPlayer';
+import { debugLogger } from '../utils/debugLogger';
 
 interface AnalysisResult {
   videoId: string;
@@ -29,6 +30,12 @@ interface Job {
 
 export const SkifyDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('upload');
+  
+  // Debug logging for development visibility
+  React.useEffect(() => {
+    debugLogger.success('DASHBOARD', 'Component initialized successfully');
+    debugLogger.log('STATE', `Active tab: ${activeTab}`);
+  }, [activeTab]);
   const [uploadedVideo, setUploadedVideo] = useState<any>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [currentJob, setCurrentJob] = useState<Job | null>(null);
@@ -47,6 +54,7 @@ export const SkifyDashboard: React.FC = () => {
   const handleFileUpload = async (file: File) => {
     if (!file) return;
 
+    debugLogger.log('UPLOAD', `Starting file upload: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
     setIsLoading(true);
     const formData = new FormData();
     formData.append('video', file);
