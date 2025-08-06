@@ -17,6 +17,9 @@ Skify is a next-generation AI-powered video transformation SaaS platform. It ana
 - **Owner**: M. Suresh Kumar (kumarsuresh84678@gmail.com, 7373643481, Ariyalur, Tamil Nadu, India)
 - **Contact**: support@skifymagicai.gmail.com
 - **Focus**: Production-grade SaaS platform with real AI integration and monetization
+- **Collaboration**: Full development control granted to AI assistant
+- **Tracking Preference**: Visible activity logs and progress summaries required
+- **Communication**: Real-time updates on development progress and system status
 
 ## System Architecture
 Skify is a full-stack application designed for robust AI video transformation.
