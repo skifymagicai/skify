@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import VideoPlayer from './VideoPlayer';
 import { debugLogger } from '../utils/debugLogger';
+import AdvancedAnalysis from './AdvancedAnalysis';
+import TemplatePreview from './TemplatePreview';
 
 interface AnalysisResult {
   videoId: string;
@@ -512,31 +514,24 @@ export const SkifyDashboard: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {templates.map((template) => (
-                    <div key={template.id} className="p-4 border rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">{template.name}</h3>
-                        <div className="flex items-center gap-2">
-                          <Star className="h-4 w-4 text-yellow-500" />
-                          <span className="text-sm">{template.usageCount}</span>
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        {template.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {template.effects.map((effect: string, index: number) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {effect}
-                          </Badge>
-                        ))}
-                      </div>
-                      <Button variant="outline" size="sm">
-                        <Play className="h-3 w-3 mr-1" />
-                        Preview
-                      </Button>
-                    </div>
+                    <TemplatePreview
+                      key={template.id}
+                      template={{
+                        ...template,
+                        rating: 4.7,
+                        category: template.id.includes('001') ? 'Cinematic' : 
+                                template.id.includes('002') ? 'Urban' : 'Vintage'
+                      }}
+                      onApply={(templateId) => {
+                        debugLogger.success('TEMPLATE', `Applied template: ${templateId}`);
+                        toast({
+                          title: "Template Applied",
+                          description: "Your video style has been updated!"
+                        });
+                      }}
+                    />
                   ))}
                 </div>
               </CardContent>
