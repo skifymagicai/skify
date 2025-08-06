@@ -54,22 +54,26 @@ export const SkifyDashboard: React.FC = () => {
     formData.append('title', file.name);
 
     try {
-      const mockVideo = {
-        id: `upload_${Date.now()}`,
-        title: file.name,
-        originalPath: URL.createObjectURL(file),
-        status: 'uploaded',
-        duration: 0,
-        createdAt: new Date().toISOString()
-      };
-
-      setUploadedVideo(mockVideo);
-      setActiveTab('analyze');
-      toast({
-        title: "Video Uploaded",
-        description: "Your video has been uploaded successfully!"
+      const response = await fetch(`${API_BASE}/upload`, {
+        method: 'POST',
+        headers: {
+          'x-user-id': 'demo-user-001'
+        },
+        body: formData
       });
 
+      const result = await response.json();
+      
+      if (result.success) {
+        setUploadedVideo(result.video);
+        setActiveTab('analyze');
+        toast({
+          title: "Video Uploaded",
+          description: "Your video has been uploaded successfully!"
+        });
+      } else {
+        throw new Error(result.error);
+      }
     } catch (error: any) {
       toast({
         title: "Upload Failed",
@@ -88,6 +92,7 @@ export const SkifyDashboard: React.FC = () => {
     setIsLoading(true);
     
     try {
+      // For demo purposes, create a mock video import
       const videoId = `import_${Date.now()}`;
       const mockVideo = {
         id: videoId,
@@ -125,6 +130,7 @@ export const SkifyDashboard: React.FC = () => {
     setIsLoading(true);
     
     try {
+      // Demo AI analysis with realistic progression
       const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
       setCurrentJob({ 
@@ -134,6 +140,7 @@ export const SkifyDashboard: React.FC = () => {
         progress: 0 
       });
       
+      // Simulate realistic AI analysis progression
       simulateAnalysisProgress(jobId);
       
       toast({
@@ -229,11 +236,29 @@ export const SkifyDashboard: React.FC = () => {
     if (!analysisResult) return;
 
     try {
-      toast({
-        title: "Template Saved",
-        description: "Your viral style template is ready to use!"
+      const response = await fetch(`${API_BASE}/templates`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': 'demo-user-001'
+        },
+        body: JSON.stringify({
+          videoId: analysisResult.videoId,
+          name: `Template ${Date.now()}`,
+          description: 'Auto-generated viral style template',
+          isPublic: true
+        })
       });
-      loadTemplates();
+
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({
+          title: "Template Saved",
+          description: "Your viral style template is ready to use!"
+        });
+        loadTemplates();
+      }
     } catch (error: any) {
       toast({
         title: "Save Failed",
@@ -246,6 +271,7 @@ export const SkifyDashboard: React.FC = () => {
   // LOAD TEMPLATES
   const loadTemplates = async () => {
     try {
+      // Demo templates for showcase
       const demoTemplates = [
         {
           id: 'template_001',
@@ -310,70 +336,70 @@ export const SkifyDashboard: React.FC = () => {
           <TabsContent value="upload" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* File Upload */}
-              <Card>
+              <Card className="bg-white/10 backdrop-blur-lg border-white/20">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="text-white flex items-center gap-2">
                     <Upload className="h-5 w-5" />
                     Upload Video
                   </CardTitle>
-                  <CardDescription>
-                    Upload your video file to start AI analysis
+                  <CardDescription className="text-blue-200">
+                    Upload your video file to transform
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div
-                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-sm text-muted-foreground">
-                      Click to upload or drag and drop
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      MP4, MOV, AVI up to 100MB
-                    </p>
-                  </div>
-                  <input
+                  <Input
                     ref={fileInputRef}
                     type="file"
                     accept="video/*"
-                    className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) handleFileUpload(file);
                     }}
+                    disabled={isLoading}
+                    className="bg-white/20 border-white/30 text-white"
                   />
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Choose Video File
+                  </Button>
                 </CardContent>
               </Card>
 
               {/* URL Import */}
-              <Card>
+              <Card className="bg-white/10 backdrop-blur-lg border-white/20">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="text-white flex items-center gap-2">
                     <Link2 className="h-5 w-5" />
                     Import from URL
                   </CardTitle>
-                  <CardDescription>
-                    Import videos from Instagram, TikTok, YouTube
+                  <CardDescription className="text-blue-200">
+                    Import viral videos from TikTok, Instagram, YouTube
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="video-url">Video URL</Label>
-                    <Input
-                      ref={urlInputRef}
-                      id="video-url"
-                      placeholder="https://www.instagram.com/reel/..."
-                      className="w-full"
-                    />
-                  </div>
-                  <Button 
-                    onClick={() => {
-                      const url = urlInputRef.current?.value;
-                      if (url) handleUrlImport(url);
-                    }}
-                    className="w-full"
+                  <Input
+                    ref={urlInputRef}
+                    placeholder="https://www.tiktok.com/@user/video/..."
                     disabled={isLoading}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/50"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && urlInputRef.current?.value) {
+                        handleUrlImport(urlInputRef.current.value);
+                      }
+                    }}
+                  />
+                  <Button
+                    onClick={() => {
+                      if (urlInputRef.current?.value) {
+                        handleUrlImport(urlInputRef.current.value);
+                      }
+                    }}
+                    disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
                   >
                     <Link2 className="h-4 w-4 mr-2" />
                     Import Video
@@ -385,41 +411,41 @@ export const SkifyDashboard: React.FC = () => {
 
           {/* ANALYZE TAB */}
           <TabsContent value="analyze" className="space-y-6">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-lg border-white/20">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="text-white flex items-center gap-2">
                   <Wand2 className="h-5 w-5" />
                   AI Analysis
                 </CardTitle>
-                <CardDescription>
-                  Analyze your video to extract viral elements and styles
+                <CardDescription className="text-blue-200">
+                  Extract viral style components with AI
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4">
                 {uploadedVideo && (
-                  <div className="bg-muted/50 p-4 rounded-lg">
-                    <h3 className="font-medium mb-2">Ready to Analyze:</h3>
-                    <p className="text-sm text-muted-foreground">{uploadedVideo.title}</p>
+                  <div className="p-4 bg-blue-500/20 rounded-lg">
+                    <h4 className="text-white font-medium">{uploadedVideo.title}</h4>
+                    <Badge variant="secondary" className="mt-1">
+                      {uploadedVideo.status}
+                    </Badge>
                   </div>
                 )}
 
                 {currentJob && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Analysis Progress</span>
-                      <span className="text-sm text-muted-foreground">{currentJob.progress}%</span>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-white">
+                      <span>Processing...</span>
+                      <span>{currentJob.progress}%</span>
                     </div>
                     <Progress value={currentJob.progress} className="w-full" />
-                    <p className="text-sm text-muted-foreground capitalize">
-                      {currentJob.status.replace('_', ' ')}
-                    </p>
+                    <p className="text-sm text-blue-200">{currentJob.status}</p>
                   </div>
                 )}
 
-                <Button 
+                <Button
                   onClick={startAnalysis}
-                  className="w-full"
                   disabled={isLoading || !uploadedVideo}
+                  className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700"
                 >
                   <Wand2 className="h-4 w-4 mr-2" />
                   Start AI Analysis
@@ -431,45 +457,72 @@ export const SkifyDashboard: React.FC = () => {
           {/* RESULTS TAB */}
           <TabsContent value="results" className="space-y-6">
             {analysisResult && (
-              <div className="grid gap-6">
-                <Card>
+              <div className="grid lg:grid-cols-2 gap-6">
+                {/* Video Player with Lyrics */}
+                <Card className="bg-white/10 backdrop-blur-lg border-white/20">
                   <CardHeader>
-                    <CardTitle>Analysis Results</CardTitle>
-                    <CardDescription>
-                      AI has detected the following viral elements
-                    </CardDescription>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Play className="h-5 w-5" />
+                      Video with AI Lyrics
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Style Analysis */}
+                  <CardContent>
+                    <VideoPlayer
+                      videoUrl={analysisResult.cloudinaryUrl}
+                      karaokeSegments={analysisResult.lyricsAnalysis?.karaokeSegments || []}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Analysis Results */}
+                <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Eye className="h-5 w-5" />
+                      Style Analysis
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Style Effects */}
                     <div>
-                      <h3 className="font-medium mb-3">Visual Effects Detected</h3>
-                      <div className="grid gap-2">
-                        {analysisResult.styleAnalysis.effects.map((effect: any, index: number) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                            <span className="font-medium">{effect.name}</span>
-                            <Badge variant="secondary">{effect.confidence}% confidence</Badge>
+                      <h4 className="text-white font-medium mb-2">Visual Effects</h4>
+                      <div className="space-y-2">
+                        {analysisResult.styleAnalysis?.effects?.map((effect: any, index: number) => (
+                          <div key={index} className="flex justify-between text-sm">
+                            <span className="text-blue-200">{effect.name}</span>
+                            <Badge variant="outline" className="text-green-400 border-green-400">
+                              {Math.round(effect.confidence * 100)}%
+                            </Badge>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    {/* Text Analysis */}
+                    {/* Color Grading */}
                     <div>
-                      <h3 className="font-medium mb-3">Text Elements</h3>
-                      <div className="grid gap-2">
-                        {analysisResult.lyricsAnalysis.extractedText.map((text: any, index: number) => (
-                          <div key={index} className="p-3 bg-muted/50 rounded-lg">
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium">"{text.text}"</span>
-                              <Badge variant="outline">{text.font}</Badge>
-                            </div>
-                          </div>
-                        ))}
+                      <h4 className="text-white font-medium mb-2">Color Grading</h4>
+                      <div className="text-sm text-blue-200 space-y-1">
+                        <div>Saturation: {analysisResult.styleAnalysis?.colorGrading?.saturation}x</div>
+                        <div>Contrast: {analysisResult.styleAnalysis?.colorGrading?.contrast}x</div>
+                        <div>Style: {analysisResult.styleAnalysis?.colorGrading?.lut}</div>
                       </div>
                     </div>
 
-                    <Button onClick={saveAsTemplate} className="w-full">
-                      <Save className="h-4 w-4 mr-2" />
+                    {/* Lyrics Info */}
+                    <div>
+                      <h4 className="text-white font-medium mb-2">Lyrics Analysis</h4>
+                      <div className="text-sm text-blue-200 space-y-1">
+                        <div>Language: {analysisResult.lyricsAnalysis?.language}</div>
+                        <div>Has Lyrics: {analysisResult.lyricsAnalysis?.hasLyrics ? 'Yes' : 'No'}</div>
+                        <div>Segments: {analysisResult.lyricsAnalysis?.karaokeSegments?.length || 0}</div>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={saveAsTemplate}
+                      className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
                       Save as Template
                     </Button>
                   </CardContent>
@@ -480,41 +533,36 @@ export const SkifyDashboard: React.FC = () => {
 
           {/* TEMPLATES TAB */}
           <TabsContent value="templates" className="space-y-6">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-lg border-white/20">
               <CardHeader>
-                <CardTitle>Viral Style Templates</CardTitle>
-                <CardDescription>
-                  Choose from our collection of viral video styles
+                <CardTitle className="text-white">Viral Style Templates</CardTitle>
+                <CardDescription className="text-blue-200">
+                  Ready-to-use viral video styles
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {templates.map((template) => (
-                    <div key={template.id} className="p-4 border rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">{template.name}</h3>
-                        <div className="flex items-center gap-2">
-                          <Star className="h-4 w-4 text-yellow-500" />
-                          <span className="text-sm">{template.usageCount}</span>
-                        </div>
+                    <div key={template.id} className="p-4 bg-white/10 rounded-lg border border-white/20">
+                      <h4 className="text-white font-medium">{template.name}</h4>
+                      <p className="text-sm text-blue-200 mt-1">{template.description}</p>
+                      <div className="mt-2 flex justify-between items-center">
+                        <Badge variant="secondary">
+                          Used {template.usageCount || 0}x
+                        </Badge>
+                        <Button size="sm" variant="outline" className="text-white border-white/30">
+                          Apply Style
+                        </Button>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        {template.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {template.effects.map((effect: string, index: number) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {effect}
-                          </Badge>
-                        ))}
-                      </div>
-                      <Button variant="outline" size="sm">
-                        <Play className="h-3 w-3 mr-1" />
-                        Preview
-                      </Button>
                     </div>
                   ))}
                 </div>
+                
+                {templates.length === 0 && (
+                  <div className="text-center py-8 text-blue-200">
+                    No templates available yet. Analyze a video to create your first template!
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
