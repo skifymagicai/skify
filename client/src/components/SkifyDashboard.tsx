@@ -337,14 +337,14 @@ export const SkifyDashboard: React.FC = () => {
           <TabsContent value="upload" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Production Upload Component */}
-              <Card className="md:col-span-2">
+              <Card className="md:col-span-2 bg-gradient-to-br from-blue-900/20 to-purple-900/20 border-blue-500/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Upload className="h-5 w-5" />
+                    <Upload className="h-5 w-5 text-blue-400" />
                     Production Upload Pipeline
                   </CardTitle>
                   <CardDescription>
-                    Upload videos with AWS S3 integration and real-time AI analysis
+                    Upload videos with AWS S3 integration, real-time AI analysis, and template application
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
