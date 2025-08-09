@@ -1,0 +1,108 @@
+You are the sole full-stack developer inside this Replit project with full write access. Your mission: implement SkifyMagicAI end-to-end and deliver a production-ready app inside this repository, matching the master brief below exactly. Do not ask for confirmation — build until everything is complete, tested, and runnable via `npm install && npm run start`. Report any runtime errors, then fix them and continue until green.
+
+--- PROJECT SUMMARY (non-negotiable) ---
+Skify — AI-Powered Viral Video Remix Platform. Build a PWA that lets users upload a viral reference video, extracts its style (timing, color, transitions, audio beats, text overlays, etc.), lets users upload their own footage, and applies the extracted style to produce a ready-to-post viral video. Pro users can enhance to 4K and skip watermarks. Include Razorpay subscription gating, Saved Templates Library, async render queue with BullMQ + Redis, moderation + licensing hooks, and a full PWA UI.
+
+--- MISSION & END-TO-END USER EXPERIENCE (copy EXACTLY into the app spec) ---
+1. User provides a viral video (via direct upload or link).
+2. AI extracts the entire style from the viral video including:
+   - Aspect ratio, clip timing, and sequence
+   - Speed ramps and slow-motion segments
+   - Color grading and filter profiles
+   - Transitions, visual effects, overlays
+   - Text/lyrics style: font, size, position, animation specifics
+   - Audio analysis: BPM, beat mapping, music cue points
+   - Background changes and masking if present
+3. User uploads their own footage or photos (single or multiple files).
+4. AI applies the extracted viral template fully to the user’s media:
+   - Cuts and splits the user media matching the viral clip timestamps
+   - Matches speed changes, transitions, color grading, visual effects with identical timing
+   - Auto-adds all text overlays, matching font, size, position, and animation with live preview overlay
+   - Applies precise music and beat mapping syncing
+   - Performs background swaps using AI masking if needed
+5. Output:
+   - A ready-to-post, fully restyled viral video, mirroring original style, energy, and structure in just a few clicks.
+   - Pro users can instantly “Enhance to 4K Ultra HD” cinematic export.
+
+--- CORE OBJECTIVES & FEATURES TO IMPLEMENT ---
+1. Secure video/image upload (resumable + signed URLs) with instant UI feedback.
+2. Razorpay tier enforcement: free users have daily/monthly upload limits + watermark; Pro users get 4K and no watermark.
+   - Enforce limits at upload start and block excess free uploads with an Upgrade flow.
+   - Razorpay Checkout + instant server webhook handling required.
+3. AI `/analyze` pipeline for style extraction (integrate via env `AI_ANALYZE_ENDPOINT` if present, else use a robust stub).
+4. Saved Templates Library (“My Templates”) — full CRUD, previews, apply full/partial.
+5. Async rendering with BullMQ + Redis worker: analysis → style extraction → apply → render → CDN upload.
+6. 4K enhancement toggle (Pro only) + watermark rules by tier + storage separation (temp vs permanent).
+7. Server-side moderation & licensing checks with audit logs and admin review queue stubs.
+8. PWA-first mobile-friendly UI with main tabs: Upload, My Templates, My Renders (progress + downloads).
+9. Environment-based config, tests (backend unit + integration, basic E2E), and production start script.
+
+--- TECH STACK & ARCHITECTURE (use these) ---
+- Frontend: React (Next.js allowed) + TailwindCSS + PWA manifest + Framer Motion for interactions
+- Backend: Node.js + Express
+- Queue/Workers: BullMQ + Redis (use in-memory fallback if REDIS_URL missing)
+- DB: PostgreSQL (Supabase) or SQLite fallback for dev
+- Storage: S3-compatible (Cloudflare R2 / AWS S3) via signed URLs
+- Payments: Razorpay (checkout + webhooks)
+- Auth: JWT-based auth (or Supabase Auth if preferred)
+- AI: Integrate external AI via env `AI_ANALYZE_ENDPOINT`/`AI_API_KEY` (use robust stubs if missing)
+- Testing: Jest + Supertest for APIs; Playwright or Cypress for a smoke E2E
+- Deployment: Dockerfile and `npm run start` production script
+
+--- ENV VARS (create placeholders in Replit if missing) ---
+- JWT_SECRET (generate secure placeholder)
+- S3_BUCKET_NAME
+- S3_ACCESS_KEY_ID
+- S3_SECRET_ACCESS_KEY
+- S3_REGION
+- RAZORPAY_KEY_ID
+- RAZORPAY_KEY_SECRET
+- REDIS_URL
+- DATABASE_URL
+- AI_ANALYZE_ENDPOINT
+- AI_API_KEY
+- APP_BASE_URL (e.g. https://your-repl-name.repl.co)
+
+If any secret is missing, implement a safe dev fallback but keep the code ready for production keys.
+
+--- IMPLEMENTATION RULES (strict) ---
+- All major flows must be non-blocking and implement proper job status updates.
+- Use signed S3 URLs for uploads; multipart upload for files > 50MB (or a clear simulated fallback in dev).
+- Razorpay webhooks must update the user tier atomically and notify the client via a /me or websocket push (or polling fallback).
+- Save templates with full metadata JSON (schema versioned). Support partial apply (select which layers to apply).
+- Worker must produce progressive preview artifacts and final CDN URL.
+- Maintain audit logs for all uploads, analyses, template applies, render jobs, and payments.
+- Tests: include at least API tests for upload/sign, upload/complete (analysis), template apply, job status.
+- README: include "how to run locally" and "how to set Replit secrets" instructions.
+- Commits: commit all files into repo; create a branch `skify-core-impl` and push commits there.
+
+--- DELIVERABLES & VERIFICATION STEPS ---
+When finished, ensure:
+1. `npm install && npm run start` boots the server and frontend in dev mode.
+2. Upload tab shows file picker and uses `/api/upload/sign` → PUT to signed URL → `/api/upload/complete` triggers analysis (real or stub).
+3. `/api/template/apply` creates jobId and processing pipeline; `/api/job/:id` returns progress and final `resultUrl`.
+4. Razorpay test checkout allows upgrading to Pro and enables 4K on success.
+5. "My Templates" listing shows saved templates and allows Apply (full/partial).
+6. Tests pass with `npm test`.
+7. README contains run and secret setup instructions.
+
+--- ADMIN & QA ---
+- Add an admin-only route `/admin/moderation` that lists pending moderation items (stub).
+- Add a `/admin/audit` route that returns recent audit events (limited to last 100).
+- Add a protected endpoint `/webhook/razorpay` to ingest Razorpay payments and update user tiers.
+
+--- NON-FUNCTIONAL REQUIREMENTS ---
+- Use environment variables for all secrets; never hardcode secrets.
+- Provide detailed error messages in logs and friendly messages in UI.
+- Prioritize low cost for hosting (avoid huge persisted artifacts in dev).
+- Keep CPU/GPU-heavy AI steps as async and pluggable; use small sample data for smoke tests.
+
+--- START NOW ---
+- Create branch `skify-core-impl`.
+- Implement all code, tests, dockerfile, and README.
+- If an operation fails, log, fix, and continue without halting the whole run.
+- When complete and all tests pass, print:
+  DONE: Skify core implemented — app URL: <preview_url>
+  And provide brief run notes and remaining manual steps (if any).
+
+This is your authoritative instruction set. Begin building now and work continuously until Skify is 100% complete and production-ready per this spec.
