@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import { Dashboard } from './pages/Dashboard.js';
 import { MobileApp } from './pages/MobileApp.js';
+import { EndToEndFlow } from './components/viral/EndToEndFlow.js';
 import { useAuth } from './hooks/useAuth.js';
 import { Loader2 } from 'lucide-react';
 
@@ -44,10 +45,11 @@ export default function App() {
       <BrowserRouter>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <Routes>
-            <Route path="/" element={isMobile ? <MobileApp /> : <Dashboard />} />
+            <Route path="/" element={<EndToEndFlow />} />
             <Route path="/mobile" element={<MobileApp />} />
             <Route path="/desktop" element={<Dashboard />} />
-            <Route path="*" element={isMobile ? <MobileApp /> : <Dashboard />} />
+            <Route path="/viral" element={<EndToEndFlow />} />
+            <Route path="*" element={<EndToEndFlow />} />
           </Routes>
           <Toaster />
         </div>

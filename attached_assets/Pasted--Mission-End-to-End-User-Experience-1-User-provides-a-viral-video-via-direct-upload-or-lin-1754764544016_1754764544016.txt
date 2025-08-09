@@ -1,0 +1,81 @@
+# Mission & End-to-End User Experience
+
+1. **User provides a viral video** (via direct upload or link).
+2. **AI extracts the entire style** from the viral video including:
+   - Aspect ratio, clip timing, and sequence
+   - Speed ramps and slow-motion segments
+   - Color grading and filter profiles
+   - Transitions, visual effects, overlays
+   - Text/lyrics style: font, size, position, animation specifics
+   - Audio analysis: BPM, beat mapping, music cue points
+   - Background changes and masking if present
+
+3. **User uploads their own footage or photos** (single or multiple files).
+4. **AI applies the extracted viral template** fully to the user’s media:
+   - Cuts and splits the user media matching the viral clip timestamps
+   - Matches speed changes, transitions, color grading, visual effects with identical timing
+   - Auto-adds all text overlays, matching font, size, position, and animation with live preview overlay
+   - Applies precise music and beat mapping syncing
+   - Performs background swaps using AI masking if needed
+
+5. **Output:**  
+   - A ready-to-post, fully restyled viral video, mirroring original style, energy, and structure in just a few clicks.
+   - *Pro users* can instantly “Enhance to 4K Ultra HD” cinematic export.
+
+---
+
+# Backend & Frontend Requirements
+
+- **Tech Stack:** Node.js + Express for backend, React (Vite) for frontend, PWA-first mobile UI.
+- **AI Processing:** Integrate Replicate API for AI style extraction + rendering pipeline.
+- **Payments:** Razorpay integration for Free/Pro tier system.
+- **Async Jobs:** Queue architecture for video rendering with job status tracking.
+- **Saved Templates Library:** Allow users to save generated templates and reuse them.
+- **Export Options:** MP4, MOV with audio sync.
+- **Limits:** Free tier = 720p max, Pro = up to 4K Ultra HD.
+
+---
+
+# Critical PWA Serving Fix (so preview works in Replit & external browsers)
+
+1. After building the React frontend into `/public` (or `/dist`), serve it with Express:
+
+```js
+const path = require('path');
+const express = require('express');
+const app = express();
+
+// Serve static frontend from "public"
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Fallback for SPA/PWA routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+````
+
+2. Always use `process.env.PORT` (no hard-coded ports).
+3. Ensure `vite build` output goes to `/public` so the above server can serve it.
+4. Preview will now load inside Replit and via "Open in New Tab".
+
+---
+
+# Deployment Steps for the Agent
+
+1. Scaffold backend (Express) + frontend (React with Vite).
+2. Implement all viral video style extraction & application pipeline.
+3. Integrate async job handling for rendering.
+4. Build Saved Templates Library.
+5. Add Razorpay checkout flow.
+6. Build React PWA with:
+
+   * Mobile-first UI
+   * Offline caching
+   * Installable app manifest
+   * Live preview player
+7. Run `npm run build` in frontend → output to `/public`.
+8. Start backend with above Express config so frontend + backend run together.
+9. Final test: Upload viral video → upload user media → apply template → export → download.
