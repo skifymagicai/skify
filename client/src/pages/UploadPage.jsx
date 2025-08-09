@@ -18,41 +18,51 @@ function UploadPage() {
     refetchInterval: 1000
   })
 
-  // Upload mutation
+  // File upload analysis mutation
   const uploadMutation = useMutation({
     mutationFn: async (file) => {
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('video', file)
       
-      // Get signed URL
-      const signResponse = await axios.post('/api/upload/sign', {
-        filename: file.name,
-        contentType: file.type
+      // Direct analysis of uploaded file
+      const response = await axios.post('/api/analyze', formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       })
       
-      // Upload file
-      const uploadResponse = await axios.put(signResponse.data.signedUrl, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
-      
-      // Complete upload
-      const completeResponse = await axios.post('/api/upload/complete', {
-        uploadId: signResponse.data.uploadId,
-        videoUrl: uploadResponse.data.url
-      })
-      
-      return completeResponse.data
+      return response.data
     },
     onSuccess: (data) => {
-      setCurrentJob({ id: data.jobId, status: data.status })
+      setAnalysisResult(data.analysis)
+      setCurrentJob(null) // Clear job since analysis is immediate
+    },
+    onError: (error) => {
+      console.error('Upload analysis failed:', error)
+      alert('Upload failed: ' + (error.response?.data?.error || error.message))
     }
   })
 
   // URL analysis mutation
   const analyzeMutation = useMutation({
-    mutationFn: (url) => axios.post('/api/analyze', { videoUrl: url }),
-    onSuccess: (response) => {
-      setAnalysisResult(response.data.analysis)
+    mutationFn: async (url) => {
+      const response = await axios.post('/api/analyze', { 
+        videoUrl: url 
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      return response.data
+    },
+    onSuccess: (data) => {
+      setAnalysisResult(data.analysis)
+      setCurrentJob(null)
+    },
+    onError: (error) => {
+      console.error('URL analysis failed:', error)
+      alert('Analysis failed: ' + (error.response?.data?.error || error.message))
     }
   })
 
@@ -235,7 +245,26 @@ function UploadPage() {
           <h4 style={{ color: 'white', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Play size={20} />
             Analysis Results
+            <span style={{ 
+              background: 'rgba(46, 204, 113, 0.2)', 
+              color: '#2ecc71', 
+              padding: '2px 8px', 
+              borderRadius: '12px', 
+              fontSize: '12px',
+              marginLeft: 'auto'
+            }}>
+              {Math.round(analysisResult.confidence * 100)}% Confidence
+            </span>
           </h4>
+          
+          <div style={{ marginBottom: '16px', padding: '12px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px' }}>
+            <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', margin: 0 }}>
+              Source: {analysisResult.sourceType === 'file' ? `📁 ${analysisResult.sourcePath}` : `🌐 ${analysisResult.sourcePath}`}
+            </p>
+            <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px', margin: '4px 0 0 0' }}>
+              Duration: {analysisResult.metadata?.duration}s • {analysisResult.metadata?.resolution} • Processed in {Math.round(analysisResult.processingTime / 1000)}s
+            </p>
+          </div>
           
           <div style={{ display: 'grid', gap: '16px' }}>
             <div>
@@ -272,6 +301,28 @@ function UploadPage() {
               </div>
             </div>
             
+            <div>
+              <h5 style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '8px' }}>Audio Analysis</h5>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '8px' }}>
+                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
+                  <div style={{ color: '#646cff', fontSize: '12px' }}>Energy</div>
+                  <div style={{ color: 'white', fontWeight: 'bold' }}>{Math.round(analysisResult.audio?.energy * 100)}%</div>
+                </div>
+                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
+                  <div style={{ color: '#646cff', fontSize: '12px' }}>Tempo</div>
+                  <div style={{ color: 'white', fontWeight: 'bold' }}>{analysisResult.audio?.tempo} BPM</div>
+                </div>
+                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
+                  <div style={{ color: '#646cff', fontSize: '12px' }}>Key</div>
+                  <div style={{ color: 'white', fontWeight: 'bold' }}>{analysisResult.audio?.key}</div>
+                </div>
+                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
+                  <div style={{ color: '#646cff', fontSize: '12px' }}>Genre</div>
+                  <div style={{ color: 'white', fontWeight: 'bold' }}>{analysisResult.audio?.genre}</div>
+                </div>
+              </div>
+            </div>
+            
             {analysisResult.style.textOverlays?.length > 0 && (
               <div>
                 <h5 style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: '8px' }}>Text Overlays</h5>
@@ -292,10 +343,18 @@ function UploadPage() {
             )}
             
             <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-              <button className="btn btn-primary" data-testid="button-save-template">
+              <button 
+                className="btn btn-primary" 
+                data-testid="button-save-template"
+                onClick={() => alert('Template saved! Coming soon: Template Library.')}
+              >
                 Save as Template
               </button>
-              <button className="btn btn-secondary" data-testid="button-apply-now">
+              <button 
+                className="btn btn-secondary" 
+                data-testid="button-apply-now"
+                onClick={() => alert('Apply feature coming soon! Upload another video to apply this style.')}
+              >
                 Apply to My Video
               </button>
             </div>

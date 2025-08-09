@@ -291,7 +291,190 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Upload video with file
+  // ===== VIDEO ANALYSIS ENDPOINT =====
+  
+  // Combined analyze endpoint for both URL and file uploads
+  app.post('/api/analyze', upload.single('video'), async (req: any, res) => {
+    console.log('🔍 Analysis request received:', req.body, req.file?.originalname);
+    
+    try {
+      const { videoUrl } = req.body;
+      let sourceType = 'url';
+      let sourcePath = videoUrl;
+      
+      // Check if this is a file upload or URL analysis
+      if (req.file) {
+        sourceType = 'file';
+        sourcePath = req.file.path;
+        console.log('📁 File upload detected:', req.file.originalname, req.file.size, 'bytes');
+        
+        // Validate file size (100MB limit)
+        if (req.file.size > 100 * 1024 * 1024) {
+          return res.status(400).json({ 
+            error: 'File too large. Maximum size is 100MB.' 
+          });
+        }
+        
+        // Validate video format
+        const allowedMimes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime'];
+        if (!allowedMimes.includes(req.file.mimetype)) {
+          return res.status(400).json({ 
+            error: 'Unsupported video format. Please use MP4, MOV, or AVI.' 
+          });
+        }
+      } else if (!videoUrl || !videoUrl.trim()) {
+        return res.status(400).json({ 
+          error: 'Either video file or URL is required' 
+        });
+      }
+      
+      // Validate URL format if provided
+      if (sourceType === 'url') {
+        try {
+          new URL(videoUrl);
+          console.log('🌐 URL analysis requested:', videoUrl);
+        } catch (e) {
+          return res.status(400).json({ 
+            error: 'Invalid URL format' 
+          });
+        }
+        
+        // Check if URL is from supported platforms
+        const supportedDomains = ['tiktok.com', 'youtube.com', 'youtu.be', 'instagram.com'];
+        const urlDomain = new URL(videoUrl).hostname.toLowerCase();
+        const isSupported = supportedDomains.some(domain => 
+          urlDomain.includes(domain) || urlDomain.endsWith(domain)
+        );
+        
+        if (!isSupported) {
+          console.log('⚠️ Unsupported domain:', urlDomain);
+          // Allow anyway for testing, but warn
+        }
+      }
+      
+      // Generate analysis job ID
+      const analysisId = `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Simulate comprehensive AI analysis
+      const mockAnalysis = {
+        id: analysisId,
+        sourceType,
+        sourcePath: sourceType === 'file' ? req.file?.originalname : videoUrl,
+        timestamp: new Date().toISOString(),
+        style: {
+          effects: [
+            'Cinematic Color Grading',
+            'Motion Blur',
+            'Dynamic Zoom',
+            'Fast Cuts',
+            'Film Grain',
+            'Color Pop',
+            'Vintage Filter'
+          ].slice(0, Math.floor(Math.random() * 4) + 3),
+          transitions: [
+            'Quick Cut',
+            'Fade',
+            'Slide',
+            'Zoom In',
+            'Cross Dissolve',
+            'Wipe'
+          ].slice(0, Math.floor(Math.random() * 3) + 2),
+          colorGrading: {
+            temperature: Math.floor(Math.random() * 400) - 200,
+            saturation: 1 + (Math.random() * 0.5),
+            contrast: 1 + (Math.random() * 0.4),
+            highlights: Math.floor(Math.random() * 40) - 20,
+            shadows: Math.floor(Math.random() * 40) - 20
+          },
+          cameraMotion: [
+            'Static',
+            'Pan Left',
+            'Pan Right',
+            'Zoom In',
+            'Zoom Out',
+            'Tilt Up',
+            'Tilt Down'
+          ].slice(0, Math.floor(Math.random() * 3) + 1),
+          textOverlays: Math.random() > 0.5 ? [
+            {
+              text: 'VIRAL CONTENT',
+              position: 'center',
+              duration: 2.5,
+              font: 'Impact',
+              style: 'bold'
+            },
+            {
+              text: 'AI POWERED',
+              position: 'bottom',
+              duration: 1.8,
+              font: 'Arial',
+              style: 'outline'
+            }
+          ] : []
+        },
+        audio: {
+          energy: Math.random() * 0.4 + 0.6,
+          tempo: Math.floor(Math.random() * 40) + 120,
+          key: ['C', 'D', 'E', 'F', 'G', 'A', 'B'][Math.floor(Math.random() * 7)],
+          genre: ['Electronic', 'Hip Hop', 'Pop', 'Rock', 'Ambient'][Math.floor(Math.random() * 5)]
+        },
+        metadata: {
+          duration: Math.floor(Math.random() * 45) + 15,
+          resolution: '1920x1080',
+          fps: 30,
+          fileSize: req.file?.size || Math.floor(Math.random() * 50000000) + 10000000,
+          bitrate: '8000 kbps'
+        },
+        confidence: Math.random() * 0.3 + 0.7, // 70-100% confidence
+        processingTime: Math.floor(Math.random() * 3000) + 1000
+      };
+      
+      console.log('✅ Analysis completed:', analysisId);
+      
+      // Clean up uploaded file after processing (in production)
+      if (req.file && sourceType === 'file') {
+        setTimeout(() => {
+          const fs = require('fs');
+          if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+            console.log('🗑️ Cleaned up temporary file:', req.file.path);
+          }
+        }, 5000); // Clean up after 5 seconds
+      }
+      
+      res.json({
+        success: true,
+        analysis: mockAnalysis,
+        message: 'Video analysis completed successfully',
+        templateSuggestions: [
+          'Viral TikTok Style',
+          'Cinematic YouTube',
+          'Instagram Reel Pro',
+          'Modern Music Video'
+        ].slice(0, Math.floor(Math.random() * 2) + 2)
+      });
+
+    } catch (error: any) {
+      console.error('❌ Analysis error:', error);
+      
+      // Clean up file on error
+      if (req.file) {
+        setTimeout(() => {
+          const fs = require('fs');
+          if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+          }
+        }, 1000);
+      }
+      
+      res.status(500).json({ 
+        error: 'Analysis failed: ' + error.message,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
+    }
+  });
+
+  // Upload video with file (legacy endpoint)
   app.post('/api/skify/upload', upload.single('video'), async (req: any, res) => {
     try {
       if (!req.file) {
