@@ -436,50 +436,83 @@ export const SkifyDashboard: React.FC = () => {
 
           {/* RESULTS TAB */}
           <TabsContent value="results" className="space-y-6">
-            {analysisResult && (
+            {analysisResult ? (
               <div className="grid gap-6">
-                <Card>
+                <Card className="bg-gradient-to-br from-emerald-900/20 to-blue-900/20 border-emerald-500/20">
                   <CardHeader>
-                    <CardTitle>Analysis Results</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                      Analysis Results
+                    </CardTitle>
                     <CardDescription>
-                      AI has detected the following viral elements
+                      AI has detected viral elements with confidence scores
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* Style Analysis */}
-                    <div>
-                      <h3 className="font-medium mb-3">Visual Effects Detected</h3>
+                    <div className="p-4 bg-background/50 rounded-lg">
+                      <h3 className="font-medium mb-3 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        Visual Effects Detected
+                      </h3>
                       <div className="grid gap-2">
                         {analysisResult.styleAnalysis.effects.map((effect: any, index: number) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                          <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                             <span className="font-medium">{effect.name}</span>
-                            <Badge variant="secondary">{effect.confidence}% confidence</Badge>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Text Analysis */}
-                    <div>
-                      <h3 className="font-medium mb-3">Text Elements</h3>
-                      <div className="grid gap-2">
-                        {analysisResult.lyricsAnalysis.extractedText.map((text: any, index: number) => (
-                          <div key={index} className="p-3 bg-muted/50 rounded-lg">
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium">"{text.text}"</span>
-                              <Badge variant="outline">{text.font}</Badge>
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                                  style={{ width: `${effect.confidence}%` }}
+                                ></div>
+                              </div>
+                              <Badge variant="secondary" className="text-xs">{effect.confidence}%</Badge>
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <Button onClick={saveAsTemplate} className="w-full">
-                      <Save className="h-4 w-4 mr-2" />
-                      Save as Template
-                    </Button>
+                    {/* Text Analysis */}
+                    <div className="p-4 bg-background/50 rounded-lg">
+                      <h3 className="font-medium mb-3 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        Text Elements
+                      </h3>
+                      <div className="grid gap-2">
+                        {analysisResult.lyricsAnalysis.extractedText.map((text: any, index: number) => (
+                          <div key={index} className="p-3 bg-muted/30 rounded-lg">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-purple-300">"{text.text}"</span>
+                              <Badge variant="outline" className="border-purple-500/30">{text.font}</Badge>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <Button onClick={saveAsTemplate} className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 flex-1">
+                        <Save className="h-4 w-4 mr-2" />
+                        Save as Template
+                      </Button>
+                      <Button variant="outline" className="border-emerald-500/20 hover:bg-emerald-500/10">
+                        Export Results
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Play className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <h3 className="font-semibold mb-2">No Analysis Results</h3>
+                <p className="text-muted-foreground mb-4">Upload and analyze a video to see results here.</p>
+                <Button onClick={() => setActiveTab('upload')} variant="outline">
+                  Go to Upload
+                </Button>
               </div>
             )}
           </TabsContent>
