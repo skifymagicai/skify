@@ -1,3 +1,12 @@
+// Processing stages for job tracking
+const defaultProcessingStages = [
+  { id: 'extraction', name: 'Style Extraction', progress: 0, status: 'pending' as const },
+  { id: 'audio', name: 'Audio Analysis', progress: 0, status: 'pending' as const },
+  { id: 'text', name: 'Text & Overlays', progress: 0, status: 'pending' as const },
+  { id: 'visual', name: 'Visual Effects', progress: 0, status: 'pending' as const },
+  { id: 'application', name: 'Applying Style', progress: 0, status: 'pending' as const }
+];
+
 // Simple memory-based queue service for development
 export class SimpleQueueService {
   private jobs: Map<string, any> = new Map();
@@ -15,13 +24,15 @@ export class SimpleQueueService {
       status: 'queued',
       progress: 0,
       data,
+      stages: [...defaultProcessingStages],
+      currentStage: 'extraction',
       createdAt: new Date()
     });
 
     console.log(`📋 Analysis job queued: ${jobId}`);
     
     // Simulate processing after a delay
-    setTimeout(() => this.processAnalysisJob(jobId), 2000);
+    setTimeout(() => this.processAnalysisJob(jobId), 1000);
     
     return jobId;
   }
@@ -35,13 +46,15 @@ export class SimpleQueueService {
       status: 'queued',
       progress: 0,
       data,
+      stages: [...defaultProcessingStages],
+      currentStage: 'extraction',
       createdAt: new Date()
     });
 
     console.log(`📋 Render job queued: ${jobId}`);
     
     // Simulate processing after a delay
-    setTimeout(() => this.processRenderJob(jobId), 3000);
+    setTimeout(() => this.processRenderJob(jobId), 1000);
     
     return jobId;
   }
@@ -50,24 +63,62 @@ export class SimpleQueueService {
     return this.jobs.get(jobId);
   }
 
+  async cancelJob(jobId: string): Promise<boolean> {
+    const job = this.jobs.get(jobId);
+    if (!job) return false;
+
+    if (job.status === 'processing' || job.status === 'queued') {
+      job.status = 'cancelled';
+      console.log(`❌ Job cancelled: ${jobId}`);
+      return true;
+    }
+    
+    return false;
+  }
+
   private async processAnalysisJob(jobId: string) {
     const job = this.jobs.get(jobId);
     if (!job) return;
 
     console.log(`🔄 Processing analysis job: ${jobId}`);
     
-    // Update job status
-    job.status = 'processing';
-    job.progress = 50;
+    const stages = job.stages;
+    const stageOrder = ['extraction', 'audio', 'text', 'visual', 'application'];
     
-    // Simulate AI analysis completion
-    setTimeout(() => {
-      job.status = 'completed';
-      job.progress = 100;
-      job.completedAt = new Date();
+    for (let i = 0; i < stageOrder.length; i++) {
+      if (job.status === 'cancelled') return;
       
-      console.log(`✅ Analysis job completed: ${jobId}`);
-    }, 5000);
+      const stageId = stageOrder[i];
+      const stageIndex = stages.findIndex((s: any) => s.id === stageId);
+      
+      if (stageIndex >= 0) {
+        // Update job status
+        job.status = 'processing';
+        job.currentStage = stageId;
+        stages[stageIndex].status = 'processing';
+        
+        // Simulate stage progress
+        for (let progress = 0; progress <= 100; progress += 20) {
+          if (job.status === 'cancelled') return;
+          
+          stages[stageIndex].progress = progress;
+          job.progress = ((i * 100 + progress) / (stageOrder.length * 100)) * 100;
+          
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+        
+        stages[stageIndex].status = 'completed';
+      }
+    }
+    
+    // Complete job
+    job.status = 'completed';
+    job.progress = 100;
+    job.completedAt = new Date();
+    job.resultUrl = `/api/placeholder/video-result.mp4`;
+    job.downloadUrl = `/api/download/${jobId}`;
+    
+    console.log(`✅ Analysis job completed: ${jobId}`);
   }
 
   private async processRenderJob(jobId: string) {
@@ -76,23 +127,50 @@ export class SimpleQueueService {
 
     console.log(`🔄 Processing render job: ${jobId}`);
     
-    // Update job status
-    job.status = 'processing';
-    job.progress = 25;
+    const stages = job.stages;
+    const stageOrder = ['extraction', 'audio', 'text', 'visual', 'application'];
     
-    // Simulate render completion
-    setTimeout(() => {
-      job.progress = 75;
-    }, 2000);
-    
-    setTimeout(() => {
-      job.status = 'completed';
-      job.progress = 100;
-      job.completedAt = new Date();
-      job.resultUrl = `/storage/renders/${jobId}.mp4`;
+    for (let i = 0; i < stageOrder.length; i++) {
+      if (job.status === 'cancelled') return;
       
-      console.log(`✅ Render job completed: ${jobId}`);
-    }, 8000);
+      const stageId = stageOrder[i];
+      const stageIndex = stages.findIndex((s: any) => s.id === stageId);
+      
+      if (stageIndex >= 0) {
+        // Update job status
+        job.status = 'processing';
+        job.currentStage = stageId;
+        stages[stageIndex].status = 'processing';
+        
+        // Simulate stage progress
+        for (let progress = 0; progress <= 100; progress += 15) {
+          if (job.status === 'cancelled') return;
+          
+          stages[stageIndex].progress = progress;
+          job.progress = ((i * 100 + progress) / (stageOrder.length * 100)) * 100;
+          
+          await new Promise(resolve => setTimeout(resolve, 400));
+        }
+        
+        stages[stageIndex].status = 'completed';
+      }
+    }
+    
+    // Complete job
+    job.status = 'completed';
+    job.progress = 100;
+    job.completedAt = new Date();
+    job.resultUrl = `/api/placeholder/video-result.mp4`;
+    job.downloadUrl = `/api/download/${jobId}`;
+    job.metadata = {
+      duration: '0:15',
+      aspectRatio: '9:16',
+      fileSize: '2.4 MB',
+      effects: 5,
+      textOverlays: 3
+    };
+    
+    console.log(`✅ Render job completed: ${jobId}`);
   }
 
   async close() {

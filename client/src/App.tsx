@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import { Dashboard } from './pages/Dashboard.js';
+import { MobileApp } from './pages/MobileApp.js';
 import { useAuth } from './hooks/useAuth.js';
 import { Loader2 } from 'lucide-react';
 
@@ -24,12 +25,15 @@ export default function App() {
     checkAuth();
   }, [checkAuth]);
 
+  // Detect if mobile device
+  const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center space-y-4">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" />
-          <p className="text-gray-600 dark:text-gray-400">Loading SkifyMagicAI...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading Skify...</p>
         </div>
       </div>
     );
@@ -40,8 +44,10 @@ export default function App() {
       <BrowserRouter>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="*" element={<Dashboard />} />
+            <Route path="/" element={isMobile ? <MobileApp /> : <Dashboard />} />
+            <Route path="/mobile" element={<MobileApp />} />
+            <Route path="/desktop" element={<Dashboard />} />
+            <Route path="*" element={isMobile ? <MobileApp /> : <Dashboard />} />
           </Routes>
           <Toaster />
         </div>

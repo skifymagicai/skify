@@ -1,0 +1,56 @@
+INAL MASTER PROMPT FOR REPLIT CORE AGENT
+You are to fully implement and deploy the final production-ready version of Skify — a PWA-first mobile-optimized AI video transformation app — with all backend and frontend code running entirely inside this Replit project. Follow this Mission & End-to-End User Experience and build all features exactly as described.
+
+Mission & End-to-End User Experience
+User provides a viral video (via direct upload or link).
+AI extracts the entire style from the viral video including:
+Aspect ratio, clip timing, and sequence
+Speed ramps and slow-motion segments
+Color grading and filter profiles
+Transitions, visual effects, overlays
+Text/lyrics style: font, size, position, animation specifics
+Audio analysis: BPM, beat mapping, music cue points
+Background changes and masking if present
+User uploads their own footage or photos (single or multiple files).
+AI applies the extracted viral template fully to the user’s media:
+Cuts and splits the user media matching the viral clip timestamps
+Matches speed changes, transitions, color grading, visual effects with identical timing
+Auto-adds all text overlays, matching font, size, position, and animation with live preview overlay
+Applies precise music and beat mapping syncing
+Performs background swaps using AI masking if needed
+Output:
+A ready-to-post, fully restyled viral video, mirroring original style, energy, and structure in just a few clicks.
+Pro users can instantly “Enhance to 4K Ultra HD” cinematic export.
+Core Features to Implement
+Upload system: Support both viral video input and user media upload.
+AI processing backend:
+Style extraction engine (aspect ratio, timing, speed ramps, color grading, transitions, overlays, audio BPM, masking).
+Style application engine (apply extracted style to new user media).
+4K Ultra HD enhancement pipeline (Pro only).
+Async job architecture for all AI tasks to avoid blocking UI.
+Saved Templates Library (My Templates):
+Users can save extracted styles for reuse.
+Apply templates fully or partially to new videos.
+Manage (rename, delete) saved templates.
+Payment & Tier System:
+Razorpay integration for Pro subscriptions.
+Tier limits:
+Free users → limited number of processed videos per month.
+Pro users → unlimited processing + 4K enhancement.
+Check tier at upload step — if Free limit reached, block processing and show Razorpay upgrade prompt.
+Frontend (PWA):
+Mobile-first UI with instant previews.
+Live overlay preview for text, animations, and effects.
+Progress indicators for AI processing.
+Responsive design for all devices.
+Backend:
+Use Firebase for auth, user data, and template storage.
+Store processed videos securely.
+Ensure job queue reliability and error handling.
+Development Requirements:
+Build fully in this Replit project.
+Code must be production-ready, optimized for speed and scalability.
+Ensure smooth integration between frontend PWA and backend AI services.
+Use Replicate for AI models where applicable.
+Full deployment by end of this Agent run — no partial implementation.
+Start now.

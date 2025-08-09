@@ -10,6 +10,7 @@ import templateRoutes from './routes/templates.js';
 import jobRoutes from './routes/jobs.js';
 import paymentRoutes from './routes/payments.js';
 import adminRoutes from './routes/admin.js';
+import viralTransformRoutes from './routes/viral-transform.js';
 
 // Initialize queue service
 import { SimpleQueueService } from './services/simple-queue.js';
@@ -51,6 +52,7 @@ app.use('/api/templates', templateRoutes);
 app.use('/api/job', jobRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/viral', viralTransformRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -1,85 +1,137 @@
 {
-  "name": "SkifyMagicAI - AI Video Transformation",
-  "short_name": "SkifyMagicAI",
-  "description": "Transform your videos into viral content using AI-powered style transfer",
+  "name": "Skify - AI Video Transform",
+  "short_name": "Skify",
+  "description": "Transform any video with viral AI styles. Extract and apply viral effects, timing, and animations.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1f2937",
-  "theme_color": "#3b82f6",
+  "theme_color": "#7c3aed",
+  "background_color": "#ffffff",
   "orientation": "portrait-primary",
-  "scope": "/",
-  "lang": "en",
-  "categories": ["productivity", "multimedia"],
+  "categories": ["video", "social", "entertainment", "productivity"],
+  "lang": "en-US",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-96x96.png",
       "sizes": "96x96",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-144x144.png",
       "sizes": "144x144",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
       "src": "/icons/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "/screenshots/desktop-1.png",
-      "sizes": "1280x720",
+      "src": "/screenshots/mobile-upload.png",
+      "sizes": "375x667",
       "type": "image/png",
-      "platform": "wide",
-      "label": "SkifyMagicAI Dashboard"
+      "platform": "narrow"
     },
     {
-      "src": "/screenshots/mobile-1.png",
-      "sizes": "375x812",
+      "src": "/screenshots/mobile-processing.png",
+      "sizes": "375x667",
       "type": "image/png",
-      "platform": "narrow",
-      "label": "Mobile Upload Interface"
+      "platform": "narrow"
+    },
+    {
+      "src": "/screenshots/mobile-preview.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "platform": "narrow"
     }
   ],
   "features": [
-    "cross-platform",
-    "offline",
-    "background-processing"
+    "AI viral video style extraction",
+    "Real-time video transformation",
+    "Template library management",
+    "4K Ultra HD enhancement",
+    "Social media optimization"
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "shortcuts": [
+    {
+      "name": "Transform Video",
+      "short_name": "Transform",
+      "description": "Start transforming a video with viral AI styles",
+      "url": "/?action=transform",
+      "icons": [
+        {
+          "src": "/icons/shortcut-transform.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "My Templates",
+      "short_name": "Templates",
+      "description": "Browse and manage your saved templates",
+      "url": "/?view=templates",
+      "icons": [
+        {
+          "src": "/icons/shortcut-templates.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "camera",
+    "microphone",
+    "storage"
+  ],
+  "file_handlers": [
+    {
+      "action": "/handle-video",
+      "accept": {
+        "video/mp4": [".mp4"],
+        "video/quicktime": [".mov"],
+        "video/x-msvideo": [".avi"],
+        "video/webm": [".webm"]
+      }
+    }
+  ]
 }
