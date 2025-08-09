@@ -6,6 +6,7 @@ function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -19,7 +20,7 @@ function AuthPage() {
 
     const result = isLogin 
       ? await login(email, password)
-      : await signup(email, password)
+      : await signup(email, password, username)
 
     if (!result.success) {
       setError(result.error)
@@ -31,7 +32,7 @@ function AuthPage() {
   const demoLogin = async () => {
     setLoading(true)
     setError('')
-    const result = await login('test@example.com', 'password')
+    const result = await login('demo@skifymagicai.com', 'demo123')
     if (!result.success) {
       setError(result.error)
     }
@@ -66,6 +67,20 @@ function AuthPage() {
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {!isLogin && (
+            <div>
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="input"
+                required
+                data-testid="input-username"
+              />
+            </div>
+          )}
+          
           <div>
             <input
               type="email"

@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     try {
       const response = await axios.post('/api/auth/login', { email, password })
-      const { token: newToken, user: newUser } = response.data
+      const { token: newToken, user: newUser } = response.data.data
       
       setToken(newToken)
       setUser(newUser)
@@ -62,10 +62,10 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const signup = async (email, password) => {
+  const signup = async (email, password, username) => {
     try {
-      const response = await axios.post('/api/auth/signup', { email, password })
-      const { token: newToken, user: newUser } = response.data
+      const response = await axios.post('/api/auth/signup', { email, password, username })
+      const { token: newToken, user: newUser } = response.data.data
       
       setToken(newToken)
       setUser(newUser)
