@@ -1,153 +1,149 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
-import { setupVite } from './vite.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.APP_BASE_URL 
-    : ['http://localhost:5000', 'http://localhost:3000'],
+  origin: true,
   credentials: true
 }));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Trust proxy for correct IP addresses
-app.set('trust proxy', 1);
-
-// Health check endpoint
+// Health check
 app.get('/health', (req, res) => {
   res.json({
     success: true,
-    message: 'SkifyMagicAI API is running',
+    message: 'Skify AI Video Transform API',
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
 });
 
-// Basic API routes for testing
-app.get('/api/test', (req, res) => {
-  res.json({
-    success: true,
-    message: 'SkifyMagicAI API endpoint working',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Mock user profile endpoint
-app.get('/api/user/profile', (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      id: 'demo-user',
-      username: 'demo',
-      email: 'demo@skify.ai',
-      tier: 'free',
-      uploadLimit: 5,
-      uploadsUsed: 0
-    }
-  });
-});
-
-// Mock templates endpoint
+// Mock API endpoints for demonstration
 app.get('/api/templates', (req, res) => {
   res.json({
     success: true,
-    data: [
-      {
-        id: 'template-1',
-        name: 'Viral Dance Style',
-        description: 'Extract dance moves and transitions',
-        thumbnailUrl: '/api/placeholder/300x200',
-        tags: ['dance', 'viral', 'transitions'],
-        likes: 1250,
-        uses: 850
-      },
-      {
-        id: 'template-2', 
-        name: 'Text Overlay Magic',
-        description: 'Animated text with perfect timing',
-        thumbnailUrl: '/api/placeholder/300x200',
-        tags: ['text', 'overlay', 'animation'],
-        likes: 980,
-        uses: 620
+    data: {
+      templates: [
+        {
+          id: '1',
+          name: 'Viral Dance Moves',
+          thumbnailUrl: '/api/placeholder/300x533',
+          duration: '0:15',
+          createdAt: new Date().toISOString(),
+          uses: 12,
+          rating: 4.8,
+          tags: ['dance', 'viral', 'transitions'],
+          metadata: {
+            aspectRatio: '9:16',
+            effects: 8,
+            textOverlays: 2,
+            sourceVideo: 'TikTok viral dance'
+          }
+        },
+        {
+          id: '2',
+          name: 'Text Animation Style',
+          thumbnailUrl: '/api/placeholder/300x533',
+          duration: '0:30',
+          createdAt: new Date().toISOString(),
+          uses: 8,
+          rating: 4.6,
+          tags: ['text', 'animation', 'trendy'],
+          metadata: {
+            aspectRatio: '9:16',
+            effects: 5,
+            textOverlays: 6,
+            sourceVideo: 'Instagram Reel'
+          }
+        }
+      ],
+      pagination: {
+        page: 1,
+        limit: 12,
+        total: 2
       }
-    ]
+    }
   });
 });
 
-// Placeholder image endpoint
-app.get('/api/placeholder/:dimensions', (req, res) => {
-  const { dimensions } = req.params;
-  const svg = `<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100%" height="100%" fill="#1a1a1a"/>
-    <text x="50%" y="50%" text-anchor="middle" fill="white" font-size="16">
-      ${dimensions} Placeholder
-    </text>
-  </svg>`;
+// Mock viral transform endpoint
+app.post('/api/viral/extract-style', (req, res) => {
+  const jobId = `job-${Date.now()}`;
   
-  res.setHeader('Content-Type', 'image/svg+xml');
-  res.send(svg);
-});
-
-// Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('API Error:', err);
-  res.status(500).json({
-    success: false,
-    error: 'Internal server error'
+  res.json({
+    success: true,
+    data: {
+      jobId,
+      status: 'processing',
+      message: 'Viral style extraction started'
+    }
   });
 });
 
-// Handle 404 for API routes
-app.use('/api/*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'API endpoint not found'
+app.get('/api/viral/job/:jobId/status', (req, res) => {
+  const { jobId } = req.params;
+  
+  res.json({
+    success: true,
+    data: {
+      jobId,
+      status: 'completed',
+      progress: 100,
+      result: {
+        videoUrl: '/api/placeholder/video-result.mp4',
+        downloadUrl: `/api/download/${jobId}`,
+        metadata: {
+          duration: '0:15',
+          aspectRatio: '9:16',
+          fileSize: '2.4 MB',
+          effects: 5,
+          textOverlays: 3
+        }
+      }
+    }
   });
+});
+
+// Serve static files and frontend
+app.use(express.static('dist', { index: false }));
+
+// SPA fallback
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ success: false, error: 'API endpoint not found' });
+  }
+  
+  // Serve index.html for all non-API routes
+  res.sendFile('index.html', { root: 'dist' });
 });
 
 // Start server
-async function startServer() {
-  try {
-    // Create HTTP server
-    const server = createServer(app);
-    
-    // Setup Vite for development
-    if (process.env.NODE_ENV !== 'production') {
-      await setupVite(app, server);
-    }
+const server = createServer(app);
 
-    // Start server
-    server.listen(PORT, '0.0.0.0', () => {
-      console.log(`\n🚀 SkifyMagicAI Minimal Server running at:`);
-      console.log(`   Local:   http://localhost:${PORT}`);
-      console.log(`   Network: http://0.0.0.0:${PORT}`);
-      console.log(`   Mode:    ${process.env.NODE_ENV || 'development'}`);
-      console.log(`\n✨ Frontend and API are ready!\n`);
-    });
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Skify server running on http://0.0.0.0:${PORT}`);
+  console.log(`📱 Mobile PWA: http://0.0.0.0:${PORT}/mobile`);
+  console.log(`💻 Desktop: http://0.0.0.0:${PORT}/desktop`);
+  console.log(`🎯 Ready for viral video transformation!`);
+});
 
-    // Graceful shutdown
-    const shutdownHandler = async () => {
-      console.log('Shutting down gracefully...');
-      server.close(() => {
-        console.log('Server closed');
-        process.exit(0);
-      });
-    };
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, shutting down gracefully');
+  server.close(() => {
+    process.exit(0);
+  });
+});
 
-    process.on('SIGTERM', shutdownHandler);
-    process.on('SIGINT', shutdownHandler);
-
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-}
-
-startServer();
+process.on('SIGINT', () => {
+  console.log('Received SIGINT, shutting down gracefully');
+  server.close(() => {
+    process.exit(0);
+  });
+});
