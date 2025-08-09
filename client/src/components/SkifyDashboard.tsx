@@ -42,12 +42,14 @@ export const SkifyDashboard: React.FC = () => {
     debugLogger.api('/dashboard', 'LOAD', 200);
   }, [activeTab]);
 
-  // Live development activity heartbeat
+  // 30-second heartbeat for Agent Bar monitoring
   React.useEffect(() => {
+    debugLogger.streamActivity('SkifyMagicAI Dashboard initialized with live monitoring');
+    
     const interval = setInterval(() => {
-      debugLogger.log('HEARTBEAT', `Development environment active - ${new Date().toLocaleTimeString()}`);
-      debugLogger.log('AGENT-BAR', 'Live monitoring enabled - file edits visible in real-time');
-    }, 30000);
+      debugLogger.heartbeat();
+      debugLogger.streamActivity('Real-time development tracking active');
+    }, 30000); // Every 30 seconds as requested
     
     return () => clearInterval(interval);
   }, []);

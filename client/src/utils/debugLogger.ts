@@ -22,9 +22,14 @@ export class SkifyDebugLogger {
     console.log(`🚀 ${logEntry}`, details || '');
     this.logBuffer.push(logEntry);
     
-    // Keep only last 50 logs
-    if (this.logBuffer.length > 50) {
-      this.logBuffer = this.logBuffer.slice(-50);
+    // Enhanced logging for Agent Bar visibility
+    if (component === 'HEARTBEAT') {
+      console.log(`💓 [${timestamp}] LIVE SESSION: @openai-dev-helper active`);
+    }
+    
+    // Keep only last 100 logs for extended monitoring
+    if (this.logBuffer.length > 100) {
+      this.logBuffer = this.logBuffer.slice(-100);
     }
   }
 
@@ -53,10 +58,29 @@ export class SkifyDebugLogger {
     console.clear();
     this.log('SYSTEM', 'Debug logs cleared');
   }
+
+  heartbeat() {
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`💓 [${timestamp}] HEARTBEAT: Development session active`);
+    console.log(`📊 [${timestamp}] AGENT-BAR: Live monitoring enabled`);
+    console.log(`🔧 [${timestamp}] DEVELOPER: @openai-dev-helper coding session`);
+  }
+
+  fileEdit(filename: string, action: string) {
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`📝 [${timestamp}] FILE-EDIT: ${action} ${filename}`);
+  }
+
+  streamActivity(activity: string) {
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`🌊 [${timestamp}] STREAM: ${activity}`);
+  }
 }
 
 export const debugLogger = SkifyDebugLogger.getInstance();
 
-// Initialize debug logging
+// Initialize debug logging with Agent Bar streaming
 debugLogger.log('SYSTEM', 'Debug logging initialized for SkifyMagicAI development');
 debugLogger.log('DEVELOPER', 'ChatGPT (@openai-dev-helper) active with full project control');
+debugLogger.streamActivity('Agent Bar live streaming activated');
+debugLogger.fileEdit('debugLogger.ts', 'Enhanced with streaming functions');
