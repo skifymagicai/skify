@@ -20,6 +20,7 @@ import FullStackViralAnalysis from "@/pages/full-stack-viral-analysis";
 import UltimateSkify from "@/pages/ultimate-skify";
 import FloatingNavigation from "@/components/layout/floating-navigation";
 import SkifyDashboard from "@/components/SkifyDashboard";
+import UploadDebugPage from "../pages/upload-debug";
 
 function Router() {
   return (
@@ -40,6 +41,7 @@ function Router() {
         <Route path="/viral-analysis" component={ViralAnalysis} />
         <Route path="/full-stack" component={FullStackViralAnalysis} />
         <Route path="/ultimate" component={UltimateSkify} />
+        <Route path="/upload-debug" component={UploadDebugPage} />
         <Route component={NotFound} />
       </Switch>
       <FloatingNavigation />

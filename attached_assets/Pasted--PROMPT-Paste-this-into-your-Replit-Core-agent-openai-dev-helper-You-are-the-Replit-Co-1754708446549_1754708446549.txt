@@ -1,0 +1,408 @@
+**PROMPT — Paste this into your Replit Core agent (openai-dev-helper):**
+
+````
+You are the Replit Core automation agent with full write access to the SkifyMagicAI repo. Perform the following changes now and start the dev server. Do not ask for further confirmation — make the edits, install dependencies, and start the app. Report back with any errors and the final running URL.
+
+PROJECT TASKS (apply immediately):
+
+1) Create frontend upload component
+- Path: client/components/Upload.tsx
+- Content: (create file exactly as below)
+
+```tsx
+// client/components/Upload.tsx
+import React, {useState, useRef} from "react";
+
+type Analysis = {
+  overall?: number;
+  effects?: Array<{name:string, confidence:number}>
+  textOverlays?: string[]
+}
+
+export default function Upload() {
+  const [file, setFile] = useState<File|null>(null);
+  const [progress, setProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const controllerRef = useRef<AbortController | null>(null);
+
+  async function requestSignedUrl(filename:string, size:number, mime:string) {
+    const res = await fetch("/api/upload/sign", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({filename, size, mime})
+    });
+    if(!res.ok) throw new Error(await res.text());
+    return res.json();
+  }
+
+  async function uploadFile(chosen: File) {
+    setUploading(true);
+    const { url, key } = await requestSignedUrl(chosen.name, chosen.size, chosen.type);
+    controllerRef.current = new AbortController();
+
+    // Simple single PUT
+    const putRes = await fetch(url, {
+      method: "PUT",
+      body: chosen,
+      headers: {"Content-Type": chosen.type},
+      signal: controllerRef.current.signal
+    });
+
+    if(!putRes.ok) {
+      setUploading(false);
+      throw new Error("Upload failed");
+    }
+
+    setProgress(100);
+
+    // notify backend to run analysis
+    const notify = await fetch("/api/upload/complete", {
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({key, filename: chosen.name, size: chosen.size, mime: chosen.type})
+    });
+    if(!notify.ok) {
+      setUploading(false);
+      throw new Error("Failed to notify backend");
+    }
+    const body = await notify.json();
+    if(body.analysis) {
+      setAnalysis(body.analysis);
+    }
+    if(body.jobId) {
+      setJobId(body.jobId);
+    }
+    setUploading(false);
+  }
+
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0] ?? null;
+    setFile(f);
+  }
+
+  async function startUpload() {
+    if(!file) return;
+    try {
+      await uploadFile(file);
+    } catch(err:any) {
+      alert("Upload error: " + err.message);
+      setUploading(false);
+    }
+  }
+
+  async function applyTemplate(templateId: string) {
+    if(!file) return alert("Upload a video first");
+    // NOTE: In production the backend should map filename -> s3 key. For demo, pass filename.
+    const res = await fetch("/api/template/apply", {
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({templateId, sourceKey: (file && file.name)})
+    });
+    const j = await res.json();
+    if(res.ok) {
+      setJobId(j.jobId);
+    } else {
+      alert(j.message || "Failed to apply template");
+    }
+  }
+
+  async function pollJobStatus() {
+    if(!jobId) return;
+    const r = await fetch(`/api/job/${jobId}`);
+    const j = await r.json();
+    if(j.status === "completed") {
+      window.open(j.resultUrl, "_blank");
+    } else if (j.status === "processing") {
+      setTimeout(pollJobStatus, 2000);
+    } else {
+      console.warn("job state", j);
+    }
+  }
+
+  return (
+    <div className="p-6 bg-white rounded shadow">
+      <h2 className="text-lg font-bold">Upload your video</h2>
+
+      <div className="mt-4">
+        <input type="file" accept="video/*" onChange={onFileChange} />
+      </div>
+
+      <div className="mt-3">
+        <button disabled={!file || uploading} onClick={startUpload} className="btn">
+          {uploading ? `Uploading ${progress}%` : "Upload & Analyze"}
+        </button>
+      </div>
+
+      {analysis && (
+        <div className="mt-4">
+          <h3 className="font-semibold">Analysis Results</h3>
+          <div>Overall confidence: {analysis.overall ?? "—"}</div>
+          <ul>
+            {(analysis.effects || []).map((e, i) => (
+              <li key={i}>{e.name} — {Math.round(e.confidence*100)}%</li>
+            ))}
+          </ul>
+          <button onClick={() => applyTemplate("temp_001")} className="mt-2 btn">
+            Apply Template: temp_001
+          </button>
+        </div>
+      )}
+
+      {jobId && (
+        <div className="mt-4">
+          <div>Job started: {jobId}</div>
+          <button onClick={pollJobStatus} className="btn mt-2">Poll Job</button>
+        </div>
+      )}
+    </div>
+  );
+}
+````
+
+2. Create server routes (Express)
+
+* Path: server/routes/upload.js
+* Content:
+
+```js
+// server/routes/upload.js
+const express = require("express");
+const aws = require("aws-sdk");
+const { v4: uuidv4 } = require("uuid");
+const router = express.Router();
+
+const BUCKET = process.env.S3_BUCKET;
+const REGION = process.env.S3_REGION;
+const EXP = parseInt(process.env.SIGNED_URL_EXPIRATION||"900", 10);
+
+const s3 = new aws.S3({
+  region: REGION,
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  signatureVersion: 'v4'
+});
+
+// POST /api/upload/sign
+router.post("/sign", async (req, res) => {
+  try {
+    const { filename, size, mime } = req.body;
+    if(!filename) return res.status(400).send("missing filename");
+    const key = `uploads/${Date.now()}_${uuidv4()}_${filename}`;
+    const params = {
+      Bucket: BUCKET,
+      Key: key,
+      Expires: EXP,
+      ContentType: mime,
+      ACL: "private"
+    };
+    const url = await s3.getSignedUrlPromise("putObject", params);
+    res.json({url, key});
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("sign error");
+  }
+});
+
+// POST /api/upload/complete
+router.post("/complete", async (req, res) => {
+  try {
+    const { key, filename, size, mime } = req.body;
+    const s3url = `s3://${BUCKET}/${key}`;
+    const analysis = await analyzeVideo({s3url, filename, size, mime});
+    res.json({ analysis });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "complete failed", details: err.message });
+  }
+});
+
+module.exports = router;
+
+async function analyzeVideo({s3url, filename, size, mime}) {
+  return {
+    overall: 0.93,
+    effects: [
+      { name: "Film Grain", confidence: 0.92 },
+      { name: "Color Pop", confidence: 0.87 },
+      { name: "Motion Blur", confidence: 0.95 }
+    ],
+    textOverlays: ["TRENDING NOW", "Follow for more!"]
+  };
+}
+```
+
+* Path: server/routes/template.js
+* Content:
+
+```js
+// server/routes/template.js
+const express = require("express");
+const router = express.Router();
+const { v4: uuidv4 } = require("uuid");
+
+router.post("/apply", async (req, res) => {
+  try {
+    const { templateId, sourceKey } = req.body;
+    if(!templateId || !sourceKey) return res.status(400).json({ message: "Missing fields" });
+    const jobId = `job_${Date.now()}_${uuidv4()}`;
+    fakeStartRender(jobId, { templateId, sourceKey });
+    res.json({ status: "processing", jobId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "apply failed", details: err.message });
+  }
+});
+
+module.exports = router;
+
+function fakeStartRender(jobId, payload) {
+  global.__SKIFY_JOBS = global.__SKIFY_JOBS || {};
+  global.__SKIFY_JOBS[jobId] = { status: "processing", progress: 0 };
+  let p = 0;
+  const t = setInterval(() => {
+    p += 20;
+    global.__SKIFY_JOBS[jobId].progress = p;
+    if(p >= 100) {
+      clearInterval(t);
+      global.__SKIFY_JOBS[jobId] = {
+        status: "completed",
+        progress: 100,
+        resultUrl: `https://cdn.example.com/outputs/${jobId}.mp4`
+      };
+    }
+  }, 1000);
+}
+```
+
+* Path: server/routes/job.js
+* Content:
+
+```js
+// server/routes/job.js
+const express = require("express");
+const router = express.Router();
+
+router.get("/:id", async (req, res) => {
+  const id = req.params.id;
+  const jobs = global.__SKIFY_JOBS || {};
+  const job = jobs[id];
+  if(!job) return res.status(404).json({ message: "job not found" });
+  res.json(job);
+});
+
+module.exports = router;
+```
+
+3. Wire routes into server/app.js (create or update)
+
+* Path: server/app.js (if your repo has server/index.js or server/index.ts, apply same edits there)
+* If file exists, insert these lines. If not, create server/app.js with the content below.
+
+```js
+// server/app.js
+const express = require("express");
+const path = require("path");
+const app = express();
+
+app.use(express.json({limit: "200mb"}));
+app.use(express.urlencoded({extended:true, limit: "200mb"}));
+
+app.use("/api/upload", require("./routes/upload"));
+app.use("/api/template", require("./routes/template"));
+app.use("/api/job", require("./routes/job"));
+
+// serve static client if present
+app.use(express.static(path.join(__dirname, "..", "client", "dist")));
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log("Server running on port", port);
+});
+```
+
+4. Add package.json scripts (server) if not present — merge if already exists:
+
+* Ensure these scripts exist in root package.json or server/package.json:
+
+```json
+"scripts": {
+  "start": "node server/app.js",
+  "dev": "nodemon server/app.js"
+}
+```
+
+5. Create .env.example file at repo root
+
+```
+STORAGE_PROVIDER=s3
+S3_REGION=your-region
+S3_BUCKET=your-bucket
+S3_ACCESS_KEY_ID=AKIA...
+S3_SECRET_ACCESS_KEY=...
+SIGNED_URL_EXPIRATION=900
+JWT_SECRET=change-me
+REDIS_URL=redis://127.0.0.1:6379
+AI_ANALYZE_ENDPOINT=
+AI_API_KEY=
+```
+
+6. Install required dependencies (run in shell)
+
+* Run:
+  npm install express aws-sdk uuid nodemon
+
+(also install bullmq + ioredis if you plan to enable workers later):
+npm install bullmq ioredis
+
+7. Frontend integration
+
+* If your client uses a route or tabs, add an import and mount the Upload component into the Upload tab:
+
+  * Find the file that renders the Upload tab (likely client/pages/UploadPage.tsx or similar). If you cannot find it, create a small debug route at client/pages/upload-debug.tsx that imports client/components/Upload.tsx and renders it; add an entry in your client router for quick testing.
+
+8. Start dev server and report back
+
+* Run:
+  npm run dev
+* Wait up to 30s; if server returns errors, capture and print the stack trace in your reply.
+* Open the running preview URL for me and confirm the Upload tab shows the new UI.
+
+9. After this completes:
+
+* Run a full smoke test:
+
+  * Upload a small MP4 (under 10MB)
+  * Confirm the PUT to signed URL succeeds
+  * Confirm `/api/upload/complete` returns the fake analysis
+  * Click Apply Template, get a jobId, poll `/api/job/:id` until completed, and open `resultUrl` in a new tab.
+
+Important notes for the agent:
+
+* Do not commit any real secret values.
+* Use .env file for local testing and set actual secrets in Replit secrets later.
+* This patch intentionally uses a demo analysis and fake render pipeline. The repo owner will later wire real AI\_ANALYZE\_ENDPOINT, render workers, and billing.
+
+If anything fails during file writes, dependency install, or server start, include:
+
+* exact error output
+* which file/line caused it
+* and a suggested quick fix
+
+When done, print:
+
+* "DONE: upload/analyze/apply pipeline created"
+* the dev server URL or preview url
+* any manual steps remaining (e.g., "add S3 keys in Replit secrets").
+
+End of prompt for agent.
+
+```
+
+---
+
+Paste that whole block into your Replit Core agent (openai-dev-helper). If you want, I can instead produce a single zip/patch file here for you to download and upload to Replit — say “patch” and I’ll generate it.  
+
+If the agent reports back any errors after you paste this, copy the agent output here and I’ll immediately debug and provide the exact fix.
+```

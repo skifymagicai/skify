@@ -72,6 +72,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== NEW UPLOAD PIPELINE ROUTES =====
+  
+  // Import ES modules for upload pipeline
+  const uploadRouter = (await import('./routes/upload.mjs')).default;
+  const templateRouter = (await import('./routes/template.mjs')).default;
+  const jobRouter = (await import('./routes/job.mjs')).default;
+  
+  app.use('/api/upload', uploadRouter);
+  app.use('/api/template', templateRouter);
+  app.use('/api/job', jobRouter);
+
   // ===== SKIFY AI VIDEO ANALYSIS ROUTES =====
   
   // Import video from URL with proper user validation
