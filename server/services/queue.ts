@@ -5,41 +5,71 @@ import { db } from '../db/index.js';
 import { renderJobs, videoUploads } from '../../shared/skify-schema.js';
 import { eq } from 'drizzle-orm';
 
-// Redis connection for BullMQ
-const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
-  maxRetriesPerRequest: null,
-  retryDelayOnFailover: 100,
-  lazyConnect: true
-});
-
-// Fallback to memory queue if Redis is not available
+// Redis connection for BullMQ (lazy connection)
+let redisConnection: IORedis | null = null;
 let useMemoryQueue = false;
 
-// Check if Redis is available, fallback to memory queue
-try {
-  await redisConnection.ping();
-} catch (error) {
-  console.warn('Redis not available, using memory queue fallback');
-  useMemoryQueue = true;
-  redisConnection.disconnect();
+// Initialize Redis connection only when needed
+async function initializeRedis() {
+  if (redisConnection !== null) return redisConnection;
+  
+  try {
+    redisConnection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
+      maxRetriesPerRequest: 3,
+      retryDelayOnFailover: 100,
+      lazyConnect: true,
+      connectTimeout: 5000,
+      commandTimeout: 5000
+    });
+    
+    await redisConnection.ping();
+    console.log('✅ Redis connection established');
+    return redisConnection;
+  } catch (error) {
+    console.warn('Redis not available, using memory queue fallback:', error.message);
+    useMemoryQueue = true;
+    if (redisConnection) {
+      redisConnection.disconnect();
+      redisConnection = null;
+    }
+    return null;
+  }
 }
 
 export class QueueService {
-  private analysisQueue: Queue;
-  private renderQueue: Queue;
+  private analysisQueue: Queue | any;
+  private renderQueue: Queue | any;
   private workers: Worker[] = [];
+  private initialized = false;
 
   constructor() {
-    if (useMemoryQueue) {
-      // Memory-based fallback (not recommended for production)
-      this.analysisQueue = this.createMemoryQueue('analysis');
-      this.renderQueue = this.createMemoryQueue('render');
-    } else {
-      this.analysisQueue = new Queue('video-analysis', { connection: redisConnection });
-      this.renderQueue = new Queue('video-render', { connection: redisConnection });
-    }
+    // Initialize queues as memory-based by default
+    this.analysisQueue = this.createMemoryQueue('analysis');
+    this.renderQueue = this.createMemoryQueue('render');
+    
+    // Try to initialize Redis connection in background
+    this.initializeAsync();
+  }
 
-    this.startWorkers();
+  private async initializeAsync() {
+    try {
+      const redis = await initializeRedis();
+      if (redis && !useMemoryQueue) {
+        // Replace memory queues with Redis queues if connection successful
+        this.analysisQueue = new Queue('video-analysis', { connection: redis });
+        this.renderQueue = new Queue('video-render', { connection: redis });
+        this.startWorkers();
+        this.initialized = true;
+        console.log('✅ QueueService initialized with Redis');
+      } else {
+        console.log('✅ QueueService initialized with memory fallback');
+        this.initialized = true;
+      }
+    } catch (error) {
+      console.warn('QueueService initialization warning:', error.message);
+      // Already using memory queues as fallback
+      this.initialized = true;
+    }
   }
 
   private createMemoryQueue(name: string): any {
