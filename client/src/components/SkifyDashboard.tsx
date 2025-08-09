@@ -12,6 +12,7 @@ import VideoPlayer from './VideoPlayer';
 import { debugLogger } from '../utils/debugLogger';
 import AdvancedAnalysis from './AdvancedAnalysis';
 import TemplatePreview from './TemplatePreview';
+import UploadComponent from './Upload';
 
 interface AnalysisResult {
   videoId: string;
@@ -332,52 +333,31 @@ export const SkifyDashboard: React.FC = () => {
             <TabsTrigger value="templates">Templates</TabsTrigger>
           </TabsList>
 
-          {/* UPLOAD TAB */}
+          {/* UPLOAD TAB - Production Pipeline */}
           <TabsContent value="upload" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
-              {/* File Upload */}
-              <Card>
+              {/* Production Upload Component */}
+              <Card className="md:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Upload className="h-5 w-5" />
-                    Upload Video
+                    Production Upload Pipeline
                   </CardTitle>
                   <CardDescription>
-                    Upload your video file to start AI analysis
+                    Upload videos with AWS S3 integration and real-time AI analysis
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div
-                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-sm text-muted-foreground">
-                      Click to upload or drag and drop
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      MP4, MOV, AVI up to 100MB
-                    </p>
-                  </div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="video/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload(file);
-                    }}
-                  />
+                <CardContent>
+                  <UploadComponent />
                 </CardContent>
               </Card>
 
-              {/* URL Import */}
-              <Card>
+              {/* URL Import - Legacy */}
+              <Card className="md:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Link2 className="h-5 w-5" />
-                    Import from URL
+                    Import from URL (Legacy)
                   </CardTitle>
                   <CardDescription>
                     Import videos from Instagram, TikTok, YouTube

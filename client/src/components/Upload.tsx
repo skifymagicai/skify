@@ -109,15 +109,24 @@ export default function Upload() {
   }
 
   return (
-    <div className="p-6 bg-white rounded shadow">
-      <h2 className="text-lg font-bold">Upload your video</h2>
+    <div className="p-6 bg-background rounded-lg border">
+      <h2 className="text-lg font-bold text-foreground mb-4">Production Upload System</h2>
 
       <div className="mt-4">
-        <input type="file" accept="video/*" onChange={onFileChange} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+        <input 
+          type="file" 
+          accept="video/*" 
+          onChange={onFileChange} 
+          className="block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-colors"
+        />
       </div>
 
       <div className="mt-3">
-        <button disabled={!file || uploading} onClick={startUpload} className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white px-4 py-2 rounded">
+        <button 
+          disabled={!file || uploading} 
+          onClick={startUpload} 
+          className="w-full bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors"
+        >
           {uploading ? `Uploading ${progress}%` : "Upload & Analyze"}
         </button>
       </div>
@@ -131,7 +140,10 @@ export default function Upload() {
               <li key={i}>{e.name} — {Math.round(e.confidence*100)}%</li>
             ))}
           </ul>
-          <button onClick={() => applyTemplate("temp_001")} className="mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+          <button 
+            onClick={() => applyTemplate("temp_001")} 
+            className="mt-2 w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
             Apply Template: temp_001
           </button>
         </div>
@@ -140,7 +152,12 @@ export default function Upload() {
       {jobId && (
         <div className="mt-4">
           <div>Job started: {jobId}</div>
-          <button onClick={pollJobStatus} className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded mt-2">Poll Job</button>
+          <button 
+            onClick={pollJobStatus} 
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium mt-2 transition-colors"
+          >
+            Check Job Status
+          </button>
         </div>
       )}
     </div>
