@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Dashboard } from './pages/Dashboard.js';
 import { MobileApp } from './pages/MobileApp.js';
 import { EndToEndFlow } from './components/viral/EndToEndFlow.js';
+import SkifyMagic from './pages/SkifyMagic.js';
 import { useAuth } from './hooks/useAuth.js';
 import { Loader2 } from 'lucide-react';
 
@@ -45,11 +46,12 @@ export default function App() {
       <BrowserRouter>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <Routes>
-            <Route path="/" element={<EndToEndFlow />} />
+            <Route path="/" element={<SkifyMagic />} />
+            <Route path="/magic" element={<SkifyMagic />} />
             <Route path="/mobile" element={<MobileApp />} />
             <Route path="/desktop" element={<Dashboard />} />
             <Route path="/viral" element={<EndToEndFlow />} />
-            <Route path="*" element={<EndToEndFlow />} />
+            <Route path="*" element={<SkifyMagic />} />
           </Routes>
           <Toaster />
         </div>

@@ -1,0 +1,110 @@
+**Task:**
+Inside Replit Core, build, debug, and fully deploy **SkifyMagicAI** so it works in one click with **no manual setup** — including automatic Upstash Redis creation, backend + frontend integration, and full feature set.
+
+---
+
+### **End-to-End Features**
+
+1. **Viral Style Extractor:** Pulls style from any video (color, transitions, effects, text style, audio beat match).
+2. **Apply to New Media:** User uploads their own video/photos → AI applies style.
+3. **Free/Pro Tiers:**
+
+   * Free: 720p export
+   * Pro: 4K Ultra HD enhancement
+4. **Saved Templates Library:** Save, manage, and reuse templates.
+5. **Async Jobs:** Queue architecture for processing with status tracking.
+6. **Payments:** Razorpay integration.
+7. **PWA:** Mobile-first, offline support, installable, single Express server for backend + built frontend.
+
+---
+
+### **Tech Stack**
+
+* **Backend:** Node.js + Express
+* **Frontend:** React (Vite → `/public`)
+* **Queue & Cache:** Upstash Redis + BullMQ
+* **AI Models:** Replicate API
+* **Payments:** Razorpay
+* **Build & Serve:** PWA + backend from one Express app
+
+---
+
+### **Automatic Upstash Redis Creation (Agent must run this)**
+
+```js
+import fetch from 'node-fetch';
+import fs from 'fs';
+
+async function createUpstashRedis() {
+  const accountEmail = process.env.UPSTASH_EMAIL; // Set in Replit secrets
+  const accountPassword = process.env.UPSTASH_PASSWORD; // Set in Replit secrets
+  
+  if (!accountEmail || !accountPassword) {
+    console.error('❌ Missing UPSTASH_EMAIL or UPSTASH_PASSWORD in env');
+    return;
+  }
+
+  const loginRes = await fetch('https://api.upstash.com/v1/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: accountEmail, password: accountPassword })
+  });
+  const loginData = await loginRes.json();
+  const token = loginData.token;
+
+  const dbRes = await fetch('https://api.upstash.com/v1/redis', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ name: 'skifymagicai-db', region: 'ap-south-1' })
+  });
+  const dbData = await dbRes.json();
+
+  const envVars = `
+REDIS_URL=${dbData.rest_url}
+REDIS_TOKEN=${dbData.rest_token}
+`;
+  fs.appendFileSync('.env', envVars);
+  console.log('✅ Upstash Redis created and .env updated');
+}
+
+createUpstashRedis();
+```
+
+**Agent Instructions:**
+
+* If `.env` lacks `REDIS_URL` and `REDIS_TOKEN`, run the above script at install time.
+* Use `REDIS_URL` and `REDIS_TOKEN` for BullMQ and caching.
+
+---
+
+### **PWA + Backend Integration**
+
+```js
+import express from 'express';
+import path from 'path';
+
+const app = express();
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('*', (_, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+app.listen(process.env.PORT || 3000, () => console.log('✅ SkifyMagicAI running'));
+```
+
+* Vite build output → `/public`
+* Single Express server serves PWA + handles API routes
+
+---
+
+### **Agent Build Steps**
+
+1. Create folder structure: `/backend` and `/frontend`
+2. Install dependencies: `express`, `vite`, `react`, `replicate`, `razorpay`, `bullmq`, `ioredis`, `node-fetch`
+3. Run **Upstash Redis automation script** if no Redis config exists
+4. Implement async job architecture with BullMQ using Upstash Redis
+5. Implement AI style extraction + apply style pipeline via Replicate
+6. Implement Saved Templates Library (CRUD API + frontend UI)
+7. Integrate Razorpay checkout (Free/Pro)
+8. Build frontend with Vite → output to `/public`
+9. Serve frontend + backend from single Express server
+10. Test full flow in Replit preview + external browser
