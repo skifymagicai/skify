@@ -1,0 +1,120 @@
+You are the Replit Core automation agent for the SkifyMagicAI repo. Your goal: implement and deliver a production-ready Skify application end-to-end on a new branch `skify-core-impl`. Do not ask for confirmation — create files, install deps, run builds, run tests, and fix errors until everything succeeds. Report progress and final preview URL when done.
+
+HIGH-LEVEL REQUIREMENTS
+- Full app: Upload → Analyze → Apply Template → Render (async) → Download.
+- PWA frontend (React + Vite) built to /public and served by Express.
+- Upstash Redis auto-creation or use existing Upstash secrets.
+- BullMQ queue for render jobs; fallback to in-memory queue if Redis not available.
+- Razorpay integration for Free/Pro tiers (requires secrets in Replit Secrets).
+- Saved Templates Library (full CRUD + partial apply).
+- 4K enhancement toggle (Pro only); Free tier applies watermarks and 720p cap.
+- Moderation & licensing stubs and audit log.
+- Env detection: automatic API base URL switching for Replit preview vs production.
+- Tests (Jest + minimal Playwright smoke test). README and Dockerfile.
+
+BRANCH
+- Create and commit all changes to a new branch `skify-core-impl`.
+
+ENV / SECRETS
+- If missing, create placeholders in .env and prompt user to fill secrets in Replit Secrets:
+  - JWT_SECRET, APP_BASE_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET,
+    S3_BUCKET/S3_ACCESS_KEY/S3_SECRET/S3_REGION (optional),
+    AI_ANALYZE_ENDPOINT, AI_API_KEY,
+    UPSTASH_EMAIL, UPSTASH_PASSWORD (optional for auto creation).
+- Agent should prefer Replit Secrets environment (process.env.*) and write .env.example.
+
+UPSTASH REDIS AUTO-CREATION
+1. If `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are absent:
+   - If `UPSTASH_EMAIL` and `UPSTASH_PASSWORD` are present, call Upstash API to create a Redis REST database and append `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to `.env`.
+   - If no Upstash credentials provided, set `DISABLE_UPSTASH_AUTOCREATE=true` and fall back to an in-memory queue.
+
+2. Use Upstash REST credentials to construct `REDIS_URL` for BullMQ and ioredis client. If using REST token, use the Upstash JS SDK or secure proxy if necessary.
+
+CODE TASKS (create these files/changes)
+
+A) Server (backend)
+- Create `server/app.js` (or update) to:
+  - Use `process.env.PORT` and bind to `0.0.0.0`.
+  - Serve static files from `/public`.
+  - Provide APIs:
+    - POST `/api/upload/sign` → generate S3 signed PUT URL (support R2/S3).
+    - POST `/api/upload/complete` → register upload, call `/analyze` (async or sync stub).
+    - POST `/api/analyze` → call `AI_ANALYZE_ENDPOINT` (if present) else run a deterministic stub that returns style metadata.
+    - POST `/api/template` → save template JSON (DB or flat JSON store).
+    - POST `/api/template/apply` → enqueue render job, return `{jobId}`.
+    - GET `/api/job/:id` → return job status + resultUrl when completed.
+    - POST `/webhook/razorpay` → verify signature, update user tier, emit audit event.
+    - Admin endpoints: GET `/admin/moderation`, GET `/admin/audit` (limited view).
+- Implement job queue:
+  - Use BullMQ connected to `REDIS_URL` (from Upstash). If Redis missing, spawn an in-memory fallback queue.
+  - Worker `server/worker/renderWorker.js` applies template to user media (stubbed processing, but produces progressive preview artifacts and final `resultUrl` stored in `storage/outputs/` or uploaded to S3 if configured).
+- Audit logging:
+  - Append audit events to `logs/audit.log` and expose via `/admin/audit`.
+- Auth:
+  - JWT-based minimal auth (routes stubbed for demo). Provide `POST /auth/signup` and `POST /auth/login` (dev-friendly test accounts).
+
+B) Frontend (client)
+- Create React + Vite app (if missing) in `client/`:
+  - Pages/tabs: Upload, My Templates, My Renders.
+  - Upload page uses `/api/upload/sign`, PUTs to signed URL, then calls `/api/upload/complete`.
+  - After analysis shows, enable Apply Template → call `/api/template/apply`.
+  - Poll `/api/job/:id` for progress.
+  - Razorpay checkout: show modal for upgrade; call backend to create order; verify webhook updates.
+- PWA:
+  - Add manifest, service worker, offline fallback, and ensure `vite build` outputs to `public/`.
+
+C) S3 / Storage
+- Implement S3-compatible storage client with env-driven provider selection (`STORAGE_PROVIDER=s3|r2|local`).
+- If S3 secrets missing, use local `storage/` folder for temp and `storage/outputs` for results.
+
+D) AI integration
+- `/api/analyze` should:
+  - If `AI_ANALYZE_ENDPOINT` + `AI_API_KEY` exist, forward video URL + metadata and return real analysis.
+  - If not, return deterministic style metadata stub (colors, transitions, text overlays) matching the template JSON in the master spec.
+
+E) Razorpay Integration
+- Implement server endpoint to create Razorpay order for subscription (test mode) and return order id to client.
+- Implement `/webhook/razorpay` to verify signature using `RAZORPAY_KEY_SECRET` and update user tier in the local DB (or a JSON file for dev).
+- Client shows Upgrade modal and triggers Razorpay checkout using `RAZORPAY_KEY_ID`.
+
+F) Env detection (auto API base)
+- Frontend should detect environment:
+  - If `window.location.hostname` contains `repl.co` or `repl.it`, set API base to `https://${REPL_SLUG}.${REPL_OWNER}.repl.co` or use `process.env.APP_BASE_URL` if present.
+  - Otherwise use production `process.env.APP_BASE_URL`.
+- Server must be reachable at `process.env.PORT` and bind `0.0.0.0`.
+
+G) Tests & README
+- Add basic Jest tests for APIs: sign, complete, template apply, job status.
+- Add Playwright smoke test to run Upload → Apply → Poll → Completed (use stubbed files).
+- Write README with run instructions and list of secrets to set in Replit.
+
+H) Dockerfile & start scripts
+- Add `Dockerfile` and `package.json` scripts:
+  - `start` → `node server/app.js`
+  - `dev` → `nodemon server/app.js`
+  - `build:client` → `cd client && npm run build` (output to /public)
+  - `test` → run jest + playwright
+
+OPERATIONAL BEHAVIOR
+- Agent must retry failing installs then fix package issues and continue.
+- Commit changes incrementally to branch `skify-core-impl`.
+- Run `npm ci` or `npm install`; run client build and server start.
+- Run tests; if tests fail, attempt minimal fixes (missing exports, typos) and re-run tests.
+
+VERIFICATION & OUTPUT
+- When everything passes, print a final message in the Agent pane exactly:
+  DONE: Skify core implemented — preview URL: <preview_url>
+  and give brief run notes and any manual steps (e.g., “Paste Razorpay keys into Replit Secrets”).
+
+ERROR HANDLING
+- If Upstash auto-creation fails, write detailed error in the Agent pane, set `DISABLE_UPSTASH_AUTOCREATE=true`, and fall back to in-memory queue and continue.
+- If Razorpay keys are missing, continue with subscription stubs and mark in README where to add real keys.
+
+SECURITY & BEST PRACTICES
+- Do not commit secrets to repo. Always use Replit Secrets.
+- Use CSRF-safe patterns for webhooks.
+- Sanitize filenames and validate MIME types on upload.
+
+Begin now and run continuously until the preview is live, tests pass, and all features above are implemented. If any blocking external permission is needed (e.g., your Upstash or Razorpay login), print instructions and pause. Otherwise finish and provide the preview URL in the final message.
+
+End of prompt.

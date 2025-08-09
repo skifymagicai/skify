@@ -1,144 +1,157 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(247, 84%, 67%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(262, 83%, 72%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(42, 96%, 50%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
-  
-  /* Custom Skify colors */
-  --dark: hsl(240, 47%, 9%);
-  --dark-card: hsl(243, 54%, 11%);
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.dark {
-  --background: hsl(240, 47%, 9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 47%, 9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(243, 54%, 11%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(247, 84%, 67%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(262, 83%, 72%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(42, 96%, 50%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
 
+#root {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Modern button styles */
+.btn {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.btn:hover {
+  border-color: #646cff;
+  background-color: #1a1a1a;
+  transform: translateY(-1px);
+}
+
+.btn:focus,
+.btn:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #646cff;
+}
+
+/* Card styles */
+.card {
+  padding: 2em;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Input styles */
+.input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1em;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.2);
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+/* Loading spinner */
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #646cff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
   body {
-    @apply font-sans antialiased bg-background text-foreground;
-  }
-
-  html {
-    font-family: 'Inter', sans-serif;
-  }
-}
-
-@layer components {
-  .gradient-bg {
-    background: linear-gradient(135deg, var(--dark) 0%, var(--dark-card) 100%);
+    padding: 1em;
   }
   
-  .card-hover {
-    transition: all 0.3s ease;
+  .card {
+    padding: 1.5em;
+    margin: 0.5em;
   }
   
-  .card-hover:hover {
-    transform: translateY(-4px);
-  }
-  
-  .video-container {
-    aspect-ratio: 9/16;
-  }
-  
-  .comparison-slider {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .comparison-handle {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: hsl(247, 84%, 67%);
-    left: 50%;
-    cursor: ew-resize;
-    z-index: 10;
-  }
-  
-  .floating-nav {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(30, 27, 75, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid hsl(247, 84%, 67%, 0.3);
-    border-radius: 50px;
-    padding: 8px 16px;
-    display: flex;
-    gap: 8px;
-    z-index: 50;
-  }
-  
-  .nav-btn {
-    padding: 8px 16px;
-    border-radius: 25px;
-    transition: all 0.3s ease;
-    color: hsl(203, 23%, 74%);
-    border: none;
-    background: transparent;
-    cursor: pointer;
-  }
-  
-  .nav-btn.active {
-    background: hsl(247, 84%, 67%);
-    color: white;
-  }
-  
-  .nav-btn:hover:not(.active) {
-    background: hsl(240, 3.7%, 15.9%);
-  }
-}
-
-@layer utilities {
-  .text-gradient {
-    background: linear-gradient(135deg, hsl(247, 84%, 67%) 0%, hsl(262, 83%, 72%) 50%, hsl(42, 96%, 50%) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .btn {
+    padding: 0.8em 1.5em;
+    font-size: 1.1em;
   }
 }

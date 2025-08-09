@@ -1,260 +1,258 @@
-# SkifyMagicAI - AI-Powered Video Transformation Platform
+# Skify Core - AI Video Transformation Platform
 
-> Transform your videos into viral content using cutting-edge AI style transfer technology
+A production-ready AI-powered video transformation SaaS platform that analyzes viral videos and applies their styles to user content.
 
-## 🌟 Features
+## 🚀 Features
 
-- **AI-Powered Analysis**: Extract style components from viral videos (timing, effects, color grading, transitions)
-- **Template Library**: Browse and apply viral video templates to your content
-- **Real-time Processing**: Background job queue with progress tracking
-- **Pro Features**: 4K exports, watermark removal, unlimited uploads
-- **Mobile-First PWA**: Responsive design with offline capabilities
-- **Secure Payments**: Integrated Razorpay payment processing
-- **Production Ready**: Complete testing suite and deployment infrastructure
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 18+ 
-- PostgreSQL 14+
-- Redis (optional, uses memory fallback)
-- S3-compatible storage (AWS S3, Cloudflare R2)
-
-### Installation
-
-```bash
-# Clone and install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your configuration
-
-# Push database schema
-npm run db:push
-
-# Start development server
-npm run dev
-```
-
-The app will be available at `http://localhost:5000`
-
-## 🔧 Environment Setup
-
-### Required Environment Variables
-
-```env
-# Database
-DATABASE_URL=postgresql://username:password@localhost:5432/skify_db
-
-# JWT Authentication
-JWT_SECRET=your-super-secure-jwt-secret-key
-
-# S3 Storage (AWS S3, Cloudflare R2, etc.)
-S3_BUCKET_NAME=skify-storage
-S3_ACCESS_KEY_ID=your-s3-access-key
-S3_SECRET_ACCESS_KEY=your-s3-secret-key
-S3_REGION=us-east-1
-
-# Razorpay Payments
-RAZORPAY_KEY_ID=rzp_test_your_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_secret
-
-# Optional: Redis for BullMQ
-REDIS_URL=redis://localhost:6379
-
-# Optional: AI Analysis Service
-AI_ANALYZE_ENDPOINT=https://api.your-ai-service.com/analyze
-AI_API_KEY=your-ai-api-key
-```
-
-### Replit Secrets Setup
-
-If running on Replit, add these secrets in the Secrets tab:
-
-1. `DATABASE_URL` - Your PostgreSQL connection string
-2. `JWT_SECRET` - A secure random string for JWT tokens
-3. `S3_BUCKET_NAME`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` - S3 credentials
-4. `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` - Razorpay payment credentials
-5. `REDIS_URL` - Redis connection string (optional)
-
-## 📋 Scripts
-
-```bash
-# Development
-npm run dev          # Start development server with hot reload
-npm run build        # Build for production
-npm run start        # Start production server
-
-# Database
-npm run db:push      # Push schema changes to database
-
-# Testing
-npm test             # Run unit tests
-npm run test:watch   # Run tests in watch mode
-npm run test:e2e     # Run end-to-end tests
-
-# Code Quality
-npm run check        # TypeScript type checking
-```
+- **Viral Video Analysis**: AI-powered extraction of effects, transitions, text overlays, and audio sync
+- **Template Library**: Save and reuse viral video styles
+- **Queue-based Processing**: Async job processing with BullMQ and Redis
+- **PWA Support**: Progressive Web App with offline capabilities
+- **Payment Integration**: Razorpay for Free/Pro tiers
+- **Multi-format Export**: 720p (free) and 4K (pro) with watermark control
+- **Real-time Progress**: Job status tracking and progress updates
 
 ## 🏗️ Architecture
 
-### Backend (Node.js + Express)
+- **Frontend**: React + Vite + TypeScript + PWA
+- **Backend**: Express.js + BullMQ + Redis
+- **Storage**: Local filesystem or S3-compatible
+- **Authentication**: JWT-based with user tiers
+- **Payment**: Razorpay integration
 
-- **Authentication**: JWT-based with bcrypt password hashing
-- **Database**: PostgreSQL with Drizzle ORM
-- **Storage**: S3-compatible file storage with signed URLs  
-- **Queue System**: BullMQ with Redis for background processing
-- **Payment Processing**: Razorpay integration with webhook handling
-- **API Documentation**: RESTful API with comprehensive error handling
+## 📋 Prerequisites
 
-### Frontend (React + TypeScript)
+- Node.js 18+ 
+- Redis (optional - falls back to in-memory queue)
+- Upstash account (optional for auto Redis setup)
+- Razorpay account (for payments)
 
-- **State Management**: Zustand for auth, TanStack Query for server state
-- **UI Components**: shadcn/ui with Tailwind CSS
-- **File Upload**: Drag & drop with progress tracking
-- **PWA Features**: Service Worker, offline support, installable
-- **Responsive Design**: Mobile-first with dark mode support
+## 🚀 Quick Start
 
-### Database Schema
+### 1. Clone and Install
+```bash
+git clone <repository-url>
+cd skify-core
+npm install
+cd client && npm install && cd ..
+```
 
-8 comprehensive tables including:
-- Users with tier management and upload quotas
-- Video uploads with metadata and analysis results  
-- Style analysis with detailed AI extraction data
-- Templates with public/private sharing
-- Render jobs with progress tracking
-- Payment processing with Razorpay integration
-- Audit logs for compliance and debugging
-- Moderation queue for content review
+### 2. Environment Setup
+Copy `.env.example` to `.env` and configure:
+
+```env
+# Required
+NODE_ENV=development
+PORT=5000
+JWT_SECRET=your-super-secret-jwt-key
+
+# Razorpay (required for payments)
+RAZORPAY_KEY_ID=your-razorpay-key-id
+RAZORPAY_KEY_SECRET=your-razorpay-secret
+
+# Optional - Upstash Redis Auto-creation
+UPSTASH_EMAIL=your-upstash-email
+UPSTASH_PASSWORD=your-upstash-password
+
+# Optional - AI Integration
+AI_ANALYZE_ENDPOINT=https://api.openai.com/v1/chat/completions
+AI_API_KEY=your-ai-api-key
+
+# Optional - S3 Storage
+S3_BUCKET=skify-uploads
+S3_ACCESS_KEY=your-s3-key
+S3_SECRET=your-s3-secret
+```
+
+### 3. Build and Run
+```bash
+# Build client
+npm run build:client
+
+# Start server
+npm start
+
+# Development mode
+npm run dev
+```
+
+### 4. Access the Application
+- Open http://localhost:5000
+- Use demo account or create new user
+- Start uploading and transforming videos!
 
 ## 🧪 Testing
 
-### Unit Tests (Jest + Supertest)
-
 ```bash
-npm test                    # Run all tests
-npm run test:watch         # Watch mode
-npm test auth.test.ts      # Run specific test file
+# Run API tests
+npm test
+
+# Run end-to-end tests
+npm run test:e2e
+
+# Watch mode
+npm run test:watch
 ```
 
-### End-to-End Tests (Playwright)
+## 📱 PWA Installation
 
+The app supports Progressive Web App installation:
+1. Visit the site on mobile/desktop
+2. Look for "Install App" prompt
+3. Enjoy native app experience with offline support
+
+## 💳 Payment Integration
+
+### Razorpay Setup
+1. Create Razorpay account
+2. Get API keys from dashboard
+3. Add to Replit Secrets or .env:
+   - `RAZORPAY_KEY_ID`
+   - `RAZORPAY_KEY_SECRET`
+4. Test with Razorpay test cards
+
+### Tier System
+- **Free**: 720p exports with watermark
+- **Pro**: 4K exports, no watermark, priority processing
+
+## 🔄 Queue Processing
+
+The system uses BullMQ for async job processing:
+
+### With Redis
 ```bash
-npm run test:e2e           # Run E2E tests
-npm run test:e2e -- --ui   # Run with UI mode
+# Auto-setup with Upstash credentials
+UPSTASH_EMAIL=your-email
+UPSTASH_PASSWORD=your-password
 ```
 
-Test coverage includes:
-- Authentication flows
-- File upload and processing
-- Payment integration
-- Template application
-- API error handling
+### Without Redis
+- Automatically falls back to in-memory processing
+- Set `DISABLE_UPSTASH_AUTOCREATE=true` to skip Redis setup
 
-## 🚀 Deployment
-
-### Production Build
-
-```bash
-npm run build
-npm run start
-```
-
-### Docker Deployment
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 5000
-CMD ["npm", "start"]
-```
-
-### Environment-Specific Configuration
-
-- Development: Uses Vite dev server with hot reload
-- Production: Serves static files with Express
-- Testing: Isolated test database and mocked services
-
-## 🔐 Security Features
-
-- JWT token-based authentication with secure httpOnly cookies
-- bcrypt password hashing with salt rounds
-- Input validation with Zod schemas
-- SQL injection prevention with parameterized queries
-- CORS protection with configurable origins
-- Rate limiting and request size restrictions
-- Secure file upload with type validation
-- Payment signature verification
-
-## 📊 Monitoring & Analytics
-
-- Comprehensive audit logging for all user actions
-- Error tracking with detailed stack traces
-- Performance monitoring for API endpoints
-- Database query optimization
-- File upload progress tracking
-- Payment transaction logging
-
-## 🤝 API Endpoints
+## 🔌 API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login  
-- `GET /api/auth/me` - Get current user
-- `GET /api/auth/quota` - Check upload quota
+- `POST /api/auth/signup` - Create new user
+- `POST /api/auth/login` - User login
 
-### File Upload
+### Upload & Analysis
 - `POST /api/upload/sign` - Get signed upload URL
-- `POST /api/upload/complete` - Complete upload and trigger analysis
-- `GET /api/upload/:id/status` - Get upload status
+- `POST /api/upload/complete` - Complete upload
+- `POST /api/analyze` - Analyze video for style extraction
 
-### Templates  
-- `GET /api/templates` - Browse public templates
-- `GET /api/templates/my` - Get user's templates
-- `POST /api/templates/:id/apply` - Apply template to media
-- `POST /api/templates/:id/like` - Like/unlike template
+### Templates
+- `GET /api/templates` - Get template library
+- `POST /api/template` - Save new template
+- `POST /api/template/apply` - Apply template to video
 
-### Jobs
-- `GET /api/job/:id` - Get render job status
-- `GET /api/job` - List user's jobs
-- `DELETE /api/job/:id` - Cancel job
+### Jobs & Status
+- `GET /api/job/:id` - Get job status and progress
+- `GET /api/files/:filename` - Download processed files
 
 ### Payments
-- `POST /api/payments/create-order` - Create Razorpay order
-- `POST /api/payments/verify` - Verify payment
-- `GET /api/payments/history` - Payment history
+- `POST /api/payment/order` - Create Razorpay order
+- `POST /api/webhook/razorpay` - Payment verification
 
-## 🎯 Roadmap
+### Admin
+- `GET /api/admin/audit` - Audit logs
+- `GET /api/admin/moderation` - System stats
 
-- [ ] Advanced AI models for style analysis
-- [ ] Real-time collaboration features  
-- [ ] Advanced template customization
-- [ ] Batch processing capabilities
-- [ ] API rate limiting and quotas
-- [ ] Advanced analytics dashboard
-- [ ] Third-party integrations (Instagram, TikTok APIs)
-- [ ] Mobile app (React Native)
+## 🚢 Deployment
 
-## 📞 Support
+### Docker
+```bash
+docker build -t skify-core .
+docker run -p 5000:5000 --env-file .env skify-core
+```
 
-For support and questions:
-- Email: support@skifymagicai.gmail.com
-- Documentation: [Coming Soon]
-- Issues: GitHub Issues
+### Replit
+1. Import repository to Replit
+2. Add secrets in Replit Secrets:
+   - `JWT_SECRET`
+   - `RAZORPAY_KEY_ID`
+   - `RAZORPAY_KEY_SECRET`
+   - Optional: Upstash credentials
+3. Run with `npm start`
 
-## 📄 License
+### Production Checklist
+- [ ] Set `NODE_ENV=production`
+- [ ] Configure Redis (Upstash recommended)
+- [ ] Add all required secrets
+- [ ] Build client assets (`npm run build:client`)
+- [ ] Set up SSL/TLS
+- [ ] Configure domain and webhooks
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 🛠️ Development
+
+### Project Structure
+```
+skify-core/
+├── client/                 # React PWA frontend
+│   ├── src/
+│   │   ├── pages/         # App pages
+│   │   ├── contexts/      # React contexts
+│   │   └── components/    # UI components
+├── server/                # Express.js backend
+│   ├── app.js            # Main server file
+│   └── worker/           # BullMQ workers
+├── storage/              # Local file storage
+├── tests/                # Test files
+└── scripts/             # Setup scripts
+```
+
+### Available Scripts
+- `npm start` - Start production server
+- `npm run dev` - Start development server
+- `npm run build:client` - Build React app
+- `npm test` - Run tests
+- `npm run test:e2e` - Run Playwright tests
+
+## 🔧 Configuration
+
+### Environment Variables
+See `.env.example` for all available options.
+
+### Feature Flags
+- `DISABLE_UPSTASH_AUTOCREATE` - Skip Redis auto-setup
+- `STORAGE_PROVIDER` - Choose storage backend (local/s3/r2)
+
+## 📚 Documentation
+
+### AI Integration
+The system supports pluggable AI analysis:
+- Set `AI_ANALYZE_ENDPOINT` for custom AI service
+- Falls back to deterministic analysis if not configured
+- Supports OpenAI, RunwayML, and custom endpoints
+
+### Storage Options
+- **Local**: Default for development
+- **S3**: Configure with S3_* environment variables
+- **R2**: Cloudflare R2 compatible
+
+## 🤝 Support
+
+For issues and questions:
+1. Check the documentation above
+2. Review test files for usage examples
+3. Check Replit Secrets configuration
+4. Verify all required environment variables
+
+## 🔒 Security
+
+- JWT tokens for authentication
+- CSRF protection for webhooks
+- File type validation for uploads
+- Input sanitization throughout
+
+## 📈 Monitoring
+
+The system provides:
+- Audit logging for all user actions
+- Job progress tracking
+- Error reporting and handling
+- Admin dashboard for system stats
 
 ---
 
-**Built with ❤️ by the SkifyMagicAI Team**
-
-*Transform your videos, amplify your reach, create viral content effortlessly.*
+Built with ❤️ for viral video creators worldwide!
