@@ -34,18 +34,20 @@ interface Job {
 export const SkifyDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('upload');
   
-  // Debug logging for development visibility
+  // Enhanced debug logging for Agent Bar monitoring
   React.useEffect(() => {
-    debugLogger.success('DASHBOARD', 'Component initialized successfully');
-    debugLogger.log('STATE', `Active tab: ${activeTab}`);
-    debugLogger.log('DEVELOPER', 'AI Developer actively working on SkifyMagicAI enhancements');
+    debugLogger.success('DASHBOARD', 'SkifyMagicAI Dashboard initialized');
+    debugLogger.log('TABS', `Active tab: ${activeTab}`);
+    debugLogger.log('DEVELOPER', '@openai-dev-helper: Live coding session active');
+    debugLogger.api('/dashboard', 'LOAD', 200);
   }, [activeTab]);
 
-  // Real-time development progress indicator
+  // Live development activity heartbeat
   React.useEffect(() => {
     const interval = setInterval(() => {
-      debugLogger.log('HEARTBEAT', `Development session active - ${new Date().toLocaleTimeString()}`);
-    }, 30000); // Log every 30 seconds
+      debugLogger.log('HEARTBEAT', `Development environment active - ${new Date().toLocaleTimeString()}`);
+      debugLogger.log('AGENT-BAR', 'Live monitoring enabled - file edits visible in real-time');
+    }, 30000);
     
     return () => clearInterval(interval);
   }, []);
