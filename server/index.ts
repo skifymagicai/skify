@@ -4,13 +4,13 @@ import { setupVite, serveStatic } from './vite.js';
 import { createServer } from 'http';
 
 // Import routes
-import authRoutes from './routes/auth.js';
-import uploadRoutes from './routes/upload.js';
-import templateRoutes from './routes/templates.js';
-import jobRoutes from './routes/jobs.js';
-import paymentRoutes from './routes/payments.js';
-import adminRoutes from './routes/admin.js';
-import viralTransformRoutes from './routes/viral-transform.js';
+import authRoutes from './routes/auth.ts';
+import uploadRoutes from './routes/upload.ts';
+import templateRoutes from './routes/templates.ts';
+import jobRoutes from './routes/jobs.ts';
+import paymentRoutes from './routes/payments.ts';
+import adminRoutes from './routes/admin.ts';
+import viralTransformRoutes from './routes/viral-transform.ts';
 
 // Initialize queue service
 import { SimpleQueueService } from './services/simple-queue.js';

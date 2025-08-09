@@ -7,7 +7,7 @@ import { auditLogs } from '../../shared/skify-schema.js';
 
 const router = Router();
 
-// Register new user
+// Register new user (also aliased as signup for frontend compatibility)
 router.post('/register', async (req, res) => {
   try {
     const userData = insertUserSchema.parse(req.body);
@@ -176,6 +176,41 @@ router.post('/logout', authenticateToken, async (req: AuthenticatedRequest, res)
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Alias signup route for frontend compatibility  
+router.post('/signup', async (req, res) => {
+  try {
+    const userData = insertUserSchema.parse(req.body);
+    
+    const user = await AuthService.createUser(userData);
+    const token = AuthService.generateToken(user.id);
+
+    // Log registration
+    await db.insert(auditLogs).values({
+      userId: user.id,
+      action: 'user_signup',
+      resource: 'user',
+      resourceId: user.id,
+      details: { email: user.email, tier: user.tier },
+      ipAddress: req.ip,
+      userAgent: req.get('User-Agent')
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        user,
+        token,
+        expiresIn: '7d'
+      }
+    });
+  } catch (error) {
+    res.status(400).json({
       success: false,
       error: error.message
     });
