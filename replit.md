@@ -4,18 +4,24 @@
 Skify is a next-generation AI-powered video transformation SaaS platform. It analyzes viral short-form videos (Reels, TikToks, YouTube Shorts) to extract style components including effects, templates, transitions, color grading, camera movements, and AI edits. Users can then apply these extracted styles to their own videos with one-click automation to achieve broadcast-quality output. The platform aims to be a production-grade SaaS solution with real AI integration and monetization capabilities.
 
 ## Recent Changes (August 2025)
+- **CRITICAL BUG FIX COMPLETED** (Aug 9, 2025): Fixed production authentication error `column "tier" does not exist`
+  - **Database Migration**: Applied full schema migration with proper UUID primary keys
+  - **User Tiers**: Implemented complete user tier system (free/pro) with upload limits and billing integration
+  - **Authentication**: Fixed password hashing and JWT token generation, demo user login working
+  - **Database Schema**: Created all required tables (users, video_uploads, templates, render_jobs, payments, audit_logs)
+  - **API Endpoints**: All core endpoints functional (/api/auth, /api/templates, /api/jobs, /api/payments)
 - **SKIFY CORE IMPLEMENTATION COMPLETE**: Full production-ready application deployed with comprehensive feature set
 - **COMPLETE ARCHITECTURE REBUILD**: Express.js backend + React PWA frontend with modern stack
 - **BULLMQ QUEUE SYSTEM**: Async job processing with Redis integration and in-memory fallback
 - **PWA WITH OFFLINE SUPPORT**: Progressive Web App with service worker, manifest, installable
 - **AUTHENTICATION SYSTEM**: JWT-based auth with demo account and user tiers (Free/Pro)
 - **COMPREHENSIVE API SUITE**: 
-  - `/api/auth/*` - JWT authentication with signup/login
+  - `/api/auth/*` - JWT authentication with signup/login ✅ WORKING
   - `/api/upload/*` - File upload with signed URLs
   - `/api/analyze` - AI video analysis with deterministic fallback
-  - `/api/templates` - Template CRUD operations and library
+  - `/api/templates` - Template CRUD operations and library ✅ WORKING
   - `/api/template/apply` - Async template application with progress tracking
-  - `/api/job/:id` - Real-time job status monitoring
+  - `/api/jobs/:id` - Real-time job status monitoring ✅ WORKING
   - `/api/payment/*` - Razorpay order creation and verification
   - `/api/admin/*` - Audit logs and moderation stats
 - **MODERN REACT FRONTEND**: Wouter routing, TanStack Query, Lucide icons, mobile-first design

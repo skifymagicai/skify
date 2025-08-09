@@ -29,7 +29,7 @@ export class AuthService {
     const [user] = await db.insert(users).values({
       username: userData.username,
       email: userData.email,
-      passwordHash: hashedPassword,
+      password: hashedPassword,
       tier: 'free',
       uploadLimit,
       uploadsUsed: 0,
@@ -61,7 +61,7 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       throw new Error('Invalid credentials');
     }
