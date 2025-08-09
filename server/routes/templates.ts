@@ -59,7 +59,7 @@ router.get('/', optionalAuth, async (req: AuthenticatedRequest, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -89,7 +89,7 @@ router.get('/my', authenticateToken, async (req: AuthenticatedRequest, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -162,7 +162,7 @@ router.get('/:templateId', optionalAuth, async (req: AuthenticatedRequest, res) 
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -239,7 +239,7 @@ router.post('/', authenticateToken, async (req: AuthenticatedRequest, res) => {
   } catch (error) {
     res.status(400).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -351,7 +351,7 @@ router.post('/:templateId/apply', authenticateToken, async (req: AuthenticatedRe
   } catch (error) {
     res.status(400).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -404,7 +404,7 @@ router.post('/:templateId/like', authenticateToken, async (req: AuthenticatedReq
   } catch (error) {
     res.status(400).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -447,7 +447,7 @@ router.delete('/:templateId', authenticateToken, async (req: AuthenticatedReques
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });

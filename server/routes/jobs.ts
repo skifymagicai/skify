@@ -55,7 +55,7 @@ router.get('/:jobId', authenticateToken, async (req: AuthenticatedRequest, res) 
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -98,7 +98,7 @@ router.get('/', authenticateToken, async (req: AuthenticatedRequest, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -146,7 +146,7 @@ router.delete('/:jobId', authenticateToken, async (req: AuthenticatedRequest, re
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });

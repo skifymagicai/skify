@@ -45,7 +45,7 @@ router.post("/complete", async (req, res) => {
     res.json({ analysis });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "complete failed", details: err.message });
+    res.status(500).json({ error: "complete failed", details: err instanceof Error ? err.message : 'Unknown error' });
   }
 });
 
