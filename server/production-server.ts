@@ -481,8 +481,8 @@ app.get('/api/download/:jobId', (req, res) => {
     success: true,
     downloadUrl: `/static/exports/skify-viral-${jobId}.${format}`,
     fileSize: quality === '4k' ? '12.8 MB' : '3.2 MB',
-    format: format.toUpperCase(),
-    quality: quality.toUpperCase(),
+    format: String(format).toUpperCase(),
+    quality: String(quality).toUpperCase(),
     message: 'Video ready for download'
   });
 });
