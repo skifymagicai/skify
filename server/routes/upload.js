@@ -1,7 +1,7 @@
 // server/routes/upload.js
-const express = require("express");
-const aws = require("aws-sdk");
-const { v4: uuidv4 } = require("uuid");
+import express from "express";
+import aws from "aws-sdk";
+import { v4 as uuidv4 } from "uuid";
 const router = express.Router();
 
 const BUCKET = process.env.S3_BUCKET;
@@ -49,7 +49,7 @@ router.post("/complete", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
 async function analyzeVideo({s3url, filename, size, mime}) {
   return {

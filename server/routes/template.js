@@ -1,7 +1,7 @@
 // server/routes/template.js
-const express = require("express");
+import express from "express";
+import { v4 as uuidv4 } from "uuid";
 const router = express.Router();
-const { v4: uuidv4 } = require("uuid");
 
 router.post("/apply", async (req, res) => {
   try {
@@ -16,7 +16,7 @@ router.post("/apply", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
 
 function fakeStartRender(jobId, payload) {
   global.__SKIFY_JOBS = global.__SKIFY_JOBS || {};
