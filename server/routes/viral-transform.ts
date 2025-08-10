@@ -58,13 +58,17 @@ router.post('/analyze', upload.single('video'), async (req, res) => {
         });
       }
       
-      // Validate video format
-      const allowedMimes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime'];
-      if (!allowedMimes.includes(req.file.mimetype)) {
+      // Validate video format - check both MIME type and file extension
+      const allowedMimes = ['video/mp4', 'video/mov', 'video/avi', 'video/quicktime', 'application/octet-stream'];
+      const isValidExtension = req.file.originalname.toLowerCase().match(/\.(mp4|mov|avi)$/);
+      
+      if (!allowedMimes.includes(req.file.mimetype) && !isValidExtension) {
         return res.status(400).json({ 
           error: 'Unsupported video format. Please use MP4, MOV, or AVI.' 
         });
       }
+      
+      console.log(`✅ Video file validation passed: ${req.file.originalname} (${req.file.mimetype})`);
     } else if (!videoUrl || !videoUrl.trim()) {
       return res.status(400).json({ 
         error: 'Either video file or URL is required' 
