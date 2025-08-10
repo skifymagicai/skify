@@ -10,7 +10,8 @@ Skify is a next-generation AI-powered video transformation SaaS platform. It ana
   - **Application Startup**: Server initialization process working correctly with proper error handling
   - **Mock Services**: All AI services (Replicate, AssemblyAI, Google Vision, Cloudinary) using fallback implementations
   - **Video Analysis**: Backend API endpoints fully functional and responding to requests
-  - **Process Management**: Application starting correctly but requiring workflow management optimization
+  - **Process Management**: Application starting correctly but Vite error handler causing crashes (line 36 in server/vite.ts calls process.exit(1))
+  - **Workflow Issue**: Replit workflow names not found via restart_workflow tool, requires manual "Run" button activation
 - **VIDEO ANALYSIS FEATURE COMPLETE** (Aug 10, 2025): Fixed and fully implemented video analysis for file uploads and URLs
   - **CRITICAL FIX**: Resolved MP4 file validation issue - files with `application/octet-stream` MIME type now accepted
   - **Analysis Endpoint**: `/api/analyze` endpoint fully functional for both video URLs and file uploads
