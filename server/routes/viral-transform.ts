@@ -21,7 +21,14 @@ const upload = multer({
     fileSize: 100 * 1024 * 1024, // 100MB limit
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('video/')) {
+    console.log('📁 File validation:', file.mimetype, file.originalname);
+    // Accept video files and common video formats
+    const allowedTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/avi', 'application/octet-stream'];
+    const isVideo = file.mimetype.startsWith('video/') || 
+                   allowedTypes.includes(file.mimetype) || 
+                   file.originalname.toLowerCase().match(/\.(mp4|mov|avi)$/);
+    
+    if (isVideo) {
       cb(null, true);
     } else {
       cb(new Error('Only video files are allowed'));
@@ -171,7 +178,7 @@ router.post('/analyze', upload.single('video'), async (req, res) => {
     if (req.file && sourceType === 'file') {
       setTimeout(() => {
         const fs = require('fs');
-        if (fs.existsSync(req.file.path)) {
+        if (req.file && fs.existsSync(req.file.path)) {
           fs.unlinkSync(req.file.path);
           console.log('🗑️ Cleaned up temporary file:', req.file.path);
         }
@@ -197,7 +204,7 @@ router.post('/analyze', upload.single('video'), async (req, res) => {
     if (req.file) {
       setTimeout(() => {
         const fs = require('fs');
-        if (fs.existsSync(req.file.path)) {
+        if (req.file && fs.existsSync(req.file.path)) {
           fs.unlinkSync(req.file.path);
         }
       }, 1000);
