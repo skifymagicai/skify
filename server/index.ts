@@ -1,3 +1,12 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+const redisUrl = process.env.REDIS_URL;
+console.log('REDIS_URL:', redisUrl);
+
+const redisToken = process.env.REDIS_TOKEN;
+console.log(redisToken); // will print undefined
+
 import express from 'express';
 import cors from 'cors';
 import { setupVite, serveStatic } from './vite.js';
@@ -12,11 +21,31 @@ import paymentRoutes from './routes/payments.ts';
 import adminRoutes from './routes/admin.ts';
 import viralTransformRoutes from './routes/viral-transform.ts';
 
+// Import modular API routes
+import { registerModularRoutes } from './api-routes.js';
+
 // Initialize queue service
 import { SimpleQueueService } from './services/simple-queue.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
+
+// Check if port is in use before starting
+import net from 'net';
+function checkPortInUse(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const tester = net.createServer()
+      .once('error', err => {
+        if ((err as any).code === 'EADDRINUSE') resolve(true);
+        else resolve(false);
+      })
+      .once('listening', () => {
+        tester.close();
+        resolve(false);
+      })
+      .listen(port);
+  });
+}
 
 // Initialize queue service
 const queueService = new SimpleQueueService();
@@ -45,6 +74,7 @@ app.get('/health', (req, res) => {
   });
 });
 
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
@@ -53,9 +83,11 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/viral', viralTransformRoutes);
-
 // Mount viral transform routes at /api for direct access to /analyze
 app.use('/api', viralTransformRoutes);
+
+// Register modular API routes (including /api/export, /api/download/:videoId, etc.)
+registerModularRoutes(app);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -87,6 +119,10 @@ app.use('/api/*', (req, res) => {
 // Start server
 async function startServer() {
   try {
+    if (await checkPortInUse(PORT)) {
+      console.error(`❌ Port ${PORT} is already in use. Please stop the other process or set a different PORT in your .env.`);
+      process.exit(1);
+    }
     // Create HTTP server
     const server = createServer(app);
     

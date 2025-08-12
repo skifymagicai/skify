@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: Skify API
+  version: 1.0.0
+  description: |
+    OpenAPI spec for Skify AI-Powered Viral Video Remix Platform.
+    All endpoints are authenticated unless otherwise noted.
+servers:
+  - url: https://api.skify.com
+paths:
+  /api/upload/viral:
+    post:
+      summary: Upload a viral video for analysis
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                viralVideo:
+                  type: string
+                  format: binary
+                title:
+                  type: string
+      responses:
+        '200':
+          description: Upload success
+  /api/analyze:
+    post:
+      summary: Analyze a video for style extraction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                videoId:
+                  type: string
+      responses:
+        '200':
+          description: Analysis result
+  /api/template/save:
+    post:
+      summary: Save a new template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                ...
+      responses:
+        '200':
+          description: Template saved
+  /api/export:
+    post:
+      summary: Export a styled video
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                videoId:
+                  type: string
+                quality:
+                  type: string
+                watermark:
+                  type: boolean
+      responses:
+        '200':
+          description: Export started
+  /api/download/{videoId}:
+    get:
+      summary: Download a processed video
+      parameters:
+        - in: path
+          name: videoId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Download URL
+  /api/status/{jobId}:
+    get:
+      summary: Get job status
+      parameters:
+        - in: path
+          name: jobId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job status

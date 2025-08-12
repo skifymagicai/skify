@@ -16,6 +16,22 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+import net from 'net';
+async function checkPortInUse(port) {
+  return new Promise((resolve) => {
+    const tester = net.createServer()
+      .once('error', err => {
+        if (err.code === 'EADDRINUSE') resolve(true);
+        else resolve(false);
+      })
+      .once('listening', () => {
+        tester.close();
+        resolve(false);
+      })
+      .listen(port);
+  });
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -564,20 +580,27 @@ app.use((error, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Skify Core Server running on port ${PORT}`);
-  console.log(`📱 PWA available at: http://localhost:${PORT}`);
-  console.log(`🔧 API endpoints: http://localhost:${PORT}/api/*`);
-  
-  if (!process.env.JWT_SECRET) {
-    console.log('⚠️  Using development JWT secret');
+
+(async () => {
+  if (await checkPortInUse(PORT)) {
+    console.error(`❌ Port ${PORT} is already in use. Please stop the other process or set a different PORT in your .env.`);
+    process.exit(1);
   }
-  
-  if (!razorpay) {
-    console.log('⚠️  Razorpay not configured - payments disabled');
-  } else {
-    console.log('💳 Razorpay payment integration active');
-  }
-});
+  app.listen(PORT, () => {
+    console.log(`🚀 Skify Core Server running on port ${PORT}`);
+    console.log(`📱 PWA available at: http://localhost:${PORT}`);
+    console.log(`🔧 API endpoints: http://localhost:${PORT}/api/*`);
+    
+    if (!process.env.JWT_SECRET) {
+      console.log('⚠️  Using development JWT secret');
+    }
+    
+    if (!razorpay) {
+      console.log('⚠️  Razorpay not configured - payments disabled');
+    } else {
+      console.log('💳 Razorpay payment integration active');
+    }
+  });
+})();
 
 export default app;

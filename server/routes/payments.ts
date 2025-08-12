@@ -34,7 +34,7 @@ router.post('/create-order', authenticateToken, async (req: AuthenticatedRequest
   } catch (error) {
     res.status(400).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -76,7 +76,7 @@ router.post('/verify', authenticateToken, async (req: AuthenticatedRequest, res)
   } catch (error) {
     res.status(400).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -93,7 +93,7 @@ router.get('/history', authenticateToken, async (req: AuthenticatedRequest, res)
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -114,7 +114,7 @@ router.post('/watermark-removal', authenticateToken, async (req: AuthenticatedRe
   } catch (error) {
     res.status(400).json({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 });

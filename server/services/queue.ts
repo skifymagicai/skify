@@ -16,17 +16,16 @@ async function initializeRedis() {
   try {
     redisConnection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
       maxRetriesPerRequest: 3,
-      retryDelayOnFailover: 100,
       lazyConnect: true,
       connectTimeout: 5000,
       commandTimeout: 5000
     });
-    
     await redisConnection.ping();
     console.log('✅ Redis connection established');
     return redisConnection;
   } catch (error) {
-    console.warn('Redis not available, using memory queue fallback:', error.message);
+    const err = error as Error;
+    console.warn('Redis not available, using memory queue fallback:', err.message);
     useMemoryQueue = true;
     if (redisConnection) {
       redisConnection.disconnect();
@@ -58,7 +57,11 @@ export class QueueService {
         // Replace memory queues with Redis queues if connection successful
         this.analysisQueue = new Queue('video-analysis', { connection: redis });
         this.renderQueue = new Queue('video-render', { connection: redis });
-        this.startWorkers();
+        if (redisConnection) {
+          this.startWorkers();
+        } else {
+          console.warn('Redis connection is null, not starting BullMQ workers.');
+        }
         this.initialized = true;
         console.log('✅ QueueService initialized with Redis');
       } else {
@@ -66,7 +69,8 @@ export class QueueService {
         this.initialized = true;
       }
     } catch (error) {
-      console.warn('QueueService initialization warning:', error.message);
+  const err = error as Error;
+  console.warn('QueueService initialization warning:', err.message);
       // Already using memory queues as fallback
       this.initialized = true;
     }
@@ -106,11 +110,15 @@ export class QueueService {
 
   private startWorkers() {
     if (useMemoryQueue) return;
+    if (!redisConnection) {
+      console.warn('No valid Redis connection for BullMQ workers. Skipping worker start.');
+      return;
+    }
 
     // Analysis worker
     const analysisWorker = new Worker('video-analysis', async (job) => {
       return this.processAnalysisJob(job);
-    }, { 
+    }, {
       connection: redisConnection,
       concurrency: 2
     });
@@ -118,7 +126,7 @@ export class QueueService {
     // Render worker
     const renderWorker = new Worker('video-render', async (job) => {
       return this.processRenderJob(job);
-    }, { 
+    }, {
       connection: redisConnection,
       concurrency: 1 // Limit concurrent renders
     });
@@ -285,15 +293,16 @@ export class QueueService {
 
     } catch (error) {
       // Update render job as failed
+      const err = error as Error;
       await db.update(renderJobs)
         .set({
           status: 'failed',
-          errorMessage: error.message,
+          errorMessage: err.message,
           completedAt: new Date()
         })
         .where(eq(renderJobs.id, renderJobId));
 
-      throw error;
+      throw err;
     }
   }
 
@@ -322,6 +331,8 @@ export class QueueService {
   // Cleanup on shutdown
   async close() {
     await Promise.all(this.workers.map(worker => worker.close()));
-    await redisConnection.quit();
+    if (redisConnection) {
+      await redisConnection.quit();
+    }
   }
 }

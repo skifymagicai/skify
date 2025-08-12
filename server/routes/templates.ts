@@ -101,6 +101,7 @@ router.get('/:templateId', optionalAuth, async (req: AuthenticatedRequest, res) 
 
     const [template] = await db.select({
       id: templates.id,
+      userId: templates.userId,
       name: templates.name,
       description: templates.description,
       thumbnailUrl: templates.thumbnailUrl,

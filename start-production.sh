@@ -9,12 +9,14 @@ pkill -f "tsx" 2>/dev/null || true
 
 # Build the frontend
 echo "📦 Building React PWA frontend..."
+export $(grep -v '^#' .env | xargs)
 npm run build
 
 # Start the production server
 echo "🌟 Starting production server with all features..."
 echo "   ✓ AI Style Extraction from viral videos"
 echo "   ✓ Template application to user media"
+npm ci
 echo "   ✓ Real-time processing with job tracking"
 echo "   ✓ 4K Ultra HD enhancement (Pro tier)"
 echo "   ✓ Saved Templates Library"

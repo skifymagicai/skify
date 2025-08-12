@@ -12,6 +12,22 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const net = require('net');
+function checkPortInUse(port) {
+  return new Promise((resolve) => {
+    const tester = net.createServer()
+      .once('error', err => {
+        if (err.code === 'EADDRINUSE') resolve(true);
+        else resolve(false);
+      })
+      .once('listening', () => {
+        tester.close();
+        resolve(false);
+      })
+      .listen(port);
+  });
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -582,10 +598,16 @@ const startServer = async () => {
     await setupRedis();
     initSampleData();
     
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Skify Core server running on http://0.0.0.0:${PORT}`);
-      console.log(`📱 PWA available at: http://localhost:${PORT}`);
-      console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+    checkPortInUse(PORT).then(inUse => {
+      if (inUse) {
+        console.error(`❌ Port ${PORT} is already in use. Please stop the other process or set a different PORT in your .env.`);
+        process.exit(1);
+      }
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Skify Core server running on http://0.0.0.0:${PORT}`);
+        console.log(`📱 PWA available at: http://localhost:${PORT}`);
+        console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+      });
     });
   } catch (error) {
     console.error('Failed to start server:', error);

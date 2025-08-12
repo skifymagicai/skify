@@ -360,15 +360,38 @@ app.use((error, req, res, next) => {
 });
 
 // Start server
+
+const net = require('net');
 const port = process.env.PORT || 5000;
-app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 SkifyMagicAI Server running on port ${port}`);
-  console.log(`📱 Access dashboard at: http://localhost:${port}`);
-  console.log('🔥 AI Services Status:');
-  console.log('  - Replicate:', !!process.env.REPLICATE_API_KEY ? '✅' : '❌');
-  console.log('  - AssemblyAI:', !!process.env.ASSEMBLYAI_API_KEY ? '✅' : '❌');
-  console.log('  - Cloudinary:', !!process.env.CLOUDINARY_CLOUD ? '✅' : '❌');
-  console.log('  - Google Vision:', !!process.env.GOOGLE_APPLICATION_CREDENTIALS ? '✅' : '❌');
+function checkPortInUse(port) {
+  return new Promise((resolve) => {
+    const tester = net.createServer()
+      .once('error', err => {
+        if (err.code === 'EADDRINUSE') resolve(true);
+        else resolve(false);
+      })
+      .once('listening', () => {
+        tester.close();
+        resolve(false);
+      })
+      .listen(port);
+  });
+}
+
+checkPortInUse(port).then(inUse => {
+  if (inUse) {
+    console.error(`❌ Port ${port} is already in use. Please stop the other process or set a different PORT in your .env.`);
+    process.exit(1);
+  }
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`🚀 SkifyMagicAI Server running on port ${port}`);
+    console.log(`📱 Access dashboard at: http://localhost:${port}`);
+    console.log('🔥 AI Services Status:');
+    console.log('  - Replicate:', !!process.env.REPLICATE_API_KEY ? '✅' : '❌');
+    console.log('  - AssemblyAI:', !!process.env.ASSEMBLYAI_API_KEY ? '✅' : '❌');
+    console.log('  - Cloudinary:', !!process.env.CLOUDINARY_CLOUD ? '✅' : '❌');
+    console.log('  - Google Vision:', !!process.env.GOOGLE_APPLICATION_CREDENTIALS ? '✅' : '❌');
+  });
 });
 
 module.exports = app;
