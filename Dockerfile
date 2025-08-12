@@ -24,7 +24,7 @@ COPY client/package*.json ./client/
 
 # Install dependencies
 RUN npm ci --only=production
-RUN cd client && npm ci --only=production
+	RUN cd client && npm install --package-lock-only && npm ci --only=production
 
 # Copy source code
 COPY . .
