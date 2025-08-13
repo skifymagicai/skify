@@ -34,11 +34,10 @@ app.use('/api/music-license', musicLicenseRoutes);
 app.use('/api/status', jobStatusRoutes);
 
 
+
 const PORT = process.env.PORT || 3000;
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Skify backend running on port ${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Skify backend running on port ${PORT}`);
+});
 
 export default app;
