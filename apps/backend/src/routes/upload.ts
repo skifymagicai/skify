@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import multer from 'multer';
 const router = Router();
 const upload = multer({ dest: 'uploads/' });
@@ -6,7 +6,7 @@ const upload = multer({ dest: 'uploads/' });
 // POST /api/upload/viral
 import { jobQueue } from '../jobs/queue';
 // POST /api/upload/viral
-router.post('/viral', upload.single('file'), async (req, res) => {
+router.post('/viral', upload.single('file'), async (req: Request, res: Response) => {
   // Compliance & moderation stubs
   // TODO: Real checks
   const passedModeration = true;
