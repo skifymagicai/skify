@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run postbuild",
+    "postbuild": "mkdir -p ../../backend/public && cp -r dist/* ../../backend/public/",
     "preview": "vite preview",
     "test": "jest"
   },
