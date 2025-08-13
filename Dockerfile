@@ -7,6 +7,7 @@ WORKDIR /app/frontend
 COPY apps/frontend/package*.json ./
 RUN npm ci
 COPY apps/frontend .
+RUN echo "Cache bust: $CACHEBUST" # This line ensures the next step is never cached
 RUN npm run build
 
 # --- Build backend ---
