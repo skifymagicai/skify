@@ -4,11 +4,12 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-  "dev": "NODE_ENV=development dotenv -e .env -- tsx server/index.ts",
-  "build": "NODE_ENV=production dotenv -e .env -- vite build && NODE_ENV=production dotenv -e .env -- esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-  "start": "NODE_ENV=production dotenv -e .env -- node dist/index.js",
+    "dev": "NODE_ENV=development dotenv -e .env -- tsx server/index.ts",
+    "build": "NODE_ENV=production dotenv -e .env -- vite build && NODE_ENV=production dotenv -e .env -- esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "start": "NODE_ENV=production dotenv -e .env -- node dist/index.js",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "postinstall": "cd apps/frontend && npm install && npm run build && cd ../../ && rm -rf apps/backend/public && mkdir -p apps/backend/public && cp -r apps/frontend/dist/* apps/backend/public/"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.864.0",
