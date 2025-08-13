@@ -1,0 +1,50 @@
+# Render Blueprint for Skify
+services:
+  - type: web
+    name: skify-backend
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: 4000
+      - key: NODE_ENV
+        value: production
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+    autoDeploy: true
+    healthCheckPath: /health
+    buildFilter:
+      paths:
+        - apps/backend/**
+  - type: web
+    name: skify-frontend
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: VITE_API_URL
+        value: https://skify-backend.onrender.com
+    autoDeploy: true
+    healthCheckPath: /
+    buildFilter:
+      paths:
+        - apps/frontend/**
+  - type: redis
+    name: skify-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
