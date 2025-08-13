@@ -5,10 +5,7 @@
 import express from "express";
 import aws from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
-// @ts-ignore
-import type { SkifyAIProcessor as SkifyAIProcessorType } from "../ai-processor.js";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { SkifyAIProcessor }: { SkifyAIProcessor: typeof SkifyAIProcessorType } = require("../ai-processor.js");
+import { SkifyAIProcessor } from "../ai-processor.js";
 const router = express.Router();
 
 const BUCKET = process.env.S3_BUCKET;

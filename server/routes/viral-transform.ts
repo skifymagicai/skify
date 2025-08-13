@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { z } from 'zod';
 import multer from 'multer';
 import { authenticateToken, AuthenticatedRequest } from '../services/auth.js';
-// @ts-expect-error: No type declaration for JS AI processor
 import { SkifyAIProcessor } from '../ai-processor.js';
 import { StorageService } from '../services/storage.js';
 import { SimpleQueueService } from '../services/simple-queue.js';
