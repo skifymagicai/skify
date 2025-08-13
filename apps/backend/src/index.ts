@@ -5,9 +5,29 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import IORedis from 'ioredis';
 
 // Load environment variables
 dotenv.config();
+
+// Redis health check setup
+let redisStatus = 'unknown';
+let redisError = null;
+let redisClient = null;
+if (process.env.REDIS_URL) {
+  redisClient = new IORedis.default(process.env.REDIS_URL);
+  redisClient.ping().then(() => {
+    redisStatus = 'ok';
+    console.log('Redis connection: OK');
+  }).catch(err => {
+    redisStatus = 'error';
+    redisError = err.message;
+    console.error('Redis connection error:', err);
+  });
+} else {
+  redisStatus = 'not_configured';
+  console.warn('REDIS_URL not set; Redis health endpoint will report not_configured.');
+}
 
 
 const app = express();
@@ -29,8 +49,23 @@ app.get('/', (req, res) => {
   });
 });
 
+
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+// Redis health check endpoint
+app.get('/health/redis', async (req, res) => {
+  if (!redisClient) {
+    return res.status(500).json({ status: 'not_configured', error: 'REDIS_URL not set' });
+  }
+  try {
+    await redisClient.ping();
+    res.json({ status: 'ok' });
+  } catch (err) {
+  const errorMsg = err instanceof Error ? err.message : String(err);
+  res.status(500).json({ status: 'error', error: errorMsg });
+  }
+});
 
 
 
