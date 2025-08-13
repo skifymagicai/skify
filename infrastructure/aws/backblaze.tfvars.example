@@ -1,0 +1,5 @@
+# Example Backblaze B2 variables for Skify AWS deployment
+b2_key_id = "your-b2-key-id"
+b2_app_key = "your-b2-app-key"
+b2_bucket = "your-b2-bucket"
+b2_endpoint = "https://s3.us-west-002.backblazeb2.com"

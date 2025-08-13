@@ -1,46 +1,26 @@
-FROM node:20-alpine
 
-WORKDIR /app
-
-COPY package*.json ./
+# --- Build frontend ---
+FROM node:20-alpine AS frontend-build
+WORKDIR /app/frontend
+COPY apps/frontend/package*.json ./
 RUN npm ci
-
-COPY . .
-
-# Build frontend (if using Vite/React)
+COPY apps/frontend .
 RUN npm run build
 
-EXPOSE 3000
+# --- Build backend ---
+FROM node:20-alpine AS backend-build
+WORKDIR /app/backend
+COPY apps/backend/package*.json ./
+RUN npm ci
+COPY apps/backend .
+# Copy built frontend to backend's public directory
+COPY --from=frontend-build /app/frontend/dist ./public
+RUN npm run build
 
-CMD ["npm", "run", "start"]
-FROM node:18-alpine
-
-# Set working directory
+# --- Production image ---
+FROM node:20-alpine
 WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-COPY client/package*.json ./client/
-
-# Install dependencies
-RUN npm ci --only=production
-	RUN cd client && npm install --package-lock-only && npm ci --only=production
-
-# Copy source code
-COPY . .
-
-# Build client
-RUN npm run build:client
-
-# Create necessary directories
-RUN mkdir -p storage/uploads storage/outputs logs
-
-# Expose port
-EXPOSE 5000
-
-# Set environment variables
+COPY --from=backend-build /app/backend .
 ENV NODE_ENV=production
-ENV PORT=5000
-
-# Start the application
+EXPOSE 3000
 CMD ["npm", "start"]

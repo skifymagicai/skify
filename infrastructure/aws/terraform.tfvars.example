@@ -1,0 +1,5 @@
+# Example Terraform variables for Skify AWS deployment
+aws_region = "us-east-1"
+project_name = "skify"
+db_password = "your-db-password"
+jwt_secret = "your-jwt-secret"
