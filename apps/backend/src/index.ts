@@ -1,14 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { json } from 'body-parser';
+import bodyParser from 'body-parser';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(json());
+app.use(bodyParser.json());
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
