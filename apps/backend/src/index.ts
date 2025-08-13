@@ -89,7 +89,7 @@ app.use('/api/status', jobStatusRoutes);
 
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 10000;
 app.listen(PORT, () => {
   console.log(`Skify backend running on port ${PORT}`);
 });
