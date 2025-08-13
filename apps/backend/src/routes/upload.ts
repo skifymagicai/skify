@@ -4,7 +4,7 @@ const router = Router();
 const upload = multer({ dest: 'uploads/' });
 
 // POST /api/upload/viral
-import { jobQueue } from '../jobs/queue';
+import { jobQueue } from '../jobs/queue.js';
 // POST /api/upload/viral
 router.post('/viral', upload.single('file'), async (req: Request, res: Response) => {
   // Compliance & moderation stubs

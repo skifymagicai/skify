@@ -15,14 +15,14 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 
 
-import uploadRoutes from './routes/upload';
-import analyzeRoutes from './routes/analyze';
-import templateRoutes from './routes/template';
-import exportRoutes from './routes/export';
-import paymentRoutes from './routes/payment';
-import moderationRoutes from './routes/moderation';
-import musicLicenseRoutes from './routes/musicLicense';
-import jobStatusRoutes from './routes/jobStatus';
+import uploadRoutes from './routes/upload.js';
+import analyzeRoutes from './routes/analyze.js';
+import templateRoutes from './routes/template.js';
+import exportRoutes from './routes/export.js';
+import paymentRoutes from './routes/payment.js';
+import moderationRoutes from './routes/moderation.js';
+import musicLicenseRoutes from './routes/musicLicense.js';
+import jobStatusRoutes from './routes/jobStatus.js';
 
 app.use('/api/upload', uploadRoutes);
 app.use('/api/analyze', analyzeRoutes);

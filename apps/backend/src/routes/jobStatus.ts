@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { jobQueue } from '../jobs/queue';
+import { jobQueue } from '../jobs/queue.js';
 const router = Router();
 
 // GET /api/status/:jobId

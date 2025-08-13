@@ -1,7 +1,7 @@
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
 
-const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
+const connection = new IORedis.default(process.env.REDIS_URL || 'redis://localhost:6379');
 
 export const worker = new Worker('skify-jobs', async job => {
   switch (job.name) {
