@@ -89,7 +89,15 @@ app.use('/api/status', jobStatusRoutes);
 
 
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 10000;
+
+// Log static directory and index.html existence for Render debugging
+import fs from 'fs';
+const staticDir = path.join(__dirname, 'public');
+const indexPath = path.join(staticDir, 'index.html');
+console.log('Serving static files from:', staticDir);
+console.log('index.html exists:', fs.existsSync(indexPath));
+
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 app.listen(PORT, () => {
   console.log(`Skify backend running on port ${PORT}`);
 });
