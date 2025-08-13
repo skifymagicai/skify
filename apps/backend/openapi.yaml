@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: Skify API
+  version: 1.0.0
+  description: Full API for Skify platform (see SKIFY_MASTER_PROMPT.md for details)
+servers:
+  - url: http://localhost:3000/api
+paths:
+  /upload/viral:
+    post:
+      summary: Upload a viral video
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Upload accepted
+  /analyze:
+    post:
+      summary: Analyze a video for style extraction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Analysis started
+  /my-templates:
+    get:
+      summary: List user templates
+      responses:
+        '200':
+          description: List of templates
+  /apply-template/{templateId}:
+    post:
+      summary: Apply a template to user media
+      parameters:
+        - in: path
+          name: templateId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Template application started
+  /export:
+    post:
+      summary: Export a video
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Export started
+  /status/{jobId}:
+    get:
+      summary: Get job status
+      parameters:
+        - in: path
+          name: jobId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job status
+  /payment:
+    post:
+      summary: Process payment
+      responses:
+        '200':
+          description: Payment processed
+  /music-license:
+    post:
+      summary: Check music license
+      responses:
+        '200':
+          description: License status
+  /moderate:
+    post:
+      summary: Moderate content
+      responses:
+        '200':
+          description: Moderation result
