@@ -16,8 +16,7 @@ WORKDIR /app/backend
 COPY apps/backend/package*.json ./
 RUN npm ci
 COPY apps/backend .
-# Copy built frontend to backend's public directory
-COPY --from=frontend-build /app/frontend/dist ./public
+COPY --from=frontend-build /app/frontend/dist ./dist/public
 RUN npm run build
 
 # --- Production image ---
