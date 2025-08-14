@@ -39,6 +39,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 // Fallback for root
 app.get('/', (req, res) => {
   // If index.html exists, serve it, else show a friendly message
@@ -47,6 +48,19 @@ app.get('/', (req, res) => {
       res.status(200).send('Skify backend is running. No frontend build found.');
     }
   });
+});
+
+// Catch-all: serve index.html for React Router (after all API/static routes)
+app.get('*', (req, res) => {
+  if (
+    !req.path.startsWith('/api') &&
+    !req.path.startsWith('/assets') &&
+    !req.path.startsWith('/static')
+  ) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  } else {
+    res.status(404).send('Not found');
+  }
 });
 
 
